@@ -1,15 +1,31 @@
-import { useState } from 'react';
-import NaNvbar from './components/Navbar';
-import Herosection from './components/Herosection';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-function App() {
-  const [count, setCount] = useState(0);
+import Navbar from "./components/Navbar";
+import Herosection from "./components/Herosection";
+import About from "./components/About";
+import MarqueeSection from "./components/MarqueeSection";
 
+import Events from "./pages/Events";
+
+function Home() {
   return (
     <>
-      <NaNvbar />
+      <Navbar />
       <Herosection />
+      <About />
+      <MarqueeSection />
     </>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/events" element={<Events />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
