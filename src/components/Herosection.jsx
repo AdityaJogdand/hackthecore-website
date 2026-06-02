@@ -1,60 +1,112 @@
 import React from "react";
+import { motion } from "framer-motion";
+import Silk from "./Silk";
+
+const fadeUp = {
+  hidden: {
+    opacity: 0,
+    y: 20,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const stagger = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
 
 const HeroSection = () => {
   return (
-    <section className="relative h-screen bg-[#F4DD0E] overflow-hidden flex items-center">
-      <div className="max-w-7xl mx-auto w-full px-8 lg:px-16 mt-20">
-        <div className="max-w-6xl">
+    <section className="relative h-screen overflow-hidden bg-[#1c1f1e] flex items-center">
+      {/* Silk Background */}
+      <div className="absolute inset-0 z-0">
+        <Silk
+          speed={15}
+          scale={1}
+          color="#525251"
+          noiseIntensity={1.5}
+          rotation={0}
+        />
+      </div>
+
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-[#1c1f1e]/85 z-10" />
+
+      {/* Content */}
+      <div className="relative z-20 max-w-7xl mx-auto w-full px-8 lg:px-16 pt-20">
+        <motion.div
+          className="max-w-6xl"
+          variants={stagger}
+          initial="hidden"
+          animate="visible"
+        >
           {/* Top Label */}
-          <div
-            className="uppercase tracking-[0.35em] text-black/60 mb-6"
+          <motion.div
+            variants={fadeUp}
+            className="uppercase tracking-[0.35em] text-[#F4DD0E]/70 mb-5"
             style={{
               fontFamily: "'Inter', sans-serif",
               fontWeight: 600,
-              fontSize: "0.85rem",
+              fontSize: "0.8rem",
             }}
           >
             COMMUNITY • HACKATHONS • BUILDERS
-          </div>
+          </motion.div>
 
           {/* Main Heading */}
-          <h1
-            className="text-black leading-[0.88]"
+          <motion.h1
+            variants={fadeUp}
+            className="text-white uppercase tracking-[-0.03em]"
             style={{
-              fontFamily: "'Achivo Black', sans-serif",
-              fontSize: "clamp(4.5rem, 8vw, 7rem)",
-              fontWeight: 700,
-              letterSpacing: "-0.08em",
+              fontFamily: "'Anton', sans-serif",
+              fontSize: "clamp(8rem, 7vw, 9rem)",
+              lineHeight: "0.9",
+              fontWeight: 400,
             }}
           >
-            BUILDING THE
+            BUILDING&nbsp;THE&nbsp;FUTURE
             <br />
-            FUTURE OF
-          </h1>
+            OF&nbsp;TECH
+          </motion.h1>
 
           {/* Accent */}
-          <div className="flex items-center gap-6 mt-2">
+          <motion.div
+            variants={fadeUp}
+            className="flex items-center gap-5 mt-3"
+          >
             <span
-              className="text-black"
+              className="text-[#F4DD0E]"
               style={{
                 fontFamily: "'Instrument Serif', serif",
                 fontStyle: "italic",
-                fontSize: "clamp(3rem, 5vw, 4.8rem)",
+                fontSize: "clamp(2.2rem, 3.5vw, 3.5rem)",
                 lineHeight: 1,
               }}
             >
               Innovation
             </span>
 
-            <div className="h-[2px] w-28 bg-black/80" />
-          </div>
+            <div className="h-[2px] w-32 bg-[#F4DD0E]/80" />
+          </motion.div>
 
           {/* Description */}
-          <p
-            className="mt-8 max-w-3xl text-black/75 leading-relaxed"
+          <motion.p
+            variants={fadeUp}
+            className="mt-5 max-w-3xl text-white/70 leading-relaxed"
             style={{
               fontFamily: "'Inter', sans-serif",
-              fontSize: "1.2rem",
+              fontSize: "1.05rem",
               fontWeight: 500,
             }}
           >
@@ -62,76 +114,85 @@ const HeroSection = () => {
             founders, and innovators come together to build impactful
             products, solve meaningful challenges, and shape the future
             through technology, collaboration, and creativity.
-          </p>
+          </motion.p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-wrap gap-4 mt-8">
-            <button
-              className="px-8 py-3 bg-black text-[#F4DD0E] transition-all duration-300 hover:scale-105"
+          <motion.div
+            variants={fadeUp}
+            className="flex flex-wrap gap-4 mt-6"
+          >
+            <motion.button
+              whileHover={{
+                y: -2,
+                scale: 1.02,
+                boxShadow: "0 12px 30px rgba(244,221,14,0.18)",
+              }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.25 }}
+              className="px-8 py-3 bg-[#F4DD0E] text-black"
               style={{
                 fontFamily: "'Inter', sans-serif",
                 fontWeight: 700,
-                letterSpacing: "-0.02em",
               }}
             >
               JOIN COMMUNITY
-            </button>
+            </motion.button>
 
-            <button
-              className="px-8 py-3 border-2 border-black text-black transition-all duration-300 hover:bg-black hover:text-[#F4DD0E]"
+            <motion.button
+              whileHover={{
+                y: -2,
+                scale: 1.02,
+              }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.25 }}
+              className="px-8 py-3 border border-[#F4DD0E] text-[#F4DD0E] hover:bg-[#F4DD0E] hover:text-black transition-colors duration-300"
               style={{
                 fontFamily: "'Inter', sans-serif",
                 fontWeight: 700,
-                letterSpacing: "-0.02em",
               }}
             >
               EXPLORE EVENTS
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
 
           {/* Stats */}
-          <div className="flex gap-12 mt-10 flex-wrap">
-            <div className="pr-12 border-r border-black/20">
+          <motion.div
+            variants={fadeUp}
+            className="flex gap-10 mt-6 flex-wrap"
+          >
+            <div className="pr-10 border-r border-white/10">
               <h3
-                className="text-black"
+                className="text-[#F4DD0E]"
                 style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: "3rem",
-                  fontWeight: 700,
-                  letterSpacing: "-0.05em",
+                  fontFamily: "'Anton', sans-serif",
+                  fontSize: "2.6rem",
+                  lineHeight: 1,
                 }}
               >
                 500+
               </h3>
-
               <p
-                className="text-black/70"
-                style={{
-                  fontFamily: "'Inter', sans-serif",
-                }}
+                className="text-white/60 mt-1"
+                style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 Builders
               </p>
             </div>
 
-            <div className="pr-12 border-r border-black/20">
+            <div className="pr-10 border-r border-white/10">
               <h3
-                className="text-black"
+                className="text-[#F4DD0E]"
                 style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: "3rem",
-                  fontWeight: 700,
-                  letterSpacing: "-0.05em",
+                  fontFamily: "'Anton', sans-serif",
+                  fontSize: "2.6rem",
+                  lineHeight: 1,
                 }}
               >
                 30+
               </h3>
-
               <p
-                className="text-black/70"
-                style={{
-                  fontFamily: "'Inter', sans-serif",
-                }}
+                className="text-white/60 mt-1"
+                style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 Events
               </p>
@@ -139,41 +200,37 @@ const HeroSection = () => {
 
             <div>
               <h3
-                className="text-black"
+                className="text-[#F4DD0E]"
                 style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: "3rem",
-                  fontWeight: 700,
-                  letterSpacing: "-0.05em",
+                  fontFamily: "'Anton', sans-serif",
+                  fontSize: "2.6rem",
+                  lineHeight: 1,
                 }}
               >
                 100+
               </h3>
-
               <p
-                className="text-black/70"
-                style={{
-                  fontFamily: "'Inter', sans-serif",
-                }}
+                className="text-white/60 mt-1"
+                style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 Projects
               </p>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
 
       {/* Watermark */}
       <div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 pointer-events-none select-none"
+        className="absolute bottom-[-1.5rem] left-0 w-full text-center pointer-events-none select-none z-100"
         style={{
-          fontFamily: "'Space Grotesk', sans-serif",
-          fontSize: "clamp(10rem, 16vw, 16rem)",
-          fontWeight: 700,
-          color: "rgba(0,0,0,0.03)",
-          letterSpacing: "-0.08em",
+          fontFamily: "'Archivo Black', sans-serif",
+          fontSize: "clamp(8rem, 12vw, 14rem)",
+          fontWeight: 400,
+          color: "rgba(244,221,14,0.025)",
+          letterSpacing: "0",
           whiteSpace: "nowrap",
-          lineHeight: 1,
+          lineHeight: 0.8,
         }}
       >
         HACKTHECORE

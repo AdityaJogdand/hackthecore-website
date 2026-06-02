@@ -2,41 +2,50 @@ import React from "react";
 import htcLogo from "../assets/htc.png";
 
 const Navbar = () => {
+  const navItems = [
+    "Home",
+    "About",
+    "Events",
+    "Showcase",
+    "Blog",
+    "Contact",
+  ];
+
   return (
     <header
       className="fixed top-0 left-0 right-0 z-50"
       style={{ fontFamily: "Barlow, sans-serif" }}
     >
-      <div className="max-w-[1400px] mx-auto flex items-center h-20 px-8">
+      <div className="flex items-center justify-between px-10 pt-4">
         {/* Logo */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center -mt-2">
           <img
             src={htcLogo}
             alt="HackTheCore Logo"
-            className="h-14 w-auto object-contain"
+            className="h-20 w-auto object-contain"
           />
-
-          <span
-            className="text-black text-[1.9rem] uppercase leading-none"
-            style={{
-              fontFamily: "'Anton', sans-serif",
-              letterSpacing: "0.05em",
-            }}
-          >
-            HackTheCore
-          </span>
         </div>
 
-        {/* Contact Button */}
-        <button
-          className="ml-auto h-11 px-10 border-2 border-black text-black font-bold text-base whitespace-nowrap transition-all duration-300 hover:scale-[1.03]"
-          style={{
-            clipPath: "polygon(0 0, 100% 0, 85% 100%, 0 100%)",
-            background: "transparent",
-          }}
-        >
-          Contact Us
-        </button>
+        {/* Navigation */}
+        <nav className="flex items-center gap-10 -mt-1">
+          {navItems.map((item) => (
+            <a
+              key={item}
+              href={`#${item.toLowerCase()}`}
+              className="
+                text-[1.1rem]
+                font-medium
+                text-[#F4DD0E]
+                tracking-tight
+                transition-all
+                duration-300
+                hover:opacity-60
+              "
+            >
+              {item}
+            </a>
+          ))}
+        </nav>
       </div>
     </header>
   );
