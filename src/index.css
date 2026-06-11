@@ -128,3 +128,14 @@
     @apply font-sans;
     }
 }
+
+@font-face {
+  font-family: 'SansPlomb';
+  src: url('./assets/SansPlomb-98.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: sans-serif;
+}

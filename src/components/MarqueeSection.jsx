@@ -20,19 +20,7 @@ const rows = [
     duration: "30s",
     accent: [1, 4],
   },
-  {
-    words: ["Node.js", "Builders Community", "Figma", "No-Code", "Python", "Blockchain"],
-    direction: "right",
-    duration: "22s",
-    accent: [],
-    outline: [0, 2, 4],
-  },
-  {
-    words: ["Design Systems", "MVP", "Pair Programming", "SaaS", "Debugging", "Zero to One"],
-    direction: "left",
-    duration: "27s",
-    accent: [1, 4],
-  },
+
 ];
 
 const MarqueeSection = () => {

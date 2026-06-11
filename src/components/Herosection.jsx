@@ -2,6 +2,7 @@ import React from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Silk from "./Silk";
 
+
 const fadeUp = {
   hidden: {
     opacity: 0,
@@ -45,7 +46,7 @@ const watermarkX = useTransform(
         <Silk
           speed={15}
           scale={1}
-          color="#525251"
+          color="#3a3a39"
           noiseIntensity={1.5}
           rotation={0}
         />
@@ -81,16 +82,16 @@ const watermarkX = useTransform(
               text-white
               uppercase
               tracking-[-0.03em]
-              text-[3.2rem]
-              sm:text-[4.5rem]
-              md:text-[6rem]
-              lg:text-[8rem]
-              xl:text-[9rem]
+              text-[3.8rem]
+              sm:text-[5.5rem]
+              md:text-[7.5rem]
+              lg:text-[10rem]
+              xl:text-[11.5rem]
               leading-[0.9]
             "
             style={{
-              fontFamily: "'Anton', sans-serif",
-              fontWeight: 400,
+              fontFamily: "'SansPlomb', sans-serif",
+              fontWeight: 600,
             }}
           >
             BUILDING THE FUTURE
@@ -224,74 +225,7 @@ const watermarkX = useTransform(
           </motion.div>
 
           {/* Stats */}
-<motion.div
-  variants={fadeUp}
-  className="
-    flex
-    flex-wrap
-    gap-8
-    md:gap-12
-    mt-10
-    items-start
-  "
->
-  <div>
-    <h3
-      className="text-[#F4DD0E]"
-      style={{
-        fontFamily: "'Anton', sans-serif",
-        fontSize: "clamp(1.8rem,4vw,2.6rem)",
-        lineHeight: 1,
-      }}
-    >
-      500+
-    </h3>
-    <p
-      className="text-white/60 mt-1 text-sm md:text-base"
-      style={{ fontFamily: "'Inter', sans-serif" }}
-    >
-      Builders
-    </p>
-  </div>
 
-  <div>
-    <h3
-      className="text-[#F4DD0E]"
-      style={{
-        fontFamily: "'Anton', sans-serif",
-        fontSize: "clamp(1.8rem,4vw,2.6rem)",
-        lineHeight: 1,
-      }}
-    >
-      30+
-    </h3>
-    <p
-      className="text-white/60 mt-1 text-sm md:text-base"
-      style={{ fontFamily: "'Inter', sans-serif" }}
-    >
-      Events
-    </p>
-  </div>
-
-  <div>
-    <h3
-      className="text-[#F4DD0E]"
-      style={{
-        fontFamily: "'Anton', sans-serif",
-        fontSize: "clamp(1.8rem,4vw,2.6rem)",
-        lineHeight: 1,
-      }}
-    >
-      100+
-    </h3>
-    <p
-      className="text-white/60 mt-1 text-sm md:text-base"
-      style={{ fontFamily: "'Inter', sans-serif" }}
-    >
-      Projects
-    </p>
-  </div>
-</motion.div>
         </motion.div>
       </div>
 
