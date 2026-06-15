@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import Navbar from "../components/Navbar";
-
+import GlassCard from "../components/GlassCard";
 /* ─── Font constants ─── */
 const HEADER_FONT = "'SansPlomb', sans-serif";
 const BODY_FONT = "'Inter', 'Manrope', 'SF Pro Display', sans-serif";
@@ -318,45 +318,30 @@ export default function HackathonRegistration() {
         </Reveal>
 
         {/* ── Prizes ── */}
-        <Reveal>
-          <section style={{ marginBottom: 100 }}>
-            <SectionLabel>Prizes & awards</SectionLabel>
-            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              {event.prizes.map((prize, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 18 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.07, ease }}
-                  style={{
-                    display: "flex", alignItems: "center", gap: 28,
-                    padding: "22px 26px",
-                    borderRadius: 14,
-                    background: i === 0 ? "rgba(255,255,0,0.04)" : "transparent",
-                    border: `1px solid ${i === 0 ? "rgba(255,255,0,0.14)" : "rgba(255,255,255,0.05)"}`,
-                    marginBottom: i === 2 ? 16 : 0,
-                  }}
-                >
-                  <span style={{ fontFamily: BODY_FONT, fontWeight: 900, fontSize: i < 3 ? 13 : 16, color: i === 0 ? "#FFFF00" : "rgba(255,255,255,0.2)", minWidth: 28, letterSpacing: "0.04em" }}>
-                    {prize.place}
-                  </span>
-                  <div style={{ flex: 1 }}>
-                    <span style={{ fontFamily: BODY_FONT, fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "rgba(255,255,255,0.35)" }}>{prize.label}</span>
-                  </div>
-                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end", flex: 2 }}>
-                    {prize.perks.map((perk, j) => (
-                      <span key={j} style={{ fontFamily: BODY_FONT, fontSize: 11, fontWeight: 400, color: "rgba(255,255,255,0.35)", background: "rgba(255,255,255,0.04)", borderRadius: 5, padding: "3px 9px" }}>{perk}</span>
-                    ))}
-                  </div>
-                  <span style={{ fontFamily: BODY_FONT, fontWeight: 900, fontSize: i === 0 ? 22 : 17, color: i === 0 ? "#FFFF00" : "rgba(255,255,255,0.75)", minWidth: 110, textAlign: "right", letterSpacing: "-0.02em" }}>
-                    {prize.amount}
-                  </span>
-                </motion.div>
-              ))}
-            </div>
-          </section>
-        </Reveal>
+        {/* ── Prizes ── */}
+<Reveal>
+  <section style={{ marginBottom: 100 }}>
+    <SectionLabel>Prizes & awards</SectionLabel>
+    <div style={{ display: "flex", gap: 24, flexWrap: "wrap", justifyContent: "center" }}>
+      {event.prizes.slice(0, 3).map((prize, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: i * 0.07, ease }}
+        >
+          <GlassCard
+            title={prize.label}
+            subtitle={prize.perks.join(" · ")}
+            amount={prize.amount}
+            tags={[`#${prize.place === "01" ? "1st" : prize.place === "02" ? "2nd" : "3rd"}`]}
+          />
+        </motion.div>
+      ))}
+    </div>
+  </section>
+</Reveal>
 
         {/* ── Venue ── */}
         <Reveal>
