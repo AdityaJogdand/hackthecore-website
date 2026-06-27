@@ -1,74 +1,16 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
-const events = [
-  {
-    id: 1,
-    tag: "Featured",
-    title: "Tech Summit 2026",
-    desc: "Meet founders, developers and recruiters from top companies. Three days of talks, workshops and networking.",
-    date: "Aug 14–16",
-    type: "Conference",
-    number: "01",
-    thumbnail: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=400&h=260&fit=crop",
-  },
-  {
-    id: 2,
-    tag: "New",
-    title: "GenAI Workshop",
-    desc: "Hands-on sessions with the latest generative AI tools. Build, fine-tune, and deploy your first AI pipeline.",
-    date: "Jul 5",
-    type: "Workshop",
-    number: "02",
-    thumbnail: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?q=80&w=400&h=260&fit=crop",
-  },
-  {
-    id: 3,
-    tag: null,
-    title: "48H Hackathon",
-    desc: "Two days. One problem. Infinite solutions. Form a team and build something real from scratch.",
-    date: "Jul 19–20",
-    type: "Hackathon",
-    number: "03",
-    thumbnail: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=400&h=260&fit=crop",
-  },
-  {
-    id: 4,
-    tag: null,
-    title: "Networking Lounge",
-    desc: "Connect with recruiters, startups and founders in a relaxed format. No slides — just conversations.",
-    date: "Aug 14",
-    type: "Networking",
-    number: "04",
-    thumbnail: "https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=400&h=260&fit=crop",
-  },
-  {
-    id: 5,
-    tag: null,
-    title: "Startup Pitch Night",
-    desc: "Watch early-stage founders pitch live to a panel of investors. Open floor Q&A after every pitch.",
-    date: "Aug 15",
-    type: "Pitch",
-    number: "05",
-    thumbnail: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?q=80&w=400&h=260&fit=crop",
-  },
-  {
-    id: 6,
-    tag: null,
-    title: "Careers in Tech Panel",
-    desc: "Engineers, PMs and designers share candid advice on breaking in, leveling up, and staying sane.",
-    date: "Aug 16",
-    type: "Panel",
-    number: "06",
-    thumbnail: "https://images.unsplash.com/photo-1558403194-611308249627?q=80&w=400&h=260&fit=crop",
-  },
-];
-
 const Events = () => {
+  const navigate = useNavigate();
   const [phase, setPhase] = useState(0);
   const [hoveredId, setHoveredId] = useState(null);
   const [openId, setOpenId] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [stats, setStats] = useState({
     attendees: 0,
     speakers: 0,
@@ -77,6 +19,24 @@ const Events = () => {
   });
   const [hasAnimated, setHasAnimated] = useState(false);
   const statsRef = useRef(null);
+
+  // Fetch events from API
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/api/events");
+        if (!res.ok) throw new Error("Failed to fetch events");
+        const data = await res.json();
+        setEvents(data);
+      } catch (err) {
+        setError(err.message);
+        setEvents([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEvents();
+  }, []);
 
   // Hero phase transitions
   useEffect(() => {
@@ -98,7 +58,7 @@ const Events = () => {
           const targets = {
             attendees: 5000,
             speakers: 120,
-            hackathon: 48,
+            hackathon: events.filter(e => e.eventType === "hackathon").length * 100,
             partners: 25,
           };
 
@@ -142,12 +102,20 @@ const Events = () => {
 
     if (statsRef.current) observer.observe(statsRef.current);
     return () => observer.disconnect();
-  }, [hasAnimated]);
+  }, [hasAnimated, events]);
 
   const FONT = "clamp(7.5rem, 16vw, 13.5rem)";
   const ease = [0.22, 1, 0.36, 1];
 
-  const handleRowClick = (id) => {
+  const handleEventClick = (eventId, eventType) => {
+    if (eventType === "hackathon") {
+      navigate(`/events/hackathon/${eventId}`);
+    } else if (eventType === "meetup") {
+      navigate(`/events/meetup/${eventId}`);
+    }
+  };
+
+  const toggleOpen = (id) => {
     setOpenId((prev) => (prev === id ? null : id));
   };
 
@@ -314,86 +282,93 @@ const Events = () => {
 
           {/* Event rows */}
           <div className="flex flex-col">
-            {events.map((event, i) => {
-              const isHovered = hoveredId === event.id;
-              const isOpen = openId === event.id;
-              const isActive = isHovered || isOpen;
+            {loading ? (
+              <p className="text-white/50 p-8">Loading events...</p>
+            ) : error ? (
+              <p className="text-red-500 p-8">Error: {error}</p>
+            ) : events.length === 0 ? (
+              <p className="text-white/50 p-8">No events yet. Check back soon!</p>
+            ) : (
+              events.map((event, i) => {
+                const isHovered = hoveredId === event._id;
+                const isOpen = openId === event._id;
+                const isActive = isHovered || isOpen;
+                const eventNumber = String(i + 1).padStart(2, "0");
 
-              return (
-                <motion.div
-                  key={event.id}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.15 }}
-                  transition={{ duration: 0.5, delay: i * 0.07, ease }}
-                  onHoverStart={() => setHoveredId(event.id)}
-                  onHoverEnd={() => setHoveredId(null)}
-                  onClick={() => handleRowClick(event.id)}
-                  className="group relative border-t border-white/10 cursor-pointer"
-                  style={{
-                    borderBottom:
-                      i === events.length - 1
-                        ? "1px solid rgba(255,255,255,0.1)"
-                        : undefined,
-                  }}
-                >
-                  {/* Hover / active fill */}
+                return (
                   <motion.div
-                    className="absolute inset-0 bg-[#FFFF00]"
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: isActive ? 1 : 0 }}
-                    transition={{ duration: 0.4, ease }}
-                    style={{ originX: 0 }}
-                  />
-
-                  {/* Main row */}
-                  <div className="relative z-10 flex items-center gap-3 sm:gap-5 md:gap-8 px-1 sm:px-2 py-4 sm:py-5">
-
-                    {/* Number */}
-                    <span
-                      className="text-[10px] sm:text-xs font-bold transition-colors duration-300 w-5 sm:w-6 flex-shrink-0"
-                      style={{
-                        fontFamily: "Barlow, sans-serif",
-                        color: isActive ? "#0C0C0D" : "rgba(255,255,255,0.25)",
-                      }}
-                    >
-                      {event.number}
-                    </span>
-
-                    {/* Thumbnail */}
+                    key={event._id}
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.15 }}
+                    transition={{ duration: 0.5, delay: i * 0.07, ease }}
+                    onHoverStart={() => setHoveredId(event._id)}
+                    onHoverEnd={() => setHoveredId(null)}
+                    onClick={() => handleEventClick(event._id, event.eventType)}
+                    className="group relative border-t border-white/10 cursor-pointer"
+                    style={{
+                      borderBottom:
+                        i === events.length - 1
+                          ? "1px solid rgba(255,255,255,0.1)"
+                          : undefined,
+                    }}
+                  >
+                    {/* Hover / active fill */}
                     <motion.div
-                      className="flex-shrink-0 overflow-hidden rounded-lg"
-                      animate={{
-                        width: isActive ? 140 : 110,
-                        height: isActive ? 90 : 72,
-                      }}
-                      transition={{ duration: 0.35, ease }}
-                      style={{ minWidth: 110 }}
-                    >
-                      <img
-                        src={event.thumbnail}
-                        alt={event.title}
-                        className="w-full h-full object-cover transition-transform duration-500"
-                        style={{ transform: isActive ? "scale(1.08)" : "scale(1)" }}
-                      />
-                    </motion.div>
+                      className="absolute inset-0 bg-[#FFFF00]"
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: isActive ? 1 : 0 }}
+                      transition={{ duration: 0.4, ease }}
+                      style={{ originX: 0 }}
+                    />
 
-                    {/* Title */}
-                    <h3
-                      className="font-black uppercase transition-colors duration-300 flex-1 leading-none"
-                      style={{
-                        fontFamily: "Barlow, sans-serif",
-                        fontSize: "clamp(1.05rem, 3.5vw, 2.4rem)",
-                        letterSpacing: "-0.02em",
-                        color: isActive ? "#0C0C0D" : "#ffffff",
-                      }}
-                    >
-                      {event.title}
-                    </h3>
+                    {/* Main row */}
+                    <div className="relative z-10 flex items-center gap-3 sm:gap-5 md:gap-8 px-1 sm:px-2 py-4 sm:py-5">
 
-                    {/* Tag */}
-                    <div className="hidden sm:block flex-shrink-0 w-[100px] md:w-[110px]">
-                      {event.tag && (
+                      {/* Number */}
+                      <span
+                        className="text-[10px] sm:text-xs font-bold transition-colors duration-300 w-5 sm:w-6 flex-shrink-0"
+                        style={{
+                          fontFamily: "Barlow, sans-serif",
+                          color: isActive ? "#0C0C0D" : "rgba(255,255,255,0.25)",
+                        }}
+                      >
+                        {eventNumber}
+                      </span>
+
+                      {/* Thumbnail */}
+                      <motion.div
+                        className="flex-shrink-0 overflow-hidden rounded-lg"
+                        animate={{
+                          width: isActive ? 140 : 110,
+                          height: isActive ? 90 : 72,
+                        }}
+                        transition={{ duration: 0.35, ease }}
+                        style={{ minWidth: 110 }}
+                      >
+                        <img
+                          src={event.thumbnail || event.banner || "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=400&h=260&fit=crop"}
+                          alt={event.title}
+                          className="w-full h-full object-cover transition-transform duration-500"
+                          style={{ transform: isActive ? "scale(1.08)" : "scale(1)" }}
+                        />
+                      </motion.div>
+
+                      {/* Title */}
+                      <h3
+                        className="font-black uppercase transition-colors duration-300 flex-1 leading-none"
+                        style={{
+                          fontFamily: "Barlow, sans-serif",
+                          fontSize: "clamp(1.05rem, 3.5vw, 2.4rem)",
+                          letterSpacing: "-0.02em",
+                          color: isActive ? "#0C0C0D" : "#ffffff",
+                        }}
+                      >
+                        {event.title}
+                      </h3>
+
+                      {/* Type badge */}
+                      <div className="hidden sm:block flex-shrink-0 w-[100px] md:w-[110px]">
                         <span
                           className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full transition-all duration-300 whitespace-nowrap"
                           style={{
@@ -404,32 +379,31 @@ const Events = () => {
                             display: "inline-block",
                           }}
                         >
-                          {event.tag}
+                          {event.eventType === "hackathon" ? "Hackathon" : "Meetup"}
                         </span>
-                      )}
-                    </div>
+                      </div>
 
-                    {/* Meta */}
-                    <div className="hidden md:flex items-center gap-4 lg:gap-6 flex-shrink-0 w-40 lg:w-48 justify-end">
-                      <span
-                        className="text-xs lg:text-sm transition-colors duration-300"
-                        style={{
-                          fontFamily: "Barlow, sans-serif",
-                          color: isActive ? "#0C0C0D" : "rgba(255,255,255,0.4)",
-                        }}
-                      >
-                        {event.date}
-                      </span>
-                      <span
-                        className="text-xs lg:text-sm transition-colors duration-300"
-                        style={{
-                          fontFamily: "Barlow, sans-serif",
-                          color: isActive ? "#0C0C0D" : "rgba(255,255,255,0.4)",
-                        }}
-                      >
-                        {event.type}
-                      </span>
-                    </div>
+                      {/* Meta */}
+                      <div className="hidden md:flex items-center gap-4 lg:gap-6 flex-shrink-0 w-40 lg:w-48 justify-end">
+                        <span
+                          className="text-xs lg:text-sm transition-colors duration-300"
+                          style={{
+                            fontFamily: "Barlow, sans-serif",
+                            color: isActive ? "#0C0C0D" : "rgba(255,255,255,0.4)",
+                          }}
+                        >
+                          {event.date}
+                        </span>
+                        <span
+                          className="text-xs lg:text-sm transition-colors duration-300"
+                          style={{
+                            fontFamily: "Barlow, sans-serif",
+                            color: isActive ? "#0C0C0D" : "rgba(255,255,255,0.4)",
+                          }}
+                        >
+                          {event.city}
+                        </span>
+                      </div>
 
                     {/* Arrow */}
                     <motion.span
@@ -474,7 +448,7 @@ const Events = () => {
                         className="text-[10px] font-semibold text-[#0C0C0D]/60 uppercase tracking-wide"
                         style={{ fontFamily: "Barlow, sans-serif" }}
                       >
-                        {event.date} · {event.type}
+                        {event.date} · {event.city}
                       </span>
                     </div>
 
@@ -482,12 +456,12 @@ const Events = () => {
                       className="text-[#0C0C0D]/60 text-xs sm:text-sm pb-4 sm:pb-5 leading-relaxed"
                       style={{ fontFamily: "Barlow, sans-serif" }}
                     >
-                      {event.desc}
+                      {event.description}
                     </p>
                   </motion.div>
                 </motion.div>
               );
-            })}
+            }))}
           </div>
         </div>
       </section>
