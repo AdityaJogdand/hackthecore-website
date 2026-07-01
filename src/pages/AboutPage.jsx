@@ -3,17 +3,10 @@ import { motion } from "framer-motion";
 import PastGlimpseScrollSection from "@/components/PastGlimpseScrollSection";
 import AboutIntro from "@/components/AboutIntro";
 import ScrollReveal from "@/components/ScrollReveal";
+import CoreValuesList from "../components/Corevalueslist";
 import hackUpLogo from "@/assets/HackUp.PNG";
+import TeamSection from "@/components/TeamSection";
 const ease = [0.22, 1, 0.36, 1];
-
-const coreValues = [
-    ["Innovation", "Encouraging creativity and solving real-world problems through technology."],
-    ["Community First", "Building meaningful relationships and creating a supportive environment where everyone grows together."],
-    ["Merit & Excellence", "Recognizing effort, quality, and genuine talent over popularity or participation alone."],
-    ["Collaboration", "Bringing students, mentors, and industry leaders together to create greater impact."],
-    ["Growth Mindset", "Promoting continuous learning, experimentation, and personal development."],
-];
-const accentColors = ["#F4DD0E", "#6EE7B7", "#93C5FD", "#F4A6C1", "#C4B5FD"];
 
 
 
@@ -184,73 +177,14 @@ export default function AboutHero() {
                         </p>
                     </motion.div>
 
-                    {/* bento grid */}
-                    <motion.div
-                        className="grid grid-cols-12 gap-4 sm:gap-5 md:gap-6"
-                        initial={{ opacity: 0, y: 36 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, amount: 0.1 }}
-                        transition={{ duration: 0.8, ease }}
-                    >
-                        {coreValues.map(([title, copy], index) => {
-                            const spanClasses = [
-                                "col-span-12 lg:col-span-7",
-                                "col-span-12 lg:col-span-5",
-                                "col-span-12 md:col-span-4",
-                                "col-span-12 md:col-span-4",
-                                "col-span-12 md:col-span-4",
-                            ][index];
-                            const accent = accentColors[index];
-
-                            return (
-                                <article
-                                    key={title}
-                                    className={`group relative flex flex-col justify-between gap-8 sm:gap-10
-                p-7 sm:p-9 md:p-10 rounded-[20px] bg-white border border-[#0C0C0D]/10
-                overflow-hidden isolate
-                transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]
-                hover:-translate-y-1 hover:border-[#0C0C0D]/25
-                group-hover:[animation-play-state:running]
-                min-h-[200px] sm:min-h-[230px] ${index === 0 ? "lg:min-h-[280px]" : ""}
-                ${spanClasses}`}
-                                >
-                                    <span
-                                        style={{ backgroundColor: accent, boxShadow: `0 0 16px ${accent}80` }}
-                                        className="relative z-[1] absolute left-0 top-7 sm:top-9 md:top-10 w-[3px] h-8 transition-all duration-300"
-                                    />
-
-                                    <div className="relative z-[1] flex items-start justify-between pl-3">
-                                        <span
-                                            style={{ color: accent }}
-                                            className="font-mono text-[0.68rem] sm:text-[0.72rem] font-bold tracking-[0.12em] uppercase opacity-80"
-                                        >
-                                            VAL.{String(index + 1).padStart(2, "0")}
-                                        </span>
-                                    </div>
-
-                                    <div className="relative z-[1] flex flex-col gap-2.5 sm:gap-3 pl-3">
-                                        <h3 className={`m-0 font-['SansPlomb',sans-serif] font-black uppercase leading-[0.92] tracking-[-0.01em] text-[#0C0C0D]
-                        ${index === 0
-                                                ? "text-[clamp(1.8rem,4vw,2.6rem)]"
-                                                : "text-[clamp(1.4rem,3vw,1.9rem)]"}`}>
-                                            {title}
-                                        </h3>
-                                        <p className={`m-0 text-[#3A3A38] font-semibold leading-[1.6]
-                        ${index === 0
-                                                ? "text-[0.98rem] sm:text-[1.05rem] max-w-[26rem]"
-                                                : "text-[0.9rem] sm:text-[0.95rem]"}`}>
-                                            {copy}
-                                        </p>
-                                    </div>
-                                </article>
-                            );
-                        })}
-                    </motion.div>
+                    {/* interactive value list — GSAP driven */}
+                    <CoreValuesList />
                 </div>
             </section >
 
             {/* PAST GLIMPSE */}
             <PastGlimpseScrollSection />
+            <TeamSection />
 
         </>
     );
