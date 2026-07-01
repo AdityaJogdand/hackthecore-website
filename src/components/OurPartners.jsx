@@ -24,6 +24,7 @@ const LOGOS = [
 /* ─── tokens ─────────────────────────────────────────────────────────────── */
 const C = {
   bg: "#FAFAF8",
+  bg2: "#F2F2EF",
   bgCard: "#ffffff",
   bgDark: "#111110",
   border: "#E8E8E6",
@@ -144,7 +145,7 @@ function BookACall() {
 
   return (
     <section id="book-a-call" style={{
-      background: C.bg,
+      background: C.bg2,
       padding: "clamp(2rem, 5vw, 80px) clamp(1.5rem, 5vw, 80px)",
       boxSizing: "border-box",
     }}>

@@ -14,19 +14,19 @@ const MARQUEE_ITEMS = [
 
 const STATS = [
   { value: "2,400+", label: "Community members" },
-  { value: "18",     label: "Hackathons hosted" },
-  { value: "₹12L+",  label: "Prizes awarded" },
+  { value: "18", label: "Hackathons hosted" },
+  { value: "₹12L+", label: "Prizes awarded" },
 ];
 
 /* ─── tokens ─────────────────────────────────────────────────────────────── */
 const C = {
-  bg:        "#FAFAF8",
-  ink:       "#111110",
-  inkMid:    "#555553",
-  inkFaint:  "#ABABAA",
-  yellow:    "#E8D20A",
-  yellowBg:  "#F4DD0E",
-  rule:      "#DDDDD9",
+  bg: "#FAFAF8",
+  ink: "#111110",
+  inkMid: "#555553",
+  inkFaint: "#ABABAA",
+  yellow: "#E8D20A",
+  yellowBg: "#F4DD0E",
+  rule: "#DDDDD9",
 };
 
 /* ─── cycling word ───────────────────────────────────────────────────────── */
@@ -42,8 +42,8 @@ function CycleWord() {
       <motion.span
         key={i}
         initial={{ y: "110%", opacity: 0 }}
-        animate={{ y: "0%",   opacity: 1 }}
-        exit={{    y: "-110%", opacity: 0 }}
+        animate={{ y: "0%", opacity: 1 }}
+        exit={{ y: "-110%", opacity: 0 }}
         transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
         style={{ display: "block" }}
       >
@@ -125,7 +125,7 @@ function NodeNetwork() {
     const dotGeo = new THREE.BufferGeometry();
     const dotPositions = new Float32Array(NODE_COUNT * 3);
     positions.forEach((p, i) => {
-      dotPositions[i * 3]     = p.x;
+      dotPositions[i * 3] = p.x;
       dotPositions[i * 3 + 1] = p.y;
       dotPositions[i * 3 + 2] = p.z;
     });
@@ -145,7 +145,7 @@ function NodeNetwork() {
     const HOT_INDICES = [0, 7, 14, 23, 38, 51, 64, 77];
     const hotPositions = new Float32Array(HOT_INDICES.length * 3);
     HOT_INDICES.forEach((idx, i) => {
-      hotPositions[i * 3]     = positions[idx].x;
+      hotPositions[i * 3] = positions[idx].x;
       hotPositions[i * 3 + 1] = positions[idx].y;
       hotPositions[i * 3 + 2] = positions[idx].z;
     });
@@ -170,8 +170,8 @@ function NodeNetwork() {
     const onMouse = (e) => {
       const rect = el.getBoundingClientRect();
       mouseRef.current = {
-        x: ((e.clientX - rect.left) / rect.width  - 0.5) * 2,
-        y: ((e.clientY - rect.top)  / rect.height - 0.5) * 2,
+        x: ((e.clientX - rect.left) / rect.width - 0.5) * 2,
+        y: ((e.clientY - rect.top) / rect.height - 0.5) * 2,
       };
     };
     window.addEventListener("mousemove", onMouse);
@@ -246,6 +246,7 @@ export default function HeroSection() {
         position: "relative",
         overflow: "hidden",
         marginTop: "30px",
+        zIndex: 0,
       }}
     >
       {/* ── 3D background ── */}
@@ -430,7 +431,7 @@ export default function HeroSection() {
           >
             Join Community
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-              <path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </motion.button>
 

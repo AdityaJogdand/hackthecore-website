@@ -1,19 +1,40 @@
+import "./loadEnv.js";
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import dotenv from "dotenv";
+import helmet from "helmet";
 import registrationRoutes from "./routes/registrations.js";
 import adminRoutes, { requireAdmin } from "./routes/admin.js";
 import eventRoutes from "./routes/events.js";
 import partnershipRoutes from "./routes/partnerships.js";
+import authRoutes from "./routes/auth.js";
 
-dotenv.config({ path: new URL("./.env", import.meta.url).pathname });
+import passport from "passport";
+
 
 const app = express();
 
-app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:5173" }));
-app.use(express.json());
+// ── Security headers ──
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  contentSecurityPolicy: false, // Let the SPA handle CSP
+}));
 
+// ── CORS ──
+app.use(cors({
+  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  credentials: true,
+}));
+
+// ── Body parser with size limit to prevent payload attacks ──
+app.use(express.json({ limit: "1mb" }));
+
+// ── Initialize Passport ──
+app.use(passport.initialize());
+
+
+// ── Routes ──
+app.use("/api/auth", authRoutes);
 app.use("/api/registrations", registrationRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/events", eventRoutes);
@@ -37,6 +58,12 @@ app.get("/api/admin/registrations/meetup", requireAdmin, async (req, res) => {
   } catch {
     res.status(500).json({ message: "Server error." });
   }
+});
+
+// ── Global error handler ──
+app.use((err, req, res, _next) => {
+  console.error("Unhandled error:", err);
+  res.status(500).json({ message: "Internal server error." });
 });
 
 mongoose
