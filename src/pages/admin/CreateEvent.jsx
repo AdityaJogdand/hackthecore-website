@@ -28,7 +28,7 @@ const fieldBase = {
 
 const focusHandlers = {
   onFocus: e => (e.target.style.borderColor = "rgba(255,255,0,0.45)"),
-  onBlur:  e => (e.target.style.borderColor = "rgba(255,255,255,0.1)"),
+  onBlur: e => (e.target.style.borderColor = "rgba(255,255,255,0.1)"),
 };
 
 /* ─── Shared sub-components ─── */
@@ -54,6 +54,23 @@ const Input = ({ label, required, ...props }) => (
 const TextArea = ({ label, required, rows = 3, ...props }) => (
   <Field label={label} required={required}>
     <textarea {...props} rows={rows} style={{ ...fieldBase, resize: "vertical" }} {...focusHandlers} />
+  </Field>
+);
+
+const Select = ({ label, required, value, onChange, options }) => (
+  <Field label={label} required={required}>
+    <select
+      value={value}
+      onChange={onChange}
+      style={{ ...fieldBase, background: "#111112", appearance: "none", cursor: "pointer" }}
+      {...focusHandlers}
+    >
+      {options.map(opt => (
+        <option key={opt.value} value={opt.value} style={{ background: "#111112" }}>
+          {opt.label}
+        </option>
+      ))}
+    </select>
   </Field>
 );
 
@@ -169,15 +186,21 @@ function ImageUpload({ label, required, value, onChange, placeholder = "https://
 
 /* ─── Empty row factories ─── */
 const emptyTimelineItem = () => ({ time: "", label: "" });
-const emptyTrack         = () => ({ name: "", desc: "" });
-const emptyPrize         = () => ({ place: "", label: "", amount: "", perks: [""] });
-const emptySponsor       = () => ({ name: "", logo: "", tier: "", url: "" });
-const emptyFaq           = () => ({ question: "", answer: "" });
-const emptyJudge         = () => ({ name: "", title: "", company: "", photo: "", bio: "" });
+const emptyTrack = () => ({ name: "", desc: "" });
+const emptyPrize = () => ({ place: "", label: "", amount: "", perks: [""] });
+const emptySponsor = () => ({ name: "", logo: "", tier: "", url: "" });
+const emptyFaq = () => ({ question: "", answer: "" });
+const emptyJudge = () => ({ name: "", title: "", company: "", photo: "", bio: "" });
 
 const EVENT_TYPE_OPTIONS = [
-  { value: "hackathon", label: "Hackathon", desc: "Team registration · timeline · problem statement · prizes" },
-  { value: "meetup",    label: "Meetup",    desc: "Single-person RSVP · timeline" },
+  { value: "hackathon", label: "Hackathon", desc: "Timeline · problem statement · prizes" },
+  { value: "meetup", label: "Meetup", desc: "Single-person RSVP · timeline" },
+];
+
+const MODE_OPTIONS = [
+  { value: "offline", label: "Offline" },
+  { value: "online", label: "Online" },
+  { value: "hybrid", label: "Hybrid" },
 ];
 
 export default function CreateEvent() {
@@ -188,33 +211,35 @@ export default function CreateEvent() {
   const [error, setError] = useState("");
 
   /* ── Core fields ── */
-  const [title, setTitle]       = useState("");
-  const [banner, setBanner]     = useState("");
+  const [title, setTitle] = useState("");
+  const [banner, setBanner] = useState("");
   const [thumbnail, setThumbnail] = useState("");
-  const [venue, setVenue]       = useState("");
-  const [city, setCity]         = useState("");
-  const [date, setDate]         = useState("");
-  const [time, setTime]         = useState("");
+  const [venue, setVenue] = useState("");
+  const [city, setCity] = useState("");
+  const [eventMode, setEventMode] = useState("offline");
+  const [fee, setFee] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
   const [capacity, setCapacity] = useState("");
   const [deadline, setDeadline] = useState("");
   const [description, setDescription] = useState("");
   const [timeline, setTimeline] = useState([emptyTimelineItem()]);
   const [sponsors, setSponsors] = useState([emptySponsor()]);
-  const [contact, setContact]   = useState({ email: "", twitter: "", discord: "", whatsapp: "" });
+  const [contact, setContact] = useState({ email: "", twitter: "", discord: "", whatsapp: "" });
 
   /* ── Venue images ── */
   const [venueImage1, setVenueImage1] = useState("");
   const [venueImage2, setVenueImage2] = useState("");
 
   /* ── Hackathon-only fields ── */
-  const [edition, setEdition]   = useState("");
-  const [theme, setTheme]       = useState("");
+  const [edition, setEdition] = useState("");
+  const [theme, setTheme] = useState("");
   const [themeImage, setThemeImage] = useState("");
   const [overview, setOverview] = useState("");
-  const [tracks, setTracks]     = useState([emptyTrack()]);
-  const [prizes, setPrizes]     = useState([emptyPrize()]);
-  const [faqs, setFaqs]         = useState([emptyFaq()]);
-  const [judges, setJudges]     = useState([emptyJudge()]);
+  const [tracks, setTracks] = useState([emptyTrack()]);
+  const [prizes, setPrizes] = useState([emptyPrize()]);
+  const [faqs, setFaqs] = useState([emptyFaq()]);
+  const [judges, setJudges] = useState([emptyJudge()]);
 
   /* ── handlers ── */
   const addTimelineItem = () => setTimeline(t => [...t, emptyTimelineItem()]);
@@ -228,8 +253,8 @@ export default function CreateEvent() {
   const addPrize = () => setPrizes(p => [...p, emptyPrize()]);
   const removePrize = i => setPrizes(p => p.filter((_, idx) => idx !== i));
   const setPrizeField = (i, key) => e => setPrizes(p => p.map((r, idx) => idx === i ? { ...r, [key]: e.target.value } : r));
-  const addPerk  = i => setPrizes(p => p.map((r, idx) => idx === i ? { ...r, perks: [...r.perks, ""] } : r));
-  const setPerk  = (i, j) => e => setPrizes(p => p.map((r, idx) => idx === i ? { ...r, perks: r.perks.map((pk, pj) => pj === j ? e.target.value : pk) } : r));
+  const addPerk = i => setPrizes(p => p.map((r, idx) => idx === i ? { ...r, perks: [...r.perks, ""] } : r));
+  const setPerk = (i, j) => e => setPrizes(p => p.map((r, idx) => idx === i ? { ...r, perks: r.perks.map((pk, pj) => pj === j ? e.target.value : pk) } : r));
   const removePerk = (i, j) => setPrizes(p => p.map((r, idx) => idx === i ? { ...r, perks: r.perks.filter((_, pj) => pj !== j) } : r));
 
   const addSponsor = () => setSponsors(s => [...s, emptySponsor()]);
@@ -247,51 +272,53 @@ export default function CreateEvent() {
   const setJudgePhoto = (i, val) => setJudges(j => j.map((r, idx) => idx === i ? { ...r, photo: val } : r));
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setSubmitting(true);
-  setError("");
+    e.preventDefault();
+    setSubmitting(true);
+    setError("");
 
-  const payload = {
-    eventType,
-    title, banner, thumbnail, venue, city, date, time,
-    capacity, registrationDeadline: deadline,
-    description,
-    venueImages: [venueImage1, venueImage2].filter(Boolean),
-    timeline: timeline.filter(t => t.time && t.label),
-    sponsors: sponsors.filter(s => s.name),
-    contact,
-    ...(eventType === "hackathon" && {
-      edition,
-      themeImage,
-      problemStatement: { theme, overview, tracks: tracks.filter(t => t.name) },
-      prizes: prizes.filter(p => p.label).map(p => ({ ...p, perks: p.perks.filter(Boolean) })),
-      faqs: faqs.filter(f => f.question && f.answer),
-      judges: judges.filter(j => j.name),
-    }),
+    const payload = {
+      eventType,
+      title, banner, thumbnail, venue, city, date, time,
+      mode: eventMode,
+      fee,
+      capacity, registrationDeadline: deadline,
+      description,
+      venueImages: [venueImage1, venueImage2].filter(Boolean),
+      timeline: timeline.filter(t => t.time && t.label),
+      sponsors: sponsors.filter(s => s.name),
+      contact,
+      ...(eventType === "hackathon" && {
+        edition,
+        themeImage,
+        problemStatement: { theme, overview, tracks: tracks.filter(t => t.name) },
+        prizes: prizes.filter(p => p.label).map(p => ({ ...p, perks: p.perks.filter(Boolean) })),
+        faqs: faqs.filter(f => f.question && f.answer),
+        judges: judges.filter(j => j.name),
+      }),
+    };
+
+    try {
+      const res = await fetch(`${API}/api/events`, {
+        method: "POST",
+        headers: authHeaders(),
+        body: JSON.stringify(payload),
+      });
+
+      // Safely parse — server might return HTML on 404/500
+      const contentType = res.headers.get("content-type") || "";
+      const data = contentType.includes("application/json")
+        ? await res.json()
+        : { message: `Server error ${res.status}: ${res.statusText}` };
+
+      if (!res.ok) throw new Error(data.message || "Failed to create event.");
+
+      navigate("/admin/dashboard", { replace: true });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
+    }
   };
-
-  try {
-    const res = await fetch(`${API}/api/events`, {
-      method: "POST",
-      headers: authHeaders(),
-      body: JSON.stringify(payload),
-    });
-
-    // Safely parse — server might return HTML on 404/500
-    const contentType = res.headers.get("content-type") || "";
-    const data = contentType.includes("application/json")
-      ? await res.json()
-      : { message: `Server error ${res.status}: ${res.statusText}` };
-
-    if (!res.ok) throw new Error(data.message || "Failed to create event.");
-
-    navigate("/admin/dashboard", { replace: true });
-  } catch (err) {
-    setError(err.message);
-  } finally {
-    setSubmitting(false);
-  }
-};
 
   return (
     <div style={{ background: "#0C0C0D", minHeight: "100vh", color: "#fff" }}>
@@ -352,6 +379,21 @@ export default function CreateEvent() {
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                   <Input label="Venue" required placeholder="e.g. NSRCEL, IIM Bangalore" value={venue} onChange={e => setVenue(e.target.value)} />
                   <Input label="City" required placeholder="e.g. Bengaluru" value={city} onChange={e => setCity(e.target.value)} />
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                  <Select
+                    label="Mode"
+                    required
+                    value={eventMode}
+                    onChange={e => setEventMode(e.target.value)}
+                    options={MODE_OPTIONS}
+                  />
+                  <Input
+                    label="Registration fee"
+                    placeholder="e.g. Free or ₹499 per team"
+                    value={fee}
+                    onChange={e => setFee(e.target.value)}
+                  />
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                   <Input label="Date" required placeholder="e.g. Sat–Sun, Aug 2–3 2026" value={date} onChange={e => setDate(e.target.value)} />

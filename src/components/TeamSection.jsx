@@ -1,171 +1,256 @@
-import { useRef, useLayoutEffect, useCallback } from "react";
+import { useRef, useLayoutEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import Meloni from "@/assets/20.png";
+import Rahul from "@/assets/21.png";
+import Shravan from "@/assets/22.png";
+import Rugved from "@/assets/23.png";
+
 gsap.registerPlugin(ScrollTrigger);
 
-// Drop each teammate's video/photo in as its own import at the top of the
-// file, e.g. import aishaVideo from "@/assets/team/aisha.mp4", then
-// reference it below as `video`. `img` still works as a static fallback/
-// poster frame. Leave both null for anyone whose media isn't ready yet —
-// the card falls back to initials so the grid never breaks.
-//
-// Layout: row 1 holds 2 cards, row 2 (and on) holds 3 cards each. That
-// pattern is driven by the col-span on each entry below — first two
-// entries span half the row, the rest span a third.
-import main1Video from "@/assets/main_1.mp4";
-
 const team = [
-    { name: "Sharvan Kadam", role: "Founder", img: null, video: main1Video },
-    { name: "Bhavesh", role: "Co Founder", img: null, video: main1Video },
-    { name: "Full Name", role: "Role / Team", img: null, video: null },
-    { name: "Full Name", role: "Role / Team", img: null, video: null },
-    { name: "Full Name", role: "Role / Team", img: null, video: null },
-    { name: "Full Name", role: "Role / Team", img: null, video: null },
-    { name: "Full Name", role: "Role / Team", img: null, video: null },
-    { name: "Full Name", role: "Role / Team", img: null, video: null },
+    { name: "Sharvan Kadam", img: Shravan, large: true },
+    { name: "Rugved Dalvi", img: Rugved, large: true },
+
+
+    { name: "Rahul Patil", img: Rahul, large: true },
+    { name: "Meloni Shah", img: Meloni, large: true },
+];
+
+const words = [
+    "Builders.",
+    "Designers.",
+    "Developers.",
+    "Dreamers.",
 ];
 
 function initials(name) {
     return name
         .split(" ")
         .map((part) => part[0])
-        .filter(Boolean)
-        .slice(0, 2)
         .join("")
+        .slice(0, 2)
         .toUpperCase();
 }
 
-function TeamCard({ name, role, img, video, cardRef, spanClass }) {
-    const videoRef = useRef(null);
-
-    const handleEnter = useCallback(() => {
-        const v = videoRef.current;
-        if (!v) return;
-        v.currentTime = 0;
-        // play() returns a promise that can reject if the user moves the
-        // mouse away before it resolves — swallow that instead of throwing.
-        v.play().catch(() => { });
-    }, []);
-
-    const handleLeave = useCallback(() => {
-        const v = videoRef.current;
-        if (!v) return;
-        v.pause();
-        v.currentTime = 0;
-    }, []);
+function TeamCard({ member, cardRef, spanClass }) {
+    const isLarge = member.large;
 
     return (
         <div
             ref={cardRef}
             className={`group flex flex-col items-center text-center ${spanClass}`}
-            onMouseEnter={handleEnter}
-            onMouseLeave={handleLeave}
         >
-            <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[20px] bg-white/[0.04]">
-                {video ? (
-                    <video
-                        ref={videoRef}
-                        src={video}
-                        poster={img || undefined}
-                        muted
-                        loop
-                        playsInline
-                        preload="metadata"
-                        className="absolute inset-0 h-full w-full object-cover grayscale transition-all duration-500 ease-out group-hover:grayscale-0 group-hover:scale-105"
-                    />
-                ) : img ? (
+            <div
+                className={
+                    isLarge
+                        ? "w-90 sm:w-80 lg:w-[28rem] xl:w-[25rem]"
+                        : "w-90 sm:w-80 lg:w-[28rem] xl:w-[25rem]"
+                }
+            >
+                {member.img ? (
                     <img
-                        src={img}
-                        alt={name}
-                        className="absolute inset-0 h-full w-full object-cover grayscale transition-all duration-500 ease-out group-hover:grayscale-0 group-hover:scale-105"
+                        src={member.img}
+                        alt={member.name}
+                        className="w-full h-auto object-contain transition-transform duration-300 group-hover:scale-105"
                     />
                 ) : (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="font-['SansPlomb',sans-serif] text-4xl font-black text-white/15">
-                            {initials(name)}
+                    <div className="aspect-[4/5] rounded-3xl bg-black/5 flex items-center justify-center">
+                        <span className="text-5xl font-black text-black/20">
+                            {initials(member.name)}
                         </span>
                     </div>
                 )}
             </div>
-            <h3 className="mt-4 text-base sm:text-lg font-semibold text-white">{name}</h3>
-            <span className="text-xs sm:text-sm text-white/50">{role}</span>
+
+            <h3
+                className={`mt-5 font-semibold text-black ${isLarge
+                    ? "text-2xl lg:text-3xl"
+                    : "text-xl lg:text-2xl"
+                    }`}
+            >
+                {member.name}
+            </h3>
+
+            {member.role && (
+                <p className="mt-1 text-black/60">
+                    {member.role}
+                </p>
+            )}
         </div>
     );
 }
 
-// First 2 cards take half the 6-col track each (row of 2),
-// every card after that takes a third (rows of 3).
-function spanFor(i) {
-    return i < 2 ? "col-span-2 sm:col-span-3" : "col-span-2 sm:col-span-2";
+function spanFor() {
+    return "col-span-2 sm:col-span-3";
 }
 
-function TeamSection() {
+export default function TeamSection() {
+    const sectionRef = useRef(null);
     const gridRef = useRef(null);
     const cardRefs = useRef([]);
+    const wordsRef = useRef([]);
+    const headingRef = useRef([]);
+    const imageRefs = useRef([]);
 
     useLayoutEffect(() => {
-        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        if (reduceMotion) return;
 
         const ctx = gsap.context(() => {
+
+            // Heading Animation — tied to the section itself, not the grid below it,
+            // so it fires as soon as the hero text is actually on screen
+            gsap.set(headingRef.current, {
+                opacity: 0,
+                y: 50,
+            });
+
+            ScrollTrigger.create({
+                trigger: sectionRef.current,
+                start: "top 90%",
+                once: true,
+                onEnter: () => {
+                    gsap.to(headingRef.current, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 1,
+                        ease: "power4.out",
+                        stagger: 0.12,
+                    });
+                },
+            });
+
+            // Hero Words — same fix, trigger off the section, not the grid
+            gsap.set(wordsRef.current, {
+                opacity: 0,
+                y: 45,
+            });
+
+            ScrollTrigger.create({
+                trigger: sectionRef.current,
+                start: "top 90%",
+                once: true,
+                onEnter: () => {
+                    gsap.to(wordsRef.current, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.9,
+                        ease: "power4.out",
+                        stagger: 0.12,
+                    });
+                },
+            });
+
+            // Cards — stay tied to the grid, since they're genuinely lower
+            // on the page and should wait until they're actually approaching view
             cardRefs.current.forEach((card, i) => {
                 if (!card) return;
-                gsap.set(card, { autoAlpha: 0, y: 24 });
+
+                gsap.set(card, {
+                    autoAlpha: 0,
+                    y: 40,
+                });
+
                 ScrollTrigger.create({
                     trigger: gridRef.current,
-                    start: "top 85%",
+                    start: "top 80%",
                     once: true,
                     onEnter: () =>
                         gsap.to(card, {
                             autoAlpha: 1,
                             y: 0,
-                            duration: 0.6,
+                            duration: 0.8,
                             ease: "power3.out",
-                            delay: i * 0.05,
+                            delay: i * 0.08,
                         }),
                 });
             });
-        }, gridRef);
+        });
 
         return () => ctx.revert();
     }, []);
 
     return (
-        <section className="px-5 py-20 text-white md:px-12 lg:px-20" style={{ backgroundColor: "#212120" }}>
-            <div className="mx-auto max-w-7xl">
-                <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-white/50">
-                    The people behind it
-                </span>
-                <h2
-                    className="mt-2 font-['SansPlomb',sans-serif] font-black uppercase leading-[0.9] tracking-[-0.01em]"
-                    style={{ fontSize: "clamp(2.5rem, 7vw, 6rem)" }}
-                >
-                    Meet the{" "}
-                    <span
-                        className="inline-block border-b-[0.06em] pb-1"
-                        style={{ color: "#F4DD0E", borderColor: "#F4DD0E" }}
-                    >
-                        team
-                    </span>
-                </h2>
+        <section ref={sectionRef} className="bg-[#FFFFFF] py-28 px-6 lg:px-16">
+            <div className="mx-auto max-w-[1700px]">
 
+                {/* HERO */}
+                <div className="flex flex-col lg:flex-row justify-between lg:items-end gap-16 lg:gap-24">
+
+                    {/* LEFT */}
+                    <div className="max-w-4xl">
+                        <span className="uppercase tracking-[0.28em] text-xs text-black/40">
+                            The people behind it
+                        </span>
+
+                        <div
+                            className="mt-5 pb-4 font-['SansPlomb',sans-serif] font-black uppercase leading-[0.88]"
+                            style={{
+                                fontSize: "clamp(4rem,8vw,8rem)",
+                            }}
+                        >
+                            <div className="overflow-hidden pb-3">
+                                <div
+                                    ref={(el) => (headingRef.current[0] = el)}
+                                    className="text-black"
+                                >
+                                    Meet the{" "}
+                                    <span className="text-[#F4DD0E]">
+                                        Team
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* RIGHT */}
+                    <div className="hidden lg:flex flex-col items-end text-right">
+                        <div
+                            className="font-['Geist_Variable'] font-medium uppercase tracking-[-0.05em] leading-[0.88]"
+                            style={{
+                                fontSize: "clamp(2.5rem,3vw,4rem)",
+                            }}
+                        >
+                            {words.map((word, index) => (
+                                <div
+                                    key={word}
+                                    className="overflow-hidden"
+                                >
+                                    <div
+                                        ref={(el) =>
+                                            (wordsRef.current[index] = el)
+                                        }
+                                        className={
+                                            word === "Dreamers."
+                                                ? "text-[#F4DD0E]"
+                                                : "text-black/85"
+                                        }
+                                    >
+                                        {word}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                </div>
+
+                {/* TEAM GRID */}
                 <div
                     ref={gridRef}
-                    className="mt-12 sm:mt-16 grid grid-cols-2 sm:grid-cols-6 gap-x-5 gap-y-10 sm:gap-x-6"
+                    className="mt-28 grid grid-cols-2 sm:grid-cols-6 gap-y-20 gap-x-8 lg:gap-x-12"
                 >
                     {team.map((member, i) => (
                         <TeamCard
                             key={i}
-                            {...member}
-                            cardRef={(el) => (cardRefs.current[i] = el)}
+                            member={member}
                             spanClass={spanFor(i)}
+                            cardRef={(el) => (cardRefs.current[i] = el)}
                         />
                     ))}
                 </div>
+
             </div>
         </section>
     );
 }
-
-export default TeamSection;

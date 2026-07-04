@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import Navbar from "../components/Navbar";
 import GlassCard from "../components/GlassCard";
+import Footer from "@/components/Footer";
 
 /* ─── Font constants ─── */
 const HEADER_FONT = "'SansPlomb', sans-serif";
@@ -11,14 +12,14 @@ const ease = [0.22, 1, 0.36, 1];
 
 /* ─── Field base style ─── */
 const fieldBase = {
-  background: "rgba(255,255,255,0.03)",
-  border: "1px solid rgba(255,255,255,0.09)",
+  background: "rgba(20,18,15,0.03)",
+  border: "1px solid rgba(20,18,15,0.14)",
   borderRadius: 10,
   padding: "13px 16px",
   fontFamily: BODY_FONT,
   fontSize: 17,
   fontWeight: 400,
-  color: "#fff",
+  color: "#1A1815",
   outline: "none",
   width: "100%",
   boxSizing: "border-box",
@@ -27,14 +28,14 @@ const fieldBase = {
 
 const focusHandlers = {
   onFocus: e => (e.target.style.borderColor = "rgba(255,255,0,0.45)"),
-  onBlur:  e => (e.target.style.borderColor = "rgba(255,255,255,0.09)"),
+  onBlur: e => (e.target.style.borderColor = "rgba(20,18,15,0.14)"),
 };
 
 /* ─── Shared sub-components ─── */
 const Field = ({ label, required, children }) => (
   <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-    <label style={{ fontFamily: BODY_FONT, fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.35)" }}>
-      {label}{required && <span style={{ color: "#FFFF00", marginLeft: 3 }}>*</span>}
+    <label style={{ fontFamily: BODY_FONT, fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(20,18,15,0.45)" }}>
+      {label}{required && <span style={{ color: "#8A6D00", marginLeft: 3 }}>*</span>}
     </label>
     {children}
   </div>
@@ -54,20 +55,20 @@ const Select = ({ label, value, onChange, options, required }) => (
   <Field label={label} required={required}>
     <select
       value={value} onChange={onChange} required={required}
-      style={{ ...fieldBase, background: "#111112", appearance: "none", cursor: "pointer", color: value ? "#fff" : "rgba(255,255,255,0.3)" }}
+      style={{ ...fieldBase, background: "#EFEBE1", appearance: "none", cursor: "pointer", color: value ? "#1A1815" : "rgba(20,18,15,0.4)" }}
     >
       <option value="" disabled>Select…</option>
-      {options.map(o => <option key={o} value={o} style={{ background: "#111112" }}>{o}</option>)}
+      {options.map(o => <option key={o} value={o} style={{ background: "#EFEBE1" }}>{o}</option>)}
     </select>
   </Field>
 );
 
 const SectionLabel = ({ children }) => (
   <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 36 }}>
-    <span style={{ fontFamily: BODY_FONT, fontSize: 12, fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", whiteSpace: "nowrap" }}>
+    <span style={{ fontFamily: BODY_FONT, fontSize: 12, fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(20,18,15,0.4)", whiteSpace: "nowrap" }}>
       {children}
     </span>
-    <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.07)" }} />
+    <div style={{ flex: 1, height: "1px", background: "rgba(20,18,15,0.12)" }} />
   </div>
 );
 
@@ -100,28 +101,28 @@ function placeLabel(place) {
 ════════════════════════════════════════════ */
 export default function HackathonRegistration() {
   const { id } = useParams();
-  const [event, setEvent]       = useState(null);
-  const [loading, setLoading]   = useState(true);
+  const [event, setEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState("");
 
   /* form state */
   const [teamName, setTeamName] = useState("");
-  const [track, setTrack]       = useState("");
-  const [members, setMembers]   = useState([emptyMember(), emptyMember()]);
-  const [idea, setIdea]         = useState("");
+  const [track, setTrack] = useState("");
+  const [members, setMembers] = useState([emptyMember(), emptyMember()]);
+  const [idea, setIdea] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   /* parallax */
   const bannerRef = useRef(null);
   const { scrollYProgress: bannerProgress } = useScroll({ target: bannerRef, offset: ["start start", "end start"] });
-  const bannerY       = useTransform(bannerProgress, [0, 1], ["0%", "25%"]);
+  const bannerY = useTransform(bannerProgress, [0, 1], ["0%", "25%"]);
   const bannerOpacity = useTransform(bannerProgress, [0, 0.7], [1, 0]);
 
   /* member handlers */
-  const addMember    = () => { if (members.length < 4) setMembers(m => [...m, emptyMember()]); };
-  const removeMember = i  => { if (members.length > 1) setMembers(m => m.filter((_, idx) => idx !== i)); };
-  const setMember    = (i, k) => e => setMembers(m => m.map((mb, idx) => idx === i ? { ...mb, [k]: e.target.value } : mb));
+  const addMember = () => { if (members.length < 4) setMembers(m => [...m, emptyMember()]); };
+  const removeMember = i => { if (members.length > 1) setMembers(m => m.filter((_, idx) => idx !== i)); };
+  const setMember = (i, k) => e => setMembers(m => m.map((mb, idx) => idx === i ? { ...mb, [k]: e.target.value } : mb));
 
   /* fetch event */
   useEffect(() => {
@@ -168,36 +169,36 @@ export default function HackathonRegistration() {
 
   /* ── loading / error states ── */
   if (loading) return (
-    <div style={{ background: "#0C0C0D", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div style={{ background: "#F5F3ED", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <Navbar />
-      <p style={{ fontFamily: BODY_FONT, color: "rgba(255,255,255,0.3)", fontSize: 14, letterSpacing: "0.2em", textTransform: "uppercase" }}>Loading event…</p>
+      <p style={{ fontFamily: BODY_FONT, color: "rgba(20,18,15,0.4)", fontSize: 14, letterSpacing: "0.2em", textTransform: "uppercase" }}>Loading event…</p>
     </div>
   );
 
   if (fetchError || !event) return (
-    <div style={{ background: "#0C0C0D", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div style={{ background: "#F5F3ED", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <Navbar />
       <p style={{ fontFamily: BODY_FONT, color: "#ff6b6b", fontSize: 16 }}>{fetchError || "Event not found"}</p>
     </div>
   );
 
   /* ── derived booleans to conditionally show sections ── */
-  const hasTracks    = event.problemStatement?.tracks?.length > 0;
-  const hasTimeline  = event.timeline?.length > 0;
-  const hasPrizes    = event.prizes?.length > 0;
-  const hasJudges    = event.judges?.length > 0;
-  const hasSponsors  = event.sponsors?.length > 0;
-  const hasFaqs      = event.faqs?.length > 0;
+  const hasTracks = event.problemStatement?.tracks?.length > 0;
+  const hasTimeline = event.timeline?.length > 0;
+  const hasPrizes = event.prizes?.length > 0;
+  const hasJudges = event.judges?.length > 0;
+  const hasSponsors = event.sponsors?.length > 0;
+  const hasFaqs = event.faqs?.length > 0;
   const hasVenueImgs = event.venueImages?.some(Boolean);
-  const hasTheme     = !!event.problemStatement?.theme;
-  const hasOverview  = !!event.problemStatement?.overview;
-  const hasProblem   = hasTheme || hasOverview || hasTracks;
-  const hasContact   = event.contact && Object.values(event.contact).some(Boolean);
+  const hasTheme = !!event.problemStatement?.theme;
+  const hasOverview = !!event.problemStatement?.overview;
+  const hasProblem = hasTheme || hasOverview || hasTracks;
+  const hasContact = event.contact && Object.values(event.contact).some(Boolean);
   const hasTrackOptions = event.problemStatement?.tracks?.map(t => t.name).filter(Boolean) || [];
 
   /* ════════════ RENDER ════════════ */
   return (
-    <div style={{ background: "#0C0C0D", minHeight: "100vh", color: "#fff" }}>
+    <div style={{ background: "#F5F3ED", minHeight: "100vh", color: "#1A1815" }}>
       <Navbar />
 
       {/* ═══ HERO ═══ */}
@@ -250,16 +251,6 @@ export default function HackathonRegistration() {
             ))}
           </motion.div>
         </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 0.6 }}
-          style={{ position: "absolute", bottom: 28, right: "6vw", display: "flex", alignItems: "center", gap: 10 }}
-        >
-          <span style={{ fontFamily: BODY_FONT, fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.2)" }}>Scroll</span>
-          <div style={{ width: 20, height: 32, border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "5px 0" }}>
-            <motion.div style={{ width: 3, height: 6, background: "rgba(255,255,255,0.3)", borderRadius: 99 }} animate={{ y: [0, 8, 0] }} transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }} />
-          </div>
-        </motion.div>
       </div>
 
       {/* ═══ BODY ═══ */}
@@ -273,20 +264,20 @@ export default function HackathonRegistration() {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 80px" }}>
                 <div>
                   {event.description.split("\n\n").map((p, i) => (
-                    <p key={i} style={{ fontFamily: BODY_FONT, fontSize: 18, fontWeight: 400, lineHeight: 1.8, color: "rgba(255,255,255,0.55)", marginBottom: 18 }}>{p}</p>
+                    <p key={i} style={{ fontFamily: BODY_FONT, fontSize: 18, fontWeight: 400, lineHeight: 1.8, color: "rgba(20,18,15,0.65)", marginBottom: 18 }}>{p}</p>
                   ))}
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                   {[
-                    event.date         && { label: "Date",     value: event.date },
-                    (event.venue || event.city) && { label: "Venue",    value: [event.venue, event.city].filter(Boolean).join(", ") },
-                    { label: "Format",   value: "In-person · Teams of 1–4" },
-                    event.capacity     && { label: "Capacity", value: event.capacity },
+                    event.date && { label: "Date", value: event.date },
+                    (event.venue || event.city) && { label: "Venue", value: [event.venue, event.city].filter(Boolean).join(", ") },
+                    { label: "Format", value: "In-person · Teams of 1–4" },
+                    event.capacity && { label: "Capacity", value: event.capacity },
                     { label: "Entry fee", value: "Free" },
                   ].filter(Boolean).map(({ label, value }) => (
-                    <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "14px 0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                      <span style={{ fontFamily: BODY_FONT, fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)" }}>{label}</span>
-                      <span style={{ fontFamily: BODY_FONT, fontSize: 17, fontWeight: 400, color: "rgba(255,255,255,0.75)", textAlign: "right", maxWidth: "60%" }}>{value}</span>
+                    <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "14px 0", borderBottom: "1px solid rgba(20,18,15,0.1)" }}>
+                      <span style={{ fontFamily: BODY_FONT, fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(20,18,15,0.4)" }}>{label}</span>
+                      <span style={{ fontFamily: BODY_FONT, fontSize: 17, fontWeight: 400, color: "rgba(20,18,15,0.8)", textAlign: "right", maxWidth: "60%" }}>{value}</span>
                     </div>
                   ))}
                 </div>
@@ -323,7 +314,7 @@ export default function HackathonRegistration() {
             <section style={{ marginBottom: 100 }}>
               <SectionLabel>Problem statement</SectionLabel>
               {hasOverview && (
-                <p style={{ fontFamily: BODY_FONT, fontSize: 18, fontWeight: 400, lineHeight: 1.8, color: "rgba(255,255,255,0.55)", maxWidth: 680, marginBottom: hasTracks ? 48 : 0 }}>
+                <p style={{ fontFamily: BODY_FONT, fontSize: 18, fontWeight: 400, lineHeight: 1.8, color: "rgba(20,18,15,0.65)", maxWidth: 680, marginBottom: hasTracks ? 48 : 0 }}>
                   {event.problemStatement.overview.split("\n\n")[0]}
                 </p>
               )}
@@ -334,11 +325,11 @@ export default function HackathonRegistration() {
                       key={i}
                       initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.08, ease }}
-                      whileHover={{ borderColor: "rgba(255,255,0,0.2)" }}
-                      style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 16, padding: "24px 22px", cursor: "default", transition: "border-color 0.25s" }}
+                      whileHover={{ borderColor: "rgba(138,109,0,0.35)" }}
+                      style={{ background: "rgba(20,18,15,0.03)", border: "1px solid rgba(20,18,15,0.1)", borderRadius: 16, padding: "24px 22px", cursor: "default", transition: "border-color 0.25s" }}
                     >
-                      <p style={{ fontFamily: BODY_FONT, fontWeight: 800, fontSize: 13, textTransform: "uppercase", letterSpacing: "0.08em", color: "#fff", marginBottom: 8 }}>{t.name}</p>
-                      {t.desc && <p style={{ fontFamily: BODY_FONT, fontSize: 16, fontWeight: 400, color: "rgba(255,255,255,0.4)", lineHeight: 1.6 }}>{t.desc}</p>}
+                      <p style={{ fontFamily: BODY_FONT, fontWeight: 800, fontSize: 13, textTransform: "uppercase", letterSpacing: "0.08em", color: "#1A1815", marginBottom: 8 }}>{t.name}</p>
+                      {t.desc && <p style={{ fontFamily: BODY_FONT, fontSize: 16, fontWeight: 400, color: "rgba(20,18,15,0.55)", lineHeight: 1.6 }}>{t.desc}</p>}
                     </motion.div>
                   ))}
                 </div>
@@ -366,11 +357,11 @@ export default function HackathonRegistration() {
                         style={{ display: "flex", gap: 20, alignItems: "flex-start", paddingBottom: 24, position: "relative" }}
                       >
                         {i < col.length - 1 && (
-                          <div style={{ position: "absolute", left: 76, top: 22, bottom: 0, width: 1, background: "rgba(255,255,255,0.06)" }} />
+                          <div style={{ position: "absolute", left: 76, top: 22, bottom: 0, width: 1, background: "rgba(20,18,15,0.1)" }} />
                         )}
-                        <span style={{ fontFamily: BODY_FONT, fontSize: 13, fontWeight: 700, color: "#FFFF00", minWidth: 76, paddingTop: 4, letterSpacing: "0.04em" }}>{item.time}</span>
-                        <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.25)", marginTop: 5, flexShrink: 0 }} />
-                        <span style={{ fontFamily: BODY_FONT, fontSize: 16, fontWeight: 400, color: "rgba(255,255,255,0.6)", paddingTop: 1, lineHeight: 1.5 }}>{item.label}</span>
+                        <span style={{ fontFamily: BODY_FONT, fontSize: 13, fontWeight: 700, color: "#8A6D00", minWidth: 76, paddingTop: 4, letterSpacing: "0.04em" }}>{item.time}</span>
+                        <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(20,18,15,0.3)", marginTop: 5, flexShrink: 0 }} />
+                        <span style={{ fontFamily: BODY_FONT, fontSize: 16, fontWeight: 400, color: "rgba(20,18,15,0.65)", paddingTop: 1, lineHeight: 1.5 }}>{item.label}</span>
                       </motion.div>
                     ))}
                   </div>
@@ -416,24 +407,24 @@ export default function HackathonRegistration() {
                     key={i}
                     initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }} transition={{ duration: 0.45, delay: i * 0.07, ease }}
-                    style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 16, padding: "22px 20px", display: "flex", flexDirection: "column", gap: 12 }}
+                    style={{ background: "rgba(20,18,15,0.03)", border: "1px solid rgba(20,18,15,0.1)", borderRadius: 16, padding: "22px 20px", display: "flex", flexDirection: "column", gap: 12 }}
                   >
                     {judge.photo && (
-                      <div style={{ width: 60, height: 60, borderRadius: "50%", overflow: "hidden", border: "1px solid rgba(255,255,255,0.1)", flexShrink: 0 }}>
+                      <div style={{ width: 60, height: 60, borderRadius: "50%", overflow: "hidden", border: "1px solid rgba(20,18,15,0.15)", flexShrink: 0 }}>
                         <img src={judge.photo} alt={judge.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                       </div>
                     )}
                     <div>
-                      <p style={{ fontFamily: BODY_FONT, fontWeight: 700, fontSize: 16, color: "#fff", margin: "0 0 4px" }}>{judge.name}</p>
+                      <p style={{ fontFamily: BODY_FONT, fontWeight: 700, fontSize: 16, color: "#1A1815", margin: "0 0 4px" }}>{judge.name}</p>
                       {judge.title && (
-                        <p style={{ fontFamily: BODY_FONT, fontSize: 13, color: "#FFFF00", margin: "0 0 2px", fontWeight: 600 }}>{judge.title}</p>
+                        <p style={{ fontFamily: BODY_FONT, fontSize: 13, color: "#8A6D00", margin: "0 0 2px", fontWeight: 600 }}>{judge.title}</p>
                       )}
                       {judge.company && (
-                        <p style={{ fontFamily: BODY_FONT, fontSize: 13, color: "rgba(255,255,255,0.35)", margin: 0 }}>{judge.company}</p>
+                        <p style={{ fontFamily: BODY_FONT, fontSize: 13, color: "rgba(20,18,15,0.45)", margin: 0 }}>{judge.company}</p>
                       )}
                     </div>
                     {judge.bio && (
-                      <p style={{ fontFamily: BODY_FONT, fontSize: 13, color: "rgba(255,255,255,0.4)", lineHeight: 1.6, margin: 0 }}>{judge.bio}</p>
+                      <p style={{ fontFamily: BODY_FONT, fontSize: 13, color: "rgba(20,18,15,0.55)", lineHeight: 1.6, margin: 0 }}>{judge.bio}</p>
                     )}
                   </motion.div>
                 ))}
@@ -476,11 +467,11 @@ export default function HackathonRegistration() {
                     rel="noopener noreferrer"
                     initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.06, ease }}
-                    whileHover={{ borderColor: "rgba(255,255,0,0.25)", y: -3 }}
+                    whileHover={{ borderColor: "rgba(138,109,0,0.4)", y: -3 }}
                     style={{
                       display: "flex", flexDirection: "column", alignItems: "center", gap: 12,
                       padding: "28px 36px", borderRadius: 16,
-                      background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.07)",
+                      background: "rgba(20,18,15,0.03)", border: "1px solid rgba(20,18,15,0.1)",
                       minWidth: 170, textDecoration: "none",
                       cursor: sponsor.url ? "pointer" : "default", transition: "border-color 0.2s",
                     }}
@@ -490,9 +481,9 @@ export default function HackathonRegistration() {
                         <img src={sponsor.logo} alt={sponsor.name} style={{ maxHeight: 56, maxWidth: 150, objectFit: "contain" }} />
                       </div>
                     )}
-                    <span style={{ fontFamily: BODY_FONT, fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.6)" }}>{sponsor.name}</span>
+                    <span style={{ fontFamily: BODY_FONT, fontSize: 13, fontWeight: 600, color: "rgba(20,18,15,0.65)" }}>{sponsor.name}</span>
                     {sponsor.tier && (
-                      <span style={{ fontFamily: BODY_FONT, fontSize: 10, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,0,0.5)" }}>
+                      <span style={{ fontFamily: BODY_FONT, fontSize: 10, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(138,109,0,0.75)" }}>
                         {sponsor.tier}
                       </span>
                     )}
@@ -524,9 +515,9 @@ export default function HackathonRegistration() {
               <SectionLabel>Contact & community</SectionLabel>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 14 }}>
                 {Object.entries(event.contact).map(([k, v]) => v && (
-                  <div key={k} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: "20px 18px" }}>
-                    <p style={{ fontFamily: BODY_FONT, fontSize: 10, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", marginBottom: 10 }}>{k}</p>
-                    <p style={{ fontFamily: BODY_FONT, fontSize: 15, fontWeight: 400, color: "#FFFF00", lineHeight: 1.5, wordBreak: "break-all" }}>{v}</p>
+                  <div key={k} style={{ background: "rgba(20,18,15,0.03)", border: "1px solid rgba(20,18,15,0.1)", borderRadius: 14, padding: "20px 18px" }}>
+                    <p style={{ fontFamily: BODY_FONT, fontSize: 10, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(20,18,15,0.4)", marginBottom: 10 }}>{k}</p>
+                    <p style={{ fontFamily: BODY_FONT, fontSize: 15, fontWeight: 400, color: "#8A6D00", lineHeight: 1.5, wordBreak: "break-all" }}>{v}</p>
                   </div>
                 ))}
               </div>
@@ -535,175 +526,7 @@ export default function HackathonRegistration() {
         )}
       </div>
 
-      {/* ═══ REGISTRATION ═══ */}
-      <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", background: "#0C0C0D" }}>
-        <div style={{ maxWidth: 1080, margin: "0 auto", padding: "100px 6vw 120px" }}>
-          <div style={{ marginBottom: 60 }}>
-            <p style={{ fontFamily: BODY_FONT, fontSize: 10, fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", marginBottom: 12 }}>
-              Free{event.registrationDeadline ? ` · Deadline ${event.registrationDeadline}` : ""}
-            </p>
-            <h2 style={{ fontFamily: BODY_FONT, fontWeight: 900, fontSize: "clamp(2rem, 5vw, 4.5rem)", textTransform: "uppercase", letterSpacing: "-0.04em", lineHeight: 0.9, color: "#fff", margin: 0 }}>
-              Register<br /><span style={{ color: "#FFFF00" }}>your team</span>
-            </h2>
-          </div>
-
-          <AnimatePresence mode="wait">
-            {!submitted ? (
-              <motion.form
-                key="form"
-                initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }}
-                transition={{ duration: 0.5, ease }}
-                onSubmit={handleSubmit}
-              >
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
-                  <Input label="Team name" placeholder="e.g. Null Pointers" value={teamName} onChange={e => setTeamName(e.target.value)} required />
-                  {hasTrackOptions.length > 0 && (
-                    <Select label="Track" value={track} onChange={e => setTrack(e.target.value)} required options={hasTrackOptions} />
-                  )}
-                </div>
-
-                {/* Members */}
-                <div style={{ marginBottom: 20 }}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-                    <span style={{ fontFamily: BODY_FONT, fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)" }}>
-                      Team members ({members.length}/4)
-                    </span>
-                    {members.length < 4 && (
-                      <button type="button" onClick={addMember} style={{ fontFamily: BODY_FONT, fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#FFFF00", background: "none", border: "1px solid rgba(255,255,0,0.25)", borderRadius: 6, padding: "5px 12px", cursor: "pointer" }}>
-                        + Add member
-                      </button>
-                    )}
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 14 }}>
-                    {members.map((member, i) => (
-                      <div key={i} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: "18px 18px 16px" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-                          <span style={{ fontFamily: BODY_FONT, fontSize: 10, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255,255,0,0.45)" }}>
-                            {i === 0 ? "Team Lead" : `Member ${i + 1}`}
-                          </span>
-                          {i > 0 && (
-                            <button type="button" onClick={() => removeMember(i)} style={{ fontFamily: BODY_FONT, fontSize: 11, color: "rgba(255,255,255,0.2)", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
-                              Remove
-                            </button>
-                          )}
-                        </div>
-                        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                          <input placeholder="Full name *" value={member.name} onChange={setMember(i, "name")} required style={{ ...fieldBase, fontSize: 14 }} {...focusHandlers} />
-                          <input placeholder="Email *" type="email" value={member.email} onChange={setMember(i, "email")} required style={{ ...fieldBase, fontSize: 14 }} {...focusHandlers} />
-                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                            <select value={member.role} onChange={setMember(i, "role")} style={{ ...fieldBase, fontSize: 13, background: "#111112", appearance: "none", color: member.role ? "#fff" : "rgba(255,255,255,0.3)" }}>
-                              <option value="" disabled>Role</option>
-                              {["Developer", "Designer", "Product", "Data / ML", "Other"].map(r => (
-                                <option key={r} value={r} style={{ background: "#111112" }}>{r}</option>
-                              ))}
-                            </select>
-                            <input placeholder="GitHub" value={member.github} onChange={setMember(i, "github")} style={{ ...fieldBase, fontSize: 13 }} {...focusHandlers} />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Idea */}
-                <div style={{ marginBottom: 32 }}>
-                  <Field label="Initial idea (optional)">
-                    <textarea
-                      placeholder="What are you thinking of building? 2–3 sentences is plenty."
-                      value={idea} onChange={e => setIdea(e.target.value)} rows={3}
-                      style={{ ...fieldBase, resize: "vertical" }} {...focusHandlers}
-                    />
-                  </Field>
-                </div>
-
-                <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-                  <motion.button
-                    type="submit" disabled={submitting}
-                    whileHover={{ scale: submitting ? 1 : 1.015 }} whileTap={{ scale: submitting ? 1 : 0.985 }}
-                    style={{
-                      background: submitting ? "rgba(255,255,0,0.5)" : "#FFFF00",
-                      color: "#0C0C0D", border: "none", borderRadius: 12,
-                      padding: "18px 48px", fontFamily: BODY_FONT,
-                      fontWeight: 900, fontSize: 16, letterSpacing: "0.1em",
-                      textTransform: "uppercase", cursor: submitting ? "not-allowed" : "pointer",
-                    }}
-                  >
-                    {submitting ? "Registering…" : "Register team →"}
-                  </motion.button>
-                  <span style={{ fontFamily: BODY_FONT, fontSize: 12, fontWeight: 400, color: "rgba(255,255,255,0.2)" }}>
-                    Free to participate · No commitment required before event
-                  </span>
-                </div>
-              </motion.form>
-            ) : (
-              <motion.div
-                key="success"
-                initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, ease }}
-                style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 20 }}
-              >
-                <h3 style={{ fontFamily: BODY_FONT, fontWeight: 900, fontSize: "clamp(1.8rem, 4vw, 3.5rem)", textTransform: "uppercase", letterSpacing: "-0.04em", lineHeight: 0.9, color: "#FFFF00", margin: 0 }}>
-                  {teamName || "Your team"}<br /><span style={{ color: "#fff" }}>is locked in.</span>
-                </h3>
-                <p style={{ fontFamily: BODY_FONT, fontSize: 18, fontWeight: 400, color: "rgba(255,255,255,0.45)", maxWidth: 480, lineHeight: 1.75 }}>
-                  Each member will receive a confirmation email with next steps.{event.contact?.discord ? " Join our Discord for pre-event workshops and mentor office hours." : ""}
-                </p>
-                {event.contact?.discord && (
-                  <a href={`https://${event.contact.discord}`} style={{ fontFamily: BODY_FONT, fontWeight: 700, fontSize: 16, color: "#FFFF00", textDecoration: "none", letterSpacing: "0.02em" }}>
-                    {event.contact.discord} ↗
-                  </a>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
-
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50%       { opacity: 0.5; transform: scale(0.85); }
-        }
-        * { -webkit-font-smoothing: antialiased; }
-        ::placeholder { color: rgba(255,255,255,0.2); }
-      `}</style>
+      <Footer />
     </div>
-  );
-}
-
-/* ─── Accordion FAQ item ─── */
-function FaqItem({ question, answer, index }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }} transition={{ duration: 0.35, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
-      style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
-    >
-      <button
-        type="button"
-        onClick={() => setOpen(o => !o)}
-        style={{ width: "100%", background: "none", border: "none", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 0", gap: 20 }}
-      >
-        <span style={{ fontFamily: BODY_FONT, fontSize: 17, fontWeight: 500, color: "rgba(255,255,255,0.8)", textAlign: "left", lineHeight: 1.4 }}>{question}</span>
-        <motion.span
-          animate={{ rotate: open ? 45 : 0 }} transition={{ duration: 0.2 }}
-          style={{ fontFamily: BODY_FONT, fontSize: 22, color: "#FFFF00", flexShrink: 0, lineHeight: 1 }}
-        >+</motion.span>
-      </button>
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            style={{ overflow: "hidden" }}
-          >
-            <p style={{ fontFamily: BODY_FONT, fontSize: 16, fontWeight: 400, color: "rgba(255,255,255,0.45)", lineHeight: 1.75, paddingBottom: 20, margin: 0 }}>
-              {answer}
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
   );
 }

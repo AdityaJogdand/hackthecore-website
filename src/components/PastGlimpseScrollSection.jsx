@@ -58,51 +58,51 @@ const events = [
             },
         ],
     },
-    {
-        // Placeholder second event — swap copy, stat, quote and images
-        // for the real edition once you have them.
-        name: "HackUp 2.0",
-        tag: "Edition 02",
-        cards: [
-            {
-                type: "image",
-                area: "hero",
-                img: glimpseImageTwo,
-                alt: "Placeholder — opening moment",
-                eyebrow: "Edition 02",
-                title: "Bigger, louder, faster",
-            },
-            { type: "logo", area: "logo" },
-            {
-                type: "stat",
-                area: "stat",
-                value: "1000+",
-                label: "Applicants this edition",
-            },
-            {
-                type: "image",
-                area: "team",
-                img: glimpseImageOne,
-                alt: "Placeholder — teams building",
-                eyebrow: "Hour 06",
-                title: "Heads down, building",
-            },
-            {
-                type: "quote",
-                area: "quote",
-                text: "“Placeholder quote — swap for a real testimonial from this edition.”",
-                attribution: "— Past participant",
-            },
-            {
-                type: "image",
-                area: "closing",
-                img: glimpseImageFour,
-                alt: "Placeholder — closing moment",
-                eyebrow: "Closing",
-                title: "A new bar, set",
-            },
-        ],
-    },
+    // {
+    //     // Placeholder second event — swap copy, stat, quote and images
+    //     // for the real edition once you have them.
+    //     name: "HackUp 2.0",
+    //     tag: "Edition 02",
+    //     cards: [
+    //         {
+    //             type: "image",
+    //             area: "hero",
+    //             img: glimpseImageTwo,
+    //             alt: "Placeholder — opening moment",
+    //             eyebrow: "Edition 02",
+    //             title: "Bigger, louder, faster",
+    //         },
+    //         { type: "logo", area: "logo" },
+    //         {
+    //             type: "stat",
+    //             area: "stat",
+    //             value: "1000+",
+    //             label: "Applicants this edition",
+    //         },
+    //         {
+    //             type: "image",
+    //             area: "team",
+    //             img: glimpseImageOne,
+    //             alt: "Placeholder — teams building",
+    //             eyebrow: "Hour 06",
+    //             title: "Heads down, building",
+    //         },
+    //         {
+    //             type: "quote",
+    //             area: "quote",
+    //             text: "“Placeholder quote — swap for a real testimonial from this edition.”",
+    //             attribution: "— Past participant",
+    //         },
+    //         {
+    //             type: "image",
+    //             area: "closing",
+    //             img: glimpseImageFour,
+    //             alt: "Placeholder — closing moment",
+    //             eyebrow: "Closing",
+    //             title: "A new bar, set",
+    //         },
+    //     ],
+    // },
 ];
 
 function ImageCard({ img, alt, eyebrow, title }) {
@@ -153,16 +153,11 @@ function QuoteCard({ text, attribution }) {
     );
 }
 
-// A single event's mosaic — fixed-size grid, no internal scroll of its own.
+// A single event's mosaic — responsive grid, no internal scroll of its own.
 // It just sits shrink-0 inside the shared outer track.
-// Top block: hero (2 cols x 2 rows) | logo/stat stacked | team/quote stacked.
-// Bottom block: closing image spans the full width, its own row — no holes.
-const MOSAIC_AREAS = `
-    "hero hero logo team"
-    "hero hero stat quote"
-    "closing closing closing closing"
-`;
-
+// Layout reshapes across breakpoints via the .mosaic-grid CSS block below:
+// stacked single column on mobile, 2-col on tablet, the original
+// hero(2x2) + logo/stat + team/quote + full-width closing on desktop.
 function EventMosaic({ name, tag, cards, cardRef }) {
     return (
         <div className="shrink-0">
@@ -175,14 +170,7 @@ function EventMosaic({ name, tag, cards, cardRef }) {
                 </span>
             </div>
 
-            <div
-                className="mt-5 sm:mt-6 grid gap-4 sm:gap-5"
-                style={{
-                    gridTemplateColumns: "repeat(4, 220px)",
-                    gridTemplateRows: "220px 220px 220px",
-                    gridTemplateAreas: MOSAIC_AREAS,
-                }}
-            >
+            <div className="mosaic-grid mt-5 sm:mt-6">
                 {cards.map((card, i) => (
                     <div key={i} ref={cardRef(i)} style={{ gridArea: card.area }}>
                         {card.type === "image" && <ImageCard {...card} />}
@@ -202,6 +190,8 @@ function JourneySoFarBento() {
     const cardRefs = useRef({}); // keyed "eventIndex-cardIndex"
     const [atStart, setAtStart] = useState(true);
     const [atEnd, setAtEnd] = useState(false);
+
+    const isSingleEvent = events.length === 1;
 
     useLayoutEffect(() => {
         const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -281,7 +271,8 @@ function JourneySoFarBento() {
 
                 <div
                     ref={trackRef}
-                    className="jf-track mt-12 sm:mt-16 flex gap-10 sm:gap-14 overflow-x-auto pb-2"
+                    className={`jf-track mt-12 sm:mt-16 flex gap-10 sm:gap-14 overflow-x-auto pb-2 ${isSingleEvent ? "justify-center" : ""
+                        }`}
                     style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                 >
                     {events.map((event, eIdx) => (
@@ -296,33 +287,78 @@ function JourneySoFarBento() {
                     ))}
                 </div>
 
-                <div className="flex items-center justify-end gap-3 mt-6 sm:mt-8">
-                    <button
-                        type="button"
-                        aria-label="Scroll left"
-                        disabled={atStart}
-                        onClick={() => scrollByStep(-1)}
-                        className="flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-full border border-white/25 text-white transition-all duration-300 hover:bg-white hover:text-black disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-white disabled:cursor-not-allowed"
-                    >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M19 12H5M12 19l-7-7 7-7" />
-                        </svg>
-                    </button>
-                    <button
-                        type="button"
-                        aria-label="Scroll right"
-                        disabled={atEnd}
-                        onClick={() => scrollByStep(1)}
-                        className="flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-full border border-white/25 text-white transition-all duration-300 hover:bg-white hover:text-black disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-white disabled:cursor-not-allowed"
-                    >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M5 12h14M12 5l7 7-7 7" />
-                        </svg>
-                    </button>
-                </div>
+                {/* nothing to step through with only one event */}
+                {!isSingleEvent && (
+                    <div className="flex items-center justify-end gap-3 mt-6 sm:mt-8">
+                        <button
+                            type="button"
+                            aria-label="Scroll left"
+                            disabled={atStart}
+                            onClick={() => scrollByStep(-1)}
+                            className="flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-full border border-white/25 text-white transition-all duration-300 hover:bg-white hover:text-black disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-white disabled:cursor-not-allowed"
+                        >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <button
+                            type="button"
+                            aria-label="Scroll right"
+                            disabled={atEnd}
+                            onClick={() => scrollByStep(1)}
+                            className="flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-full border border-white/25 text-white transition-all duration-300 hover:bg-white hover:text-black disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-white disabled:cursor-not-allowed"
+                        >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                    </div>
+                )}
             </div>
 
-            <style>{`.jf-track::-webkit-scrollbar { display: none; }`}</style>
+            <style>{`
+                .jf-track::-webkit-scrollbar { display: none; }
+
+                .mosaic-grid {
+                    display: grid;
+                    width: min(86vw, 380px);
+                    gap: 0.9rem;
+                    grid-template-columns: 1fr;
+                    grid-template-rows: 200px 150px 150px 200px 150px 200px;
+                    grid-template-areas:
+                        "hero"
+                        "logo"
+                        "stat"
+                        "team"
+                        "quote"
+                        "closing";
+                }
+                @media (min-width: 640px) {
+                    .mosaic-grid {
+                        width: min(90vw, 620px);
+                        gap: 1.1rem;
+                        grid-template-columns: repeat(2, minmax(0, 1fr));
+                        grid-template-rows: 240px 160px 160px 210px;
+                        grid-template-areas:
+                            "hero hero"
+                            "logo stat"
+                            "team quote"
+                            "closing closing";
+                    }
+                }
+                @media (min-width: 1024px) {
+                    .mosaic-grid {
+                        width: auto;
+                        gap: 1.5rem;
+                        grid-template-columns: repeat(4, 220px);
+                        grid-template-rows: 220px 220px 220px;
+                        grid-template-areas:
+                            "hero hero logo team"
+                            "hero hero stat quote"
+                            "closing closing closing closing";
+                    }
+                }
+            `}</style>
         </section>
     );
 }

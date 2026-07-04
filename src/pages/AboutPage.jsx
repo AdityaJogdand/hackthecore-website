@@ -6,6 +6,8 @@ import ScrollReveal from "@/components/ScrollReveal";
 import CoreValuesList from "../components/Corevalueslist";
 import hackUpLogo from "@/assets/HackUp.PNG";
 import TeamSection from "@/components/TeamSection";
+import BookACall from "@/components/BookACall";
+import Footer from "@/components/Footer";
 const ease = [0.22, 1, 0.36, 1];
 
 
@@ -185,6 +187,8 @@ export default function AboutHero() {
             {/* PAST GLIMPSE */}
             <PastGlimpseScrollSection />
             <TeamSection />
+            <BookACall />
+            <Footer />
 
         </>
     );
