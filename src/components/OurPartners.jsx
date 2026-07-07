@@ -69,7 +69,7 @@ function LogoCard({ logo }) {
         alt={logo.name}
         loading="lazy"
         style={{
-          maxHeight: 32,
+          maxHeight: 62,
           maxWidth: 112,
           width: "auto",
           height: "auto",

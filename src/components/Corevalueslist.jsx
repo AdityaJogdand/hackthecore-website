@@ -182,7 +182,7 @@ function CoreValuesList() {
                             </h3>
                             <p
                                 className="card-copy m-0 font-semibold leading-[1.6]"
-                                style={{ color: `${INK}CC`, fontSize: "0.95rem", maxWidth: "22rem" }}
+                                style={{ color: `${INK}CC`, fontSize: "1.25rem", maxWidth: "25rem" }}
                             >
                                 {value.copy}
                             </p>
