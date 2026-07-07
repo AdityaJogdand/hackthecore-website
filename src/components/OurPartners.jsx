@@ -38,6 +38,7 @@ const C = {
   yellow: "#F4DD0E",
   rule: "#DDDDD9",
 };
+const API_BASE = `${import.meta.env.VITE_API_URL}/api`;
 
 /* ─── logo card ──────────────────────────────────────────────────────────── */
 function LogoCard({ logo }) {
@@ -122,7 +123,7 @@ function ScrollColumn({ logos, direction, duration }) {
 //     setSubmitting(true);
 //     setSubmitError("");
 //     try {
-//       const response = await fetch("http://localhost:4000/api/partnerships", {
+//       const response = await fetch(`${API_BASE}/partnerships`, {
 //         method: "POST",
 //         headers: { "Content-Type": "application/json" },
 //         body: JSON.stringify({

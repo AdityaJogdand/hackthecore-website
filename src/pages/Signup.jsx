@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-const GOOGLE_CLIENT_ID = "997591062804-l6m15s6n2gunu2sjp5un94bda4m1nvi0.apps.googleusercontent.com";
+const API_BASE = import.meta.env.VITE_API_URL;
 
 const C = {
     bg: "#FAFAF8",
@@ -319,7 +319,7 @@ function FormPanel({ done, setDone }) {
     }, []);
 
     const handleGoogleClick = () => {
-        window.location.href = "http://localhost:4000/api/auth/google";
+        window.location.href = `${API_BASE}/api/auth/google`;
     };
 
     const validate = () => {

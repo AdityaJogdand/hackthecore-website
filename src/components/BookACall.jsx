@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+const API_BASE = `${import.meta.env.VITE_API_URL}/api`;
+
 const C = {
     bg: "#FAFAF8",
     bg2: "#F2F2EF",
@@ -32,7 +34,7 @@ export default function BookACall() {
         setSubmitting(true);
         setSubmitError("");
         try {
-            const response = await fetch("http://localhost:4000/api/partnerships", {
+            const response = await fetch(`${API_BASE}/partnerships`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

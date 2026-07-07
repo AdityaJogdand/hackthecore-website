@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const ease = [0.22, 1, 0.36, 1];
 const FONT = "Barlow, sans-serif";
+const API_BASE = `${import.meta.env.VITE_API_URL}/api`;
 
 export default function AdminLogin() {
   const [username, setUsername] = useState("");
@@ -18,7 +19,7 @@ export default function AdminLogin() {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:4000/api/admin/login", {
+      const res = await fetch(`${API_BASE}/admin/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),

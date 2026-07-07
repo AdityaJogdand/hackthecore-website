@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const FONT = "Barlow, sans-serif";
 const ease = [0.22, 1, 0.36, 1];
-const API = "http://localhost:4000";
+const API = `${import.meta.env.VITE_API_URL}`;
 
 const authHeaders = () => ({
   "Content-Type": "application/json",

@@ -13,8 +13,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:4000/api/auth/google/callback",
-    },
+      callbackURL: process.env.GOOGLE_CALLBACK_URL,    },
     async (accessToken, refreshToken, profile, done) => {
       try {
         const email = profile.emails?.[0]?.value?.toLowerCase();
@@ -256,21 +255,22 @@ router.get(
   "/google/callback",
   googleLimiter,
   passport.authenticate("google", {
-    failureRedirect: "http://localhost:5173/login?error=GoogleOAuthFailed",
+    failureRedirect: `${process.env.CLIENT_URL}/login?error=GoogleOAuthFailed`,
     session: false,
   }),
   async (req, res) => {
     try {
       if (!req.user) {
-        return res.redirect("http://localhost:5173/login?error=GoogleOAuthFailed");
+          return res.redirect(
+  `${process.env.CLIENT_URL}/login?error=GoogleOAuthFailed`
+);
       }
       const token = signToken(req.user);
       // Redirect back to frontend, passing the token as a query parameter
-      res.redirect(`http://localhost:5173/login?token=${token}`);
+res.redirect(`${process.env.CLIENT_URL}/login?token=${token}`);
     } catch (err) {
       console.error("Google callback redirect error:", err);
-      res.redirect("http://localhost:5173/login?error=ServerError");
-    }
+      res.redirect(`${process.env.CLIENT_URL}/login?error=ServerError`);    }
   }
 );
 

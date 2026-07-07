@@ -5,6 +5,8 @@ import Navbar from "../components/Navbar";
 import GlassCard from "../components/GlassCard";
 import Footer from "@/components/Footer";
 
+const API_BASE = `${import.meta.env.VITE_API_URL}/api`;
+
 /* ─── Font constants ─── */
 const HEADER_FONT = "'SansPlomb', sans-serif";
 const BODY_FONT = "'Inter', 'Manrope', 'SF Pro Display', sans-serif";
@@ -128,7 +130,7 @@ export default function HackathonRegistration() {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const res = await fetch(`http://localhost:4000/api/events/${id}`);
+        const res = await fetch(`${API_BASE}/events/${id}`);
         const contentType = res.headers.get("content-type") || "";
         const data = contentType.includes("application/json")
           ? await res.json()
@@ -149,7 +151,7 @@ export default function HackathonRegistration() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const res = await fetch("http://localhost:4000/api/registrations/hackathon", {
+      const res = await fetch(`${API_BASE}/registrations/hackathon`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ eventId: id, teamName, track, members, idea }),

@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import Navbar from "../components/Navbar";
 
+const API_BASE = `${import.meta.env.VITE_API_URL}/api`;
+
 const HEADER_FONT = "'SansPlomb', sans-serif";
 const BODY_FONT = "'Inter', 'Manrope', 'SF Pro Display', sans-serif";
 const ease = [0.22, 1, 0.36, 1];
@@ -87,7 +89,7 @@ export default function MeetupRegistration() {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const res = await fetch(`http://localhost:4000/api/events/${id}`);
+        const res = await fetch(`${API_BASE}/events/${id}`);
         if (!res.ok) throw new Error("Event not found");
         const data = await res.json();
         setEvent(data);
@@ -104,7 +106,7 @@ export default function MeetupRegistration() {
     e.preventDefault();
     setSubmitError("");
     try {
-      const res = await fetch("http://localhost:4000/api/registrations/meetup", {
+      const res = await fetch(`${API_BASE}/registrations/meetup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ eventId: id, eventTitle: event.title, name, email, phone, experience }),

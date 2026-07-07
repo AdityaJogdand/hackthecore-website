@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback } from "rea
 
 const AuthContext = createContext(null);
 
-const API_BASE = "http://localhost:4000/api/auth";
+const API_BASE = `${import.meta.env.VITE_API_URL}/api`;
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -35,7 +35,7 @@ export function AuthProvider({ children }) {
       return;
     }
 
-    fetch(`${API_BASE}/me`, {
+    fetch(`${API_BASE}/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
@@ -55,7 +55,7 @@ export function AuthProvider({ children }) {
 
   // ── Register ──
   const register = async (name, email, password) => {
-    const res = await fetch(`${API_BASE}/register`, {
+    const res = await fetch(`${API_BASE}/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, email, password }),
@@ -73,7 +73,7 @@ export function AuthProvider({ children }) {
 
   // ── Login ──
   const login = async (email, password) => {
-    const res = await fetch(`${API_BASE}/login`, {
+    const res = await fetch(`${API_BASE}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -91,7 +91,7 @@ export function AuthProvider({ children }) {
 
   // ── Google OAuth ──
   const loginWithGoogle = async (credential) => {
-    const res = await fetch(`${API_BASE}/google`, {
+    const res = await fetch(`${API_BASE}/auth/google`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ credential }),

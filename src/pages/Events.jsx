@@ -5,6 +5,7 @@ import { Calendar, Building2, Zap } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import headerimg from "@/assets/aboutus.jpeg";
+const API_BASE = `${import.meta.env.VITE_API_URL}/api`;
 const Events = () => {
   const navigate = useNavigate();
   const [phase, setPhase] = useState(0);
@@ -25,7 +26,7 @@ const Events = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await fetch("http://localhost:4000/api/events");
+        const res = await fetch(`${API_BASE}/events`);
         if (!res.ok) throw new Error("Failed to fetch events");
         const data = await res.json();
         setEvents(data);
