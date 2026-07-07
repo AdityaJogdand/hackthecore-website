@@ -1,24 +1,26 @@
 import { useEffect, useState, useRef } from "react";
 import * as THREE from "three";
+import spons1 from "../assets/spons1.png";
+import spons2 from "../assets/spons2.png";
+import spons3 from "../assets/spons3.png";
+import spons4 from "../assets/spons4.png";
+import spons5 from "../assets/spons5.png";
+import spons6 from "../assets/spons6.png";
+import spons7 from "../assets/spons7.png";
+import spons8 from "../assets/spons8.png";
+import spons9 from "../assets/spons9.png";
 
 /* ─── PARTNER LOGOS — edit this array to add/remove partners ────────────── */
 const LOGOS = [
-  { name: "GitHub", url: "https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" },
-  { name: "Vercel", url: "https://assets.vercel.com/image/upload/v1588805858/repositories/vercel/logo.png" },
-  { name: "Figma", url: "https://upload.wikimedia.org/wikipedia/commons/3/33/Figma-logo.svg" },
-  { name: "Stripe", url: "https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" },
-  { name: "Notion", url: "https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png" },
-  { name: "Linear", url: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/linear.svg" },
-  { name: "Supabase", url: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/supabase.svg" },
-  { name: "Docker", url: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/docker.svg" },
-  { name: "OpenAI", url: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/openai.svg" },
-  { name: "Microsoft", url: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" },
-  { name: "AWS", url: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/amazonwebservices.svg" },
-  { name: "Google Cloud", url: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/googlecloud.svg" },
-  { name: "GitHub", url: "https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" },
-  { name: "Figma", url: "https://upload.wikimedia.org/wikipedia/commons/3/33/Figma-logo.svg" },
-  { name: "Stripe", url: "https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" },
-  { name: "Docker", url: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/docker.svg" },
+  { name: "GitHub", url: spons1 },
+  { name: "Vercel", url: spons2 },
+  { name: "Figma", url: spons3 },
+  { name: "Stripe", url: spons4 },
+  { name: "Notion", url: spons5 },
+  { name: "Linear", url: spons6 },
+  { name: "GitHub", url: spons7 },
+  { name: "Figma", url: spons8 },
+  { name: "Stripe", url: spons9 },
 ];
 
 /* ─── tokens ─────────────────────────────────────────────────────────────── */
@@ -599,12 +601,11 @@ export default function OurPartners() {
         }}>
           {/* left copy */}
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: 32 }}>
-              <div style={{ width: 28, height: 1, background: C.rule }} />
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: 22 }}>
               <span style={{
                 fontFamily: "'Inter', sans-serif",
                 fontWeight: 500,
-                fontSize: "0.62rem",
+                fontSize: "clamp(0.62rem,1.4vw,5rem)",
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
                 color: C.inkFaint,
@@ -639,7 +640,7 @@ export default function OurPartners() {
             <p style={{
               fontFamily: "'Inter', sans-serif",
               fontWeight: 400,
-              fontSize: "clamp(0.85rem,1.4vw,1rem)",
+              fontSize: "clamp(0.85rem,1.4vw,2rem)",
               lineHeight: 1.75,
               color: C.inkMid,
               margin: "0 0 clamp(2rem,3.5vw,3rem)",
@@ -655,7 +656,7 @@ export default function OurPartners() {
                 gap: "0.6rem",
                 alignSelf: "flex-start",
                 fontFamily: "'Inter', sans-serif",
-                fontSize: "0.65rem",
+                fontSize: "clamp(0.65rem,1vw,2rem)",
                 fontWeight: 700,
                 letterSpacing: "0.18em",
                 textTransform: "uppercase",

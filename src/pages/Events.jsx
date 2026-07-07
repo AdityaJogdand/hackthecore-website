@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Calendar, Building2, Zap } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-
+import headerimg from "@/assets/aboutus.jpeg";
 const Events = () => {
   const navigate = useNavigate();
   const [phase, setPhase] = useState(0);
@@ -115,9 +115,12 @@ const Events = () => {
       navigate(`/events/meetup/${eventId}`);
     }
   };
-
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, []);
   return (
     <>
+
       <Navbar />
 
       {/* ── HERO ── */}
@@ -138,7 +141,7 @@ const Events = () => {
             style={{ x: "-50%", y: "-50%" }}
           >
             <img
-              src="https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=2000"
+              src={headerimg}
               alt=""
               className="h-full w-full object-cover"
             />

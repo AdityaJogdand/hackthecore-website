@@ -265,22 +265,22 @@ export default function HeroSection() {
 
       {/* ══════════════════ HERO CONTENT ══════════════════ */}
       <div
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          maxWidth: 1440,
-          margin: "0 auto",
-          width: "100%",
-          padding: "clamp(2rem, 5vw, 4rem) clamp(1.25rem, 5vw, 5rem)",
-          minHeight: 0,
-          textAlign: "center",
-          position: "relative",
-          zIndex: 2,
-        }}
-      >
+  style={{
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    maxWidth: 1440,
+    margin: "0 auto",
+    width: "100%",
+    padding: "80px clamp(1.25rem, 5vw, 5rem) clamp(2rem, 5vw, 4rem)",
+    minHeight: 0,
+    textAlign: "center",
+    position: "relative",
+    zIndex: 2,
+  }}
+>
         {/* eyebrow */}
         <motion.div
           initial={{ clipPath: "inset(0 0 100% 0)", opacity: 0 }}
@@ -317,8 +317,8 @@ export default function HeroSection() {
         <h1
           style={{
             fontFamily: "'SansPlomb', sans-serif",
-            fontWeight: 600,
-            fontSize: "clamp(3.4rem, 10.5vw, 11rem)",
+            fontWeight: 900,
+            fontSize: "clamp(4.4rem, 11.5vw, 20rem)",
             lineHeight: 0.92,
             letterSpacing: "-0.035em",
             color: C.ink,
@@ -382,10 +382,10 @@ export default function HeroSection() {
           style={{
             fontFamily: "'Inter', sans-serif",
             fontWeight: 400,
-            fontSize: "clamp(0.95rem, 1.8vw, 1.15rem)",
+            fontSize: "clamp(0.95rem, 2.4vw, 4rem)",
             color: C.inkMid,
             lineHeight: 1.6,
-            maxWidth: 560,
+            maxWidth: 1000,
             margin: "clamp(1rem, 2vw, 1.5rem) 0 0",
           }}
         >
@@ -395,72 +395,103 @@ export default function HeroSection() {
 
         {/* CTAs */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.75 }}
-          style={{
-            display: "flex",
-            gap: "0.75rem",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            marginTop: "clamp(1.5rem, 3vw, 2.5rem)",
-          }}
-        >
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            style={{
-              background: C.ink,
-              color: C.bg,
-              border: "none",
-              padding: "0.85em 1.8em",
-              fontFamily: "'Inter', sans-serif",
-              fontWeight: 700,
-              fontSize: "0.72rem",
-              letterSpacing: "0.16em",
-              textTransform: "uppercase",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.6em",
-              borderRadius: 2,
-              transition: "background 0.2s",
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = "#333"}
-            onMouseLeave={e => e.currentTarget.style.background = C.ink}
-          >
-            Join Community
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-              <path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </motion.button>
+  initial={{ opacity: 0, y: 24 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{
+    duration: 0.8,
+    ease: [0.22, 1, 0.36, 1],
+    delay: 0.75,
+  }}
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "1rem",
+    marginTop: "clamp(1.8rem, 3vw, 2.8rem)",
+    flexWrap: "wrap",
+  }}
+>
+  {/* Primary CTA */}
+  <motion.button
+    whileHover={{ scale: 1.02 }}
+    whileTap={{ scale: 0.98 }}
+    onMouseEnter={(e) => (e.currentTarget.style.background = "#2d2d2d")}
+    onMouseLeave={(e) => (e.currentTarget.style.background = C.ink)}
+    style={{
+      width: "clamp(380px, 100%, 500px)",
+      height: "72px",
+      padding: "clamp(0.7rem, 2vw, 0.95rem) clamp(1.2rem, 4vw, 2rem)",
 
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            style={{
-              background: "transparent",
-              color: C.ink,
-              border: `1.5px solid ${C.rule}`,
-              padding: "0.85em 1.8em",
-              fontFamily: "'Inter', sans-serif",
-              fontWeight: 600,
-              fontSize: "0.72rem",
-              letterSpacing: "0.16em",
-              textTransform: "uppercase",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.6em",
-              borderRadius: 2,
-              transition: "border-color 0.2s",
-            }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = C.ink}
-            onMouseLeave={e => e.currentTarget.style.borderColor = C.rule}
-          >
-            Explore Events
-          </motion.button>
-        </motion.div>
+      background: C.ink,
+      color: C.bg,
+      border: "1.5px solid transparent",
+
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "0.8rem",
+
+      fontFamily: "'Inter', sans-serif",
+      fontWeight: 700,
+      fontSize: "1rem",
+      letterSpacing: "0.14em",
+      textTransform: "uppercase",
+      whiteSpace: "nowrap",
+
+      cursor: "pointer",
+      borderRadius: 4,
+      transition: "all .2s ease",
+      boxSizing: "border-box",
+    }}
+  >
+    <span>Join Community</span>
+
+    <svg width="16" height="16" viewBox="0 0 12 12" fill="none">
+      <path
+        d="M1 6h10M6 1l5 5-5 5"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  </motion.button>
+
+  {/* Secondary CTA */}
+  <motion.button
+    whileHover={{ scale: 1.02 }}
+    whileTap={{ scale: 0.98 }}
+    onMouseEnter={(e) => (e.currentTarget.style.borderColor = C.ink)}
+    onMouseLeave={(e) => (e.currentTarget.style.borderColor = C.rule)}
+    style={{
+      width: "clamp(380px, 100%, 500px)",
+
+      height: "72px",
+
+      background: "transparent",
+      color: C.ink,
+      border: `1.5px solid ${C.rule}`,
+
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+
+      fontFamily: "'Inter', sans-serif",
+      fontWeight: 700,
+      fontSize: "1rem",
+      letterSpacing: "0.14em",
+      textTransform: "uppercase",
+      whiteSpace: "nowrap",
+
+      cursor: "pointer",
+      borderRadius: 4,
+      transition: "all .2s ease",
+      boxSizing: "border-box",
+    }}
+  >
+    Explore Events
+  </motion.button>
+</motion.div>
 
         {/* stats */}
         <motion.div
@@ -481,7 +512,7 @@ export default function HeroSection() {
                 style={{
                   fontFamily: "'Inter', sans-serif",
                   fontWeight: 700,
-                  fontSize: "clamp(1.4rem, 3vw, 1.9rem)",
+                  fontSize: "clamp(2rem, 4vw, 5rem)", // Increased
                   color: C.ink,
                   letterSpacing: "-0.03em",
                   lineHeight: 1,
@@ -493,7 +524,7 @@ export default function HeroSection() {
                 style={{
                   fontFamily: "'Inter', sans-serif",
                   fontWeight: 400,
-                  fontSize: "0.68rem",
+                  fontSize: "0.98rem",
                   letterSpacing: "0.12em",
                   textTransform: "uppercase",
                   color: C.inkFaint,
@@ -546,7 +577,7 @@ export default function HeroSection() {
               style={{
                 fontFamily: item === "✦" ? "serif" : "'Inter', sans-serif",
                 fontWeight: item === "✦" ? 400 : 500,
-                fontSize: item === "✦" ? "0.55rem" : "0.62rem",
+                fontSize: item === "✦" ? "0.75rem" : "0.98rem",
                 letterSpacing: item === "✦" ? 0 : "0.2em",
                 textTransform: "uppercase",
                 color: item === "✦" ? C.yellow : C.inkMid,

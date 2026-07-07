@@ -123,7 +123,7 @@ export default function FeaturedEvents() {
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "2rem",
+            gap: "0.9rem",
             flexWrap: "wrap",
             justifyContent: "center",
           }}
@@ -132,7 +132,7 @@ export default function FeaturedEvents() {
             style={{
               fontFamily: "'Inter', sans-serif",
               fontWeight: 400,
-              fontSize: "clamp(0.8rem, 1.2vw, 0.92rem)",
+              fontSize: "clamp(0.8rem, 2vw, 3rem)",
               color: C.inkMid,
               margin: 0,
               letterSpacing: "0.01em",
@@ -147,7 +147,7 @@ export default function FeaturedEvents() {
             style={{
               fontFamily: "'Inter', sans-serif",
               fontWeight: 600,
-              fontSize: "0.65rem",
+              fontSize: "clamp(0.75rem, 2vw, 1.25rem)",
               letterSpacing: "0.18em",
               textTransform: "uppercase",
               color: C.ink,

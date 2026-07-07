@@ -121,6 +121,7 @@ function SocialBtn({ label, Icon, href }) {
                 transition: "all 0.18s",
                 cursor: "pointer",
                 textDecoration: "none",
+                flexShrink: 0,
             }}
             onMouseEnter={() => setHov(true)}
             onMouseLeave={() => setHov(false)}
@@ -146,23 +147,79 @@ export default function Footer() {
             {/* Google Fonts — Bebas Neue for the wordmark */}
             <style>{`
                 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap');
+
+                .htc-footer-main {
+                    display: grid;
+                    grid-template-columns: 1fr auto;
+                    gap: clamp(3rem, 6vw, 8rem);
+                    align-items: start;
+                }
+                .htc-footer-nav {
+                    display: grid;
+                    grid-template-columns: repeat(3, minmax(100px, 1fr));
+                    gap: clamp(1.75rem, 4vw, 4rem);
+                }
+                .htc-footer-bottom {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    flex-wrap: wrap;
+                    gap: 1rem;
+                }
+                .htc-footer-legal {
+                    display: flex;
+                    gap: 1.75rem;
+                    align-items: center;
+                    flex-wrap: wrap;
+                }
+
+                @media (max-width: 860px) {
+                    .htc-footer-main {
+                        grid-template-columns: 1fr;
+                        gap: 2.5rem;
+                    }
+                    .htc-footer-left {
+                        max-width: none !important;
+                    }
+                    .htc-footer-nav {
+                        grid-template-columns: repeat(3, minmax(0, 1fr));
+                    }
+                }
+
+                @media (max-width: 520px) {
+                    .htc-footer-nav {
+                        grid-template-columns: repeat(2, 1fr);
+                        row-gap: 2rem;
+                    }
+                    .htc-footer-bottom {
+                        flex-direction: column;
+                        align-items: flex-start;
+                    }
+                    .htc-footer-legal {
+                        gap: 1.1rem;
+                    }
+                }
+
+                @media (max-width: 360px) {
+                    .htc-footer-nav {
+                        grid-template-columns: 1fr;
+                        row-gap: 1.5rem;
+                    }
+                }
             `}</style>
 
-            <div style={{ maxWidth: 1280, margin: "0 auto", padding: "clamp(3rem, 5vw, 5rem) clamp(1.5rem, 5vw, 5rem) 0" }}>
+            <div style={{ maxWidth: 1280, margin: "0 auto", padding: "clamp(2.5rem, 5vw, 5rem) clamp(1.25rem, 5vw, 5rem) 0" }}>
 
                 {/* ── main grid ── */}
                 <div
+                    className="htc-footer-main"
                     style={{
-                        display: "grid",
-                        gridTemplateColumns: "1fr auto",
-                        gap: "clamp(3rem, 6vw, 8rem)",
                         paddingBottom: "clamp(2rem, 4vw, 3.5rem)",
                         borderBottom: `1px solid ${C.rule}`,
-                        alignItems: "start",
                     }}
                 >
                     {/* left: wordmark + tagline + socials */}
-                    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: 320 }}>
+                    <div className="htc-footer-left" style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: 320 }}>
 
                         {/* wordmark */}
                         <div style={{ display: "flex", alignItems: "center", gap: "0.55rem" }}>
@@ -190,21 +247,15 @@ export default function Footer() {
                         </p>
 
                         {/* social icons */}
-                        <div style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
+                        <div style={{ display: "flex", gap: "0.6rem", alignItems: "center", flexWrap: "wrap" }}>
                             {SOCIALS.map(s => <SocialBtn key={s.label} {...s} />)}
                         </div>
                     </div>
 
                     {/* right: nav columns */}
-                    <div
-                        style={{
-                            display: "grid",
-                            gridTemplateColumns: "repeat(3, minmax(110px, 1fr))",
-                            gap: "clamp(2rem, 4vw, 4rem)",
-                        }}
-                    >
+                    <div className="htc-footer-nav">
                         {NAV_COLS.map(col => (
-                            <div key={col.heading} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                            <div key={col.heading} style={{ display: "flex", flexDirection: "column", gap: "1rem", minWidth: 0 }}>
                                 <span
                                     style={{
                                         fontSize: "0.63rem",
@@ -227,19 +278,15 @@ export default function Footer() {
 
                 {/* ── bottom bar ── */}
                 <div
+                    className="htc-footer-bottom"
                     style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        flexWrap: "wrap",
-                        gap: "1rem",
                         padding: "clamp(1.25rem, 2vw, 1.75rem) 0 clamp(1rem, 2vw, 1.5rem)",
                     }}
                 >
                     <span style={{ fontSize: "0.68rem", color: C.inkMid, letterSpacing: "0.01em" }}>
                         © {year} HackTheCore — All rights reserved.
                     </span>
-                    <div style={{ display: "flex", gap: "1.75rem", alignItems: "center" }}>
+                    <div className="htc-footer-legal">
                         {LEGAL.map(l => (
                             <FootLink key={l.label} href={l.href} size="0.68rem" underline>{l.label}</FootLink>
                         ))}
@@ -261,7 +308,7 @@ export default function Footer() {
                     style={{
                         display: "block",
                         fontFamily: "'Bebas Neue', sans-serif",
-                        fontSize: "clamp(5rem, 16vw, 14rem)",
+                        fontSize: "clamp(3rem, 16vw, 14rem)",
                         letterSpacing: "0.04em",
                         textTransform: "uppercase",
                         color: C.ink,

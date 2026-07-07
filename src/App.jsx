@@ -19,6 +19,12 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import ProtectedRoute from "./pages/admin/components/ProtectedRoute";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
+// Salted admin login path — set VITE_ADMIN_LOGIN_SALT in your .env file.
+// Falls back to a default so the app doesn't crash if the env var is missing,
+// but you should always set your own value in .env (never commit the real one).
+const ADMIN_LOGIN_SALT = import.meta.env.VITE_ADMIN_LOGIN_SALT || "x9k2p7q4z";
+const ADMIN_LOGIN_PATH = `/admin/login-${ADMIN_LOGIN_SALT}`;
+
 function Home() {
   return (
     <>
@@ -72,7 +78,7 @@ function App() {
           <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
 
           {/* Admin pages — no navbar */}
-          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path={ADMIN_LOGIN_PATH} element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
           <Route path="/admin/create-event" element={<ProtectedRoute><CreateEvent /></ProtectedRoute>} />
           <Route path="/admin/edit-event/:id" element={<ProtectedRoute><EditEvent /></ProtectedRoute>} />
