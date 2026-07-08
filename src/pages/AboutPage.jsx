@@ -8,6 +8,7 @@ import hackUpLogo from "@/assets/HackUp.PNG";
 import TeamSection from "@/components/TeamSection";
 import BookACall from "@/components/BookACall";
 import Footer from "@/components/Footer";
+import MarqueeSection from "@/components/MarqueeSection";
 const ease = [0.22, 1, 0.36, 1];
 
 
@@ -153,36 +154,7 @@ export default function AboutHero() {
             </section >
 
             {/* CORE VALUES */}
-            < section className="relative overflow-hidden bg-white text-[#0C0C0D] py-20 sm:py-28 md:py-32 lg:py-40 px-5 md:px-12 lg:px-20" >
-                <div className="relative z-[1] max-w-[1320px] mx-auto">
-
-                    {/* header — split layout, left-weighted */}
-                    <motion.div
-                        className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 lg:gap-12 mb-14 sm:mb-16 md:mb-20 pb-10 sm:pb-12 border-b border-[#0C0C0D]/15"
-                        initial={{ opacity: 0, y: 28 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, amount: 0.22 }}
-                        transition={{ duration: 0.75, ease }}
-                    >
-                        <div className="max-w-[44rem]">
-                            <h2 className="mt-4 sm:mt-6 font-['SansPlomb',sans-serif] font-black uppercase leading-[0.84] tracking-[-0.01em] text-[#0C0C0D]
-            text-[clamp(2.8rem,11vw,4.2rem)]
-            sm:text-[clamp(3.6rem,8vw,5.6rem)]
-            lg:text-[clamp(4.4rem,6.5vw,6.8rem)]">
-                                The <span className="text-[#F4DD0E]">Code</span><br />
-                                We Build By
-                            </h2>
-                        </div>
-
-                        <p className="max-w-[20rem] text-[#3A3A38] font-semibold leading-[1.65] text-[1rem] sm:text-[1.1rem] lg:text-right lg:pb-2">
-                            These principles guide how HackTheCore designs events, evaluates effort, supports builders, and creates long-term community momentum.
-                        </p>
-                    </motion.div>
-
-                    {/* interactive value list — GSAP driven */}
-                    <CoreValuesList />
-                </div>
-            </section >
+            <CoreValuesList />
 
             {/* PAST GLIMPSE */}
             <PastGlimpseScrollSection />
