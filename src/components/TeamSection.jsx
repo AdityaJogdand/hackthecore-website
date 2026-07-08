@@ -1,19 +1,24 @@
-import { useRef, useLayoutEffect } from "react";
+import { useRef, useLayoutEffect, useState, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-import Meloni from "@/assets/20.png";
-import Rahul from "@/assets/21.png";
-import Shravan from "@/assets/22.png";
-import Rugved from "@/assets/23.png";
-
+import Meloni from "@/assets/Meloni.jpg";
+import Rahul from "@/assets/Rahul.jpg";
+import Shravan from "@/assets/Shravan.jpg";
+import Rugved from "@/assets/Rugved.jpg";
+import Bhavesh from "@/assets/Bhavesh.jpg";
+import ShravanKid from "@/assets/ShravanKid.jpg";
 gsap.registerPlugin(ScrollTrigger);
 
 const team = [
-    { name: "Sharvan Kadam", img: Shravan, large: true },
+    {
+        name: "Shravan Kadam",
+        img: Shravan,
+        hoverImg: ShravanKid,
+        large: true,
+    },
     { name: "Rugved Dalvi", img: Rugved, large: true },
-
-
+    { name: "Bhavesh Rajdev", img: Bhavesh, large: true },
     { name: "Rahul Patil", img: Rahul, large: true },
     { name: "Meloni Shah", img: Meloni, large: true },
 ];
@@ -23,6 +28,7 @@ const words = [
     "Designers.",
     "Developers.",
     "Dreamers.",
+
 ];
 
 function initials(name) {
@@ -36,6 +42,7 @@ function initials(name) {
 
 function TeamCard({ member, cardRef, spanClass }) {
     const isLarge = member.large;
+    const [imgSrc, setImgSrc] = useState(member.img);
 
     return (
         <div
@@ -51,13 +58,20 @@ function TeamCard({ member, cardRef, spanClass }) {
             >
                 {member.img ? (
                     <img
-                        src={member.img}
+                        src={imgSrc}
                         alt={member.name}
-                        className="w-full h-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                        onMouseEnter={() =>
+                            member.hoverImg && setImgSrc(member.hoverImg)
+                        }
+                        onMouseLeave={() => setImgSrc(member.img)}
+                        className="w-full h-auto object-contain"
                     />
                 ) : (
                     <div className="aspect-[4/5] rounded-3xl bg-black/5 flex items-center justify-center">
-                        <span className="text-5xl font-black text-black/20">
+                        <span
+                            className="text-5xl font-black text-black/20"
+                            style={{ fontFamily: "Montserrat, sans-serif" }}
+                        >
                             {initials(member.name)}
                         </span>
                     </div>
@@ -65,16 +79,22 @@ function TeamCard({ member, cardRef, spanClass }) {
             </div>
 
             <h3
-                className={`mt-5 font-semibold text-black ${isLarge
-                    ? "text-2xl lg:text-3xl"
-                    : "text-xl lg:text-2xl"
-                    }`}
+                className={`mt-5 text-black ${
+                    isLarge ? "text-2xl lg:text-3xl" : "text-xl lg:text-2xl"
+                }`}
+                style={{
+                    fontFamily: "Montserrat, sans-serif",
+                    fontWeight: 700,
+                }}
             >
                 {member.name}
             </h3>
 
             {member.role && (
-                <p className="mt-1 text-black/60">
+                <p
+                    className="mt-1 text-black/60"
+                    style={{ fontFamily: "Montserrat, sans-serif" }}
+                >
                     {member.role}
                 </p>
             )}
@@ -82,7 +102,13 @@ function TeamCard({ member, cardRef, spanClass }) {
     );
 }
 
-function spanFor() {
+function spanFor(index) {
+    // First card (Shravan) centered on first row
+    if (index === 0) {
+        return "col-span-2 sm:col-start-3 sm:col-span-2";
+    }
+
+    // Remaining four cards
     return "col-span-2 sm:col-span-3";
 }
 
