@@ -18,8 +18,6 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ProtectedRoute from "./pages/admin/components/ProtectedRoute";
 import { AuthProvider, useAuth } from "./context/AuthContext";
-import EventGallery from "./components/EventGallery";
-import ManifestoStatement from "./components/Manifestostatement";
 // Salted admin login path — set VITE_ADMIN_LOGIN_SALT in your .env file.
 // Falls back to a default so the app doesn't crash if the env var is missing,
 // but you should always set your own value in .env (never commit the real one).
