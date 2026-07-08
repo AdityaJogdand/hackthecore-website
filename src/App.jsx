@@ -30,8 +30,6 @@ function Home() {
       <Herosection />
       <FeaturedEvents />
       <OurPartners />
-      {/* <ManifestoStatement /> */}
-      {/* <EventGallery /> */}
       <Footer />
     </>
   );
