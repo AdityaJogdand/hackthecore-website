@@ -7,7 +7,7 @@ import Rahul from "@/assets/Rahul.jpg";
 import Shravan from "@/assets/Shravan.jpg";
 import Rugved from "@/assets/Rugved.jpg";
 import Bhavesh from "@/assets/Bhavesh.jpg";
-import ShravanKid from "@/assets/ShravanKid.png";
+import ShravanKid from "@/assets/Shravankid.png";
 import Rugvedkid from "@/assets/Rugvedkid.png";
 import Bhaveshkid from "@/assets/Bhaveskid.png";
 import Rahulkid from "@/assets/Rahulkid.png";
