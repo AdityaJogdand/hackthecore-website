@@ -149,50 +149,63 @@ export default function GapHero() {
   );
 
   return (
-    <>
-      <header
-        style={{
-          background: '#0B0C0A',
-          padding: '7vh 6vw 3vh',
-          textAlign: 'left',
-        }}
-      >
-        <h1
-          style={{
-            margin: 0,
-            fontFamily: "'Anton', sans-serif",
-            color: '#ECE6D8',
-            fontSize: 'clamp(1.3rem, 4.4vw, 3.6rem)',
-            lineHeight: 1.05,
-            textTransform: 'uppercase',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          THE GAP BETWEEN INDUSTRY{' '}
-          <span style={{ color: '#6E8CA0' }}>& ACADEMIA</span>
-        </h1>
-      </header>
+    <div
+      ref={sectionRef}
+      style={{ height: '300vh', position: 'relative', background: '#0B0C0A' }}
+    >
+      <style>{`
+        @keyframes gapImgFade { from { opacity: 0; } to { opacity: 1; } }
+        .gap-img { animation: gapImgFade 900ms ease; }
+      `}</style>
 
       <div
-        ref={sectionRef}
-        style={{ height: '300vh', position: 'relative', background: '#0B0C0A' }}
+        style={{
+          position: 'sticky',
+          top: 0,
+          height: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+        }}
       >
-        <style>{`
-          @keyframes gapImgFade { from { opacity: 0; } to { opacity: 1; } }
-          .gap-img { animation: gapImgFade 900ms ease; }
-        `}</style>
+        {/* Header now lives inside the sticky container, so it stays pinned
+            in place for the whole scroll duration instead of scrolling
+            away before the "WE CLOSE THAT GAP" animation begins. */}
+        <header
+          style={{
+            padding: '7vh 6vw 3vh',
+            textAlign: 'left',
+            flex: '0 0 auto',
+          }}
+        >
+          <h1
+            style={{
+              margin: 0,
+              marginTop: '20px',
+              fontFamily: "'Anton', sans-serif",
+              color: '#ECE6D8',
+              fontSize: 'clamp(1.3rem, 4.4vw, 3.6rem)',
+              lineHeight: 1.05,
+              textTransform: 'uppercase',
+              whiteSpace: 'nowrap',
+              textAlign: 'center',
+            }}
+          >
+            THE GAP BETWEEN INDUSTRY{' '}
+            <span style={{ color: '#eec20f' }}>& ACADEMIA</span>
+          </h1>
+        </header>
 
         <div
           style={{
-            position: 'sticky',
-            top: 0,
-            height: '100vh',
+            flex: '1 1 auto',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
             overflow: 'hidden',
             padding: '0 6vw',
+            minHeight: 0,
           }}
         >
           {isMobile ? (
@@ -348,6 +361,6 @@ export default function GapHero() {
           </p>
         </div>
       </div>
-    </>
+    </div>
   );
 }

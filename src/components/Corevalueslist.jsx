@@ -33,7 +33,7 @@ const coreValues = [
         seed: "collaboration-table",
     },
     {
-        title: "Growth Mindset",
+        title: "Growth",
         copy: "Promoting continuous learning, experimentation, and personal development.",
         accent: "#C4B5FD",
         seed: "growth-path",

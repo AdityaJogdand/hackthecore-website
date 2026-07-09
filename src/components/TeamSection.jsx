@@ -7,7 +7,11 @@ import Rahul from "@/assets/Rahul.jpg";
 import Shravan from "@/assets/Shravan.jpg";
 import Rugved from "@/assets/Rugved.jpg";
 import Bhavesh from "@/assets/Bhavesh.jpg";
-import ShravanKid from "@/assets/ShravanKid.jpg";
+import ShravanKid from "@/assets/ShravanKid.png";
+import Rugvedkid from "@/assets/Rugvedkid.png";
+import Bhaveshkid from "@/assets/Bhaveskid.png";
+import Rahulkid from "@/assets/Rahulkid.png";
+import Melonikid from "@/assets/Melonikid.png";
 gsap.registerPlugin(ScrollTrigger);
 
 const team = [
@@ -17,10 +21,10 @@ const team = [
         hoverImg: ShravanKid,
         large: true,
     },
-    { name: "Rugved Dalvi", img: Rugved, large: true },
-    { name: "Bhavesh Rajdev", img: Bhavesh, large: true },
-    { name: "Rahul Patil", img: Rahul, large: true },
-    { name: "Meloni Shah", img: Meloni, large: true },
+    { name: "Rugved Dalvi", img: Rugved, hoverImg: Rugvedkid, large: true },
+    { name: "Bhavesh Rajdev", img: Bhavesh, hoverImg: Bhaveshkid, large: true },
+    { name: "Rahul Patil", img: Rahul, hoverImg: Rahulkid, large: true },
+    { name: "Meloni Shah", img: Meloni, hoverImg: Melonikid, large: true },
 ];
 
 const words = [

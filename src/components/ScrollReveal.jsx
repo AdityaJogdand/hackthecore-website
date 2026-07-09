@@ -70,63 +70,66 @@ const ScrollReveal = ({
 
     const scroller = scrollContainerRef && scrollContainerRef.current ? scrollContainerRef.current : window;
 
-    gsap.fromTo(
-      el,
-      { transformOrigin: '0% 50%', rotate: baseRotation },
-      {
-        ease: 'none',
-        rotate: 0,
-        scrollTrigger: {
-          trigger: el,
-          scroller,
-          start: 'top bottom',
-          end: rotationEnd,
-          scrub: true
+    const ctx = gsap.context(() => {
+      // Animation 1: container rotation
+      gsap.fromTo(
+        el,
+        { transformOrigin: '0% 50%', rotate: baseRotation },
+        {
+          ease: 'none',
+          rotate: 0,
+          scrollTrigger: {
+            trigger: el,
+            scroller,
+            start: 'top bottom',
+            end: rotationEnd,
+            scrub: true
+          }
         }
-      }
-    );
+      );
 
-    const wordElements = el.querySelectorAll('.word');
+      const wordElements = el.querySelectorAll('.word');
 
-    gsap.fromTo(
-      wordElements,
-      { opacity: baseOpacity, willChange: 'opacity' },
-      {
-        ease: 'none',
-        opacity: 1,
-        stagger: 0.15,   // was 0.05 — slower word-by-word reveal
-        scrollTrigger: {
-          trigger: el,
-          scroller,
-          start: 'top bottom-=10%',   // was 'top bottom-=20%' — starts a bit later
-          end: wordAnimationEnd,
-          scrub: 1.5   // was true — adds smoothing/lag instead of 1:1 scroll tracking
-        }
-      }
-    );
-
-    if (enableBlur) {
+      // Animation 2: word opacity
       gsap.fromTo(
         wordElements,
         { opacity: baseOpacity, willChange: 'opacity' },
         {
           ease: 'none',
           opacity: 1,
-          stagger: 0.08,   // was 0.15 — still a bit slower than original 0.05, not excessive
+          stagger: 0.15,
           scrollTrigger: {
             trigger: el,
             scroller,
             start: 'top bottom-=10%',
             end: wordAnimationEnd,
-            scrub: 0.6   // was 1.5 — light smoothing instead of heavy lag
+            scrub: 1.5
           }
         }
       );
-    }
 
-    return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    };
+      // Animation 3: blur opacity (conditional)
+      if (enableBlur) {
+        gsap.fromTo(
+          wordElements,
+          { opacity: baseOpacity, willChange: 'opacity' },
+          {
+            ease: 'none',
+            opacity: 1,
+            stagger: 0.08,
+            scrollTrigger: {
+              trigger: el,
+              scroller,
+              start: 'top bottom-=10%',
+              end: wordAnimationEnd,
+              scrub: 0.6
+            }
+          }
+        );
+      }
+    }, el);
+
+    return () => ctx.revert();
   }, [scrollContainerRef, enableBlur, baseRotation, baseOpacity, rotationEnd, wordAnimationEnd, blurStrength]);
 
   return (

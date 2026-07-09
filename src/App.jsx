@@ -19,6 +19,10 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import ProtectedRoute from "./pages/admin/components/ProtectedRoute";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import GapHero from "./components/Gaphero";
+import SmoothScrollProvider from "./components/SmoothScrollProvider";
+import ScrollToTop from "./components/ScrollToTop";
+import StatsReveal from "./components/Statsreveal";
+
 // Salted admin login path — set VITE_ADMIN_LOGIN_SALT in your .env file.
 // Falls back to a default so the app doesn't crash if the env var is missing,
 // but you should always set your own value in .env (never commit the real one).
@@ -31,6 +35,7 @@ function Home() {
       <Herosection />
       <GapHero />
       <FeaturedEvents />
+      <StatsReveal />
       <OurPartners />
       <Footer />
       
@@ -72,61 +77,68 @@ function AppLayout({ children }) {
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          {/* Auth pages — no navbar */}
-          <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-          <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
+    // SmoothScrollProvider owns a single Lenis instance for the entire app.
+    // It must sit above BrowserRouter/Routes so it mounts once and never
+    // gets torn down and recreated on every route change — that per-page
+    // recreation was what forced a hard reload when navigating between pages.
+    <SmoothScrollProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <ScrollToTop />
+          <Routes>
+            {/* Auth pages — no navbar */}
+            <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+            <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
 
-          {/* Admin pages — no navbar */}
-          <Route path={ADMIN_LOGIN_PATH} element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/admin/create-event" element={<ProtectedRoute><CreateEvent /></ProtectedRoute>} />
-          <Route path="/admin/edit-event/:id" element={<ProtectedRoute><EditEvent /></ProtectedRoute>} />
+            {/* Admin pages — no navbar */}
+            <Route path={ADMIN_LOGIN_PATH} element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin/create-event" element={<ProtectedRoute><CreateEvent /></ProtectedRoute>} />
+            <Route path="/admin/edit-event/:id" element={<ProtectedRoute><EditEvent /></ProtectedRoute>} />
 
-          {/* User pages — navbar included */}
-          <Route path="/" element={
-            <UserProtectedRoute>
-              <AppLayout><Home /></AppLayout>
-            </UserProtectedRoute>
-          } />
-          <Route path="/events" element={
-            <UserProtectedRoute>
-              <AppLayout><Events /></AppLayout>
-            </UserProtectedRoute>
-          } />
-          <Route path="/aboutpage" element={
-            <UserProtectedRoute>
-              <AppLayout><About /></AppLayout>
-            </UserProtectedRoute>
-          } />
+            {/* User pages — navbar included */}
+            <Route path="/" element={
+              <UserProtectedRoute>
+                <AppLayout><Home /></AppLayout>
+              </UserProtectedRoute>
+            } />
+            <Route path="/events" element={
+              <UserProtectedRoute>
+                <AppLayout><Events /></AppLayout>
+              </UserProtectedRoute>
+            } />
+            <Route path="/aboutpage" element={
+              <UserProtectedRoute>
+                <AppLayout><About /></AppLayout>
+              </UserProtectedRoute>
+            } />
 
-          <Route path="/courses" element={
-            <UserProtectedRoute>
-              <AppLayout><Courses /></AppLayout>
-            </UserProtectedRoute>
-          } />
-          <Route path="/merchstore" element={
-            <UserProtectedRoute>
-              <AppLayout><MerchStore /></AppLayout>
-            </UserProtectedRoute>
-          } />
-          <Route path="/events/hackathon/:id" element={
-            <UserProtectedRoute>
-              <AppLayout><HackathonRegistration /></AppLayout>
-            </UserProtectedRoute>
-          } />
-          <Route path="/events/meetup/:id" element={
-            <UserProtectedRoute>
-              <AppLayout><MeetupRegistration /></AppLayout>
-            </UserProtectedRoute>
-          } />
+            <Route path="/courses" element={
+              <UserProtectedRoute>
+                <AppLayout><Courses /></AppLayout>
+              </UserProtectedRoute>
+            } />
+            <Route path="/merchstore" element={
+              <UserProtectedRoute>
+                <AppLayout><MerchStore /></AppLayout>
+              </UserProtectedRoute>
+            } />
+            <Route path="/events/hackathon/:id" element={
+              <UserProtectedRoute>
+                <AppLayout><HackathonRegistration /></AppLayout>
+              </UserProtectedRoute>
+            } />
+            <Route path="/events/meetup/:id" element={
+              <UserProtectedRoute>
+                <AppLayout><MeetupRegistration /></AppLayout>
+              </UserProtectedRoute>
+            } />
 
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+    </SmoothScrollProvider>
   );
 }
 
