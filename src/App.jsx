@@ -21,7 +21,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import GapHero from "./components/Gaphero";
 import SmoothScrollProvider from "./components/SmoothScrollProvider";
 import ScrollToTop from "./components/ScrollToTop";
-import StatsReveal from "./components/Statsreveal";
+import StatsReveal from "./components/StatsReveal";
 
 // Salted admin login path — set VITE_ADMIN_LOGIN_SALT in your .env file.
 // Falls back to a default so the app doesn't crash if the env var is missing,

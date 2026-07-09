@@ -21,7 +21,7 @@ const coreValues = [
         seed: "community-hands",
     },
     {
-        title: "Merit & Excellence",
+        title: "Excellence",
         copy: "Recognizing effort, quality, and genuine talent over popularity or participation alone.",
         accent: "#93C5FD",
         seed: "merit-summit",

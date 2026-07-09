@@ -21,8 +21,8 @@ const team = [
         hoverImg: ShravanKid,
         large: true,
     },
-    { name: "Rugved Dalvi", img: Rugved, hoverImg: Rugvedkid, large: true },
     { name: "Bhavesh Rajdev", img: Bhavesh, hoverImg: Bhaveshkid, large: true },
+    { name: "Rugved Dalvi", img: Rugved, hoverImg: Rugvedkid, large: true },
     { name: "Rahul Patil", img: Rahul, hoverImg: Rahulkid, large: true },
     { name: "Meloni Shah", img: Meloni, hoverImg: Melonikid, large: true },
 ];
