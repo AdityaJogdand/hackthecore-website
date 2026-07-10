@@ -17,8 +17,9 @@
  *  - The image section stays fixed in view (via CSS `position: sticky`,
  *    NOT GSAP's `pin: true`) while the user scrolls through an outer
  *    tall wrapper that provides the scroll distance.
- *  - Two colored stat panels slide in from the right edge over the photo,
- *    each with a count-up number, staggered one after the other.
+ *  - Three colored stat panels (all yellow, varying shades) slide in
+ *    from the right edge over the photo, each with a count-up number,
+ *    staggered one after the other.
  *  - Why no `pin: true`: GSAP's pin inserts a "pin-spacer" wrapper div
  *    directly into the DOM, outside of React's virtual DOM tracking.
  *    In React 18/19 Strict Mode (dev), effects intentionally run,
@@ -48,17 +49,24 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 const STATS = [
   {
     id: "stat-1",
-    value: 900,
+    value: 5000,
     suffix: "+",
-    label: "Designers surveyed in 60+ countries.",
-    bg: "#B69DF8", // purple
+    label: "Students and Developers engaged",
+    bg: "#F6D34A", // gold
   },
   {
     id: "stat-2",
-    value: 25,
+    value: 45,
     suffix: "+",
-    label: "Interviews with practitioners and leaders",
-    bg: "#E9EBD9", // pale sage
+    label: "Universities and Colleges",
+    bg: "#FBE9A6", // pale yellow
+  },
+  {
+    id: "stat-3",
+    value: 500,
+    suffix: "+",
+    label: "Projects Built",
+    bg: "#E8B923", // deep amber-yellow
   },
 ];
 
@@ -103,7 +111,7 @@ export default function StatsReveal({
             duration: 0.6,
             ease: "power3.out",
           },
-          i * 0.5
+          i * 0.4
         ).to(
           counter,
           {
@@ -117,7 +125,7 @@ export default function StatsReveal({
               }
             },
           },
-          i * 0.5
+          i * 0.4
         );
       });
 
@@ -144,7 +152,7 @@ export default function StatsReveal({
   );
 
   return (
-    <div ref={wrapperRef} className="relative w-full h-[220vh]">
+    <div ref={wrapperRef} className="relative w-full h-[260vh]">
       <section
         ref={stickyRef}
         className="sticky top-0 w-full h-screen overflow-hidden bg-black"
@@ -169,15 +177,15 @@ export default function StatsReveal({
                 key={stat.id}
                 ref={(el) => (panelRefs.current[i] = el)}
                 style={{ background: stat.bg }}
-                className="flex-1 flex flex-col justify-center p-5 sm:p-8 md:p-12 lg:p-14 will-change-transform"
+                className="flex-1 flex flex-col justify-center p-5 sm:p-6 md:p-10 lg:p-12 will-change-transform"
               >
                 <span
                   ref={(el) => (numberRefs.current[i] = el)}
-                  className="font-sans font-bold leading-none tracking-tight text-neutral-900 text-[40px] sm:text-[56px] md:text-[72px] lg:text-[88px]"
+                  className="font-sans font-bold leading-none tracking-tight text-neutral-900 text-[32px] sm:text-[44px] md:text-[60px] lg:text-[72px]"
                 >
                   0{stat.suffix}
                 </span>
-                <p className="mt-4 max-w-[22ch] font-sans text-neutral-900 text-base sm:text-lg md:text-xl leading-snug">
+                <p className="mt-3 max-w-[22ch] font-sans text-neutral-900 text-sm sm:text-base md:text-lg leading-snug">
                   {stat.label}
                 </p>
               </div>

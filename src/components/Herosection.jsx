@@ -12,11 +12,7 @@ const MARQUEE_ITEMS = [
   "Web3", "✦", "Deep Tech", "✦",
 ];
 
-const STATS = [
-  { value: "2,400+", label: "Community members" },
-  { value: "18", label: "Hackathons hosted" },
-  { value: "₹12L+", label: "Prizes awarded" },
-];
+
 
 /* ─── tokens ─────────────────────────────────────────────────────────────── */
 const C = {
@@ -245,7 +241,6 @@ export default function HeroSection() {
         flexDirection: "column",
         position: "relative",
         overflow: "hidden",
-        marginTop: "30px",
         zIndex: 0,
       }}
     >
@@ -494,48 +489,7 @@ export default function HeroSection() {
 </motion.div>
 
         {/* stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.9 }}
-          style={{
-            display: "flex",
-            gap: "clamp(2rem, 5vw, 4rem)",
-            marginTop: "clamp(2.5rem, 5vw, 4rem)",
-            flexWrap: "wrap",
-            justifyContent: "center",
-          }}
-        >
-          {STATS.map(s => (
-            <div key={s.label}>
-              <div
-                style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontWeight: 700,
-                  fontSize: "clamp(2rem, 4vw, 5rem)", // Increased
-                  color: C.ink,
-                  letterSpacing: "-0.03em",
-                  lineHeight: 1,
-                }}
-              >
-                {s.value}
-              </div>
-              <div
-                style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontWeight: 400,
-                  fontSize: "0.98rem",
-                  letterSpacing: "0.12em",
-                  textTransform: "uppercase",
-                  color: C.inkFaint,
-                  marginTop: "0.35em",
-                }}
-              >
-                {s.label}
-              </div>
-            </div>
-          ))}
-        </motion.div>
+        
       </div>
 
       {/* ══════════════════ MARQUEE ══════════════════ */}

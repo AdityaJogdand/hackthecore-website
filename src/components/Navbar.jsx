@@ -1,56 +1,84 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, LogOut, User as UserIcon } from "lucide-react";
+import { LogOut, User as UserIcon, Menu, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import htcLogo from "../assets/htc.png";
+import black from "../assets/black.png";
+import white from "../assets/white.png";
 import { useAuth } from "../context/AuthContext";
-
 
 const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+
   const [scrolled, setScrolled] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
+  const [hovered, setHovered] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(null);
+  const [indicator, setIndicator] = useState({ left: 0, width: 0, opacity: 0 });
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const itemRefs = useRef([]);
+  const menuRef = useRef(null);
   const dropdownRef = useRef(null);
+  const mobileMenuRef = useRef(null);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
+    const handleScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("resize", handleResize, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleResize);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (!scrolled) {
+      setHovered(false);
+      setActiveIndex(null);
+    }
+  }, [scrolled]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
       }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+        setMobileMenuOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const navItems = ["Home", "About", "Events", "Merch"];
-  const routeMap = {
-    Events: "/events",
-    About: "/aboutpage",
-    Courses: "/courses",
-    Merch: "/merchstore",
-  };
+  // Close the mobile menu automatically if the viewport grows back to desktop size
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) setMobileMenuOpen(false);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-  const textColor = scrolled ? "#ffffff" : "#0C0C0D";
-  const hoverColor = "#FFFF00";
+  const navItems = [
+    { label: "Home", to: "/" },
+    { label: "About", to: "/aboutpage" },
+    { label: "Events", to: "/events" },
+    { label: "Merch", to: "/merchstore" },
+    { label: "Showcase", to: "/showcase" },
+  ];
 
-  const handleLogout = () => {
-    logout();
-    setDropdownOpen(false);
-    navigate("/login");
+  const smoothEase = "cubic-bezier(0.22, 1, 0.36, 1)";
+  const transition = `all 650ms ${smoothEase}`;
+
+  const moveIndicator = (index) => {
+    const el = itemRefs.current[index];
+    const menu = menuRef.current;
+    if (!el || !menu) return;
+    const elRect = el.getBoundingClientRect();
+    const menuRect = menu.getBoundingClientRect();
+    setIndicator({
+      left: elRect.left - menuRect.left,
+      width: elRect.width,
+      opacity: 1,
+    });
+    setActiveIndex(index);
   };
 
   const getInitials = (name) => {
@@ -58,284 +86,295 @@ const Navbar = () => {
     return name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
   };
 
-  return (
-    <header
-      className="fixed top-0 left-0 right-0 z-50"
-      style={{ fontFamily: "Barlow, sans-serif" }}
-    >
-      <motion.div
-        initial={false}
-        animate={{
-          marginLeft: scrolled && isDesktop ? "2.5rem" : "0rem",
-          marginRight: scrolled && isDesktop ? "2.5rem" : "0rem",
-          marginTop: scrolled && isDesktop ? "0.65rem" : "0rem",
-          borderRadius: scrolled && isDesktop ? "9999px" : "0px",
-          backgroundColor: scrolled ? "#0C0C0D" : "#ffffff",
-          boxShadow: scrolled
-            ? "0 4px 32px rgba(0,0,0,0.18)"
-            : "0 1px 0px rgba(0,0,0,0.08)",
-        }}
-        transition={{ duration: 0.38, ease: "easeInOut" }}
-        style={{ overflow: "visible" }}
+  const handleLogout = () => {
+    logout();
+    setDropdownOpen(false);
+    setMobileMenuOpen(false);
+    navigate("/login");
+  };
+
+  // Shared avatar button — used in both pre-scroll and collapsed states
+  const AvatarButton = ({ size = 44, ringColor }) => (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setDropdownOpen((prev) => !prev)}
+        className="flex items-center justify-center rounded-full border-2 overflow-hidden cursor-pointer focus:outline-none"
+        style={{ width: size, height: size, borderColor: ringColor }}
       >
-        <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-2 md:py-3">
-          {/* Logo */}
-          <div className="flex items-center">
-            <Link to="/">
-              <img
-                src={htcLogo}
-                alt="HackTheCore Logo"
-                className={`w-auto object-contain transition-all duration-300 ${scrolled ? "h-11" : "h-14"}`}
-              />
-            </Link>
+        {user?.avatar ? (
+          <img
+            src={user.avatar}
+            alt={user.name}
+            referrerPolicy="no-referrer"
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-xs font-bold text-white bg-neutral-800">
+            {getInitials(user?.name)}
           </div>
+        )}
+      </button>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-8">
-            {navItems.map((item) =>
-              routeMap[item] ? (
-                <Link key={item} to={routeMap[item]}>
-                  <motion.span
-                    whileHover={{ y: -2, color: hoverColor }}
-                    animate={{ color: textColor }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
-                    className="text-[1rem] font-semibold tracking-tight cursor-pointer uppercase"
-                    style={{ letterSpacing: "0.06em", fontSize: "0.82rem" }}
-                  >
-                    {item}
-                  </motion.span>
-                </Link>
-              ) : (
-                <motion.a
-                  key={item}
-                  href={item === "Home" ? "/" : `#${item.toLowerCase()}`}
-                  whileHover={{ y: -2, color: hoverColor }}
-                  animate={{ color: textColor }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                  className="uppercase font-semibold"
-                  style={{ letterSpacing: "0.06em", fontSize: "0.82rem" }}
-                >
-                  {item}
-                </motion.a>
-              )
-            )}
-          </nav>
+      <AnimatePresence>
+        {dropdownOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            style={{ position: "absolute", right: 0, top: "calc(100% + 10px)", zIndex: 100 }}
+            className="w-56 bg-neutral-900 border border-neutral-800 rounded-lg shadow-xl py-2 text-white"
+          >
+            <div className="px-4 py-2 border-b border-neutral-800">
+              <p className="text-sm font-semibold truncate text-white">{user?.name}</p>
+              <p className="text-xs text-neutral-400 truncate mt-0.5">{user?.email}</p>
+            </div>
+            <Link
+              to="/courses"
+              onClick={() => setDropdownOpen(false)}
+              className="flex items-center gap-2 px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors"
+            >
+              <UserIcon size={16} />
+              My Profile
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-400 hover:bg-neutral-800 hover:text-red-300 transition-colors cursor-pointer text-left"
+            >
+              <LogOut size={16} />
+              Sign Out
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 
-          {/* Desktop Right Area */}
-          <div className="hidden lg:flex items-center gap-4">
-            {isAuthenticated && user ? (
-              <div className="relative" ref={dropdownRef}>
-                <button
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center justify-center w-10 h-10 rounded-full border-2 overflow-hidden transition-all duration-200 cursor-pointer focus:outline-none"
-                  style={{ borderColor: scrolled ? "#FFFF00" : "#0C0C0D" }}
-                >
-                  {user.avatar ? (
-                    <img
-                      src={user.avatar}
-                      alt={user.name}
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-xs font-bold text-white bg-neutral-800">
-                      {getInitials(user.name)}
+  return (
+    <header className="fixed inset-0 z-50 pointer-events-none" style={{ fontFamily: "Barlow, sans-serif" }}>
+      {/* ============ DESKTOP NAVBAR (md and up) ============ */}
+
+      {/* Logo — pinned to the far top-left corner */}
+      <div
+        className="hidden md:block absolute top-3 left-8 pointer-events-auto"
+        style={{
+          opacity: scrolled ? 0 : 1,
+          transform: scrolled ? "translate(0, -16px)" : "translate(0, 0)",
+          pointerEvents: scrolled ? "none" : "auto",
+          transition,
+        }}
+      >
+        <Link to="/" className="flex items-center h-16">
+          <img src={black} alt="HackTheCore Logo" className="h-16 w-auto object-contain" />
+        </Link>
+      </div>
+
+      {/* Nav items — centered as their own group, same height as logo so text sits on the same vertical center */}
+      <div
+        className="hidden md:flex absolute top-3 left-1/2 items-center h-16 gap-16 pointer-events-auto"
+        style={{
+          transform: scrolled ? "translate(-50%, -16px)" : "translate(-50%, 0)",
+          opacity: scrolled ? 0 : 1,
+          pointerEvents: scrolled ? "none" : "auto",
+          transition,
+        }}
+      >
+        {navItems.map((item) => (
+          <Link
+            key={item.label}
+            to={item.to}
+            className="text-base font-semibold uppercase text-neutral-700"
+          >
+            {item.label}
+          </Link>
+        ))}
+      </div>
+
+      {/* Avatar / Sign In — pinned to the far top-right corner, stays fixed with no scroll animation */}
+      <div className="hidden md:flex absolute top-3 right-8 items-center h-16 pointer-events-auto">
+        {isAuthenticated && user ? (
+          <AvatarButton size={44} ringColor="#0C0C0D" />
+        ) : (
+          <Link
+            to="/login"
+            className="px-4 py-2 text-xs font-bold uppercase text-neutral-900 border border-neutral-900 rounded-full"
+          >
+            Sign In
+          </Link>
+        )}
+      </div>
+
+      {/* Collapsed pill + avatar — top-center to top-left */}
+      <div
+        className="hidden md:flex absolute items-center gap-3 pointer-events-none"
+        style={{
+          top: 16,
+          left: scrolled ? 16 : "50%",
+          transform: scrolled ? "translate(0, 0)" : "translate(-50%, 0)",
+          opacity: scrolled ? 1 : 0,
+          transition,
+        }}
+      >
+        <div
+          className="relative overflow-hidden rounded-full pointer-events-auto"
+          style={{
+            height: 64,
+            width: hovered ? 640 : 64,
+            background: "#0C0C0D",
+            pointerEvents: scrolled ? "auto" : "none",
+            transition: `width 450ms ${smoothEase}`,
+          }}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => {
+            setHovered(false);
+            setIndicator((prev) => ({ ...prev, opacity: 0 }));
+          }}
+        >
+          <Link
+            to="/"
+            className="absolute flex items-center justify-center"
+            style={{
+              top: "50%",
+              left: hovered ? 22 : "50%",
+              transform: hovered ? "translate(0, -50%)" : "translate(-50%, -50%)",
+              opacity: hovered ? 0 : 1,
+              pointerEvents: hovered ? "none" : "auto",
+              transition: `left 400ms ${smoothEase}, transform 400ms ${smoothEase}, opacity 250ms ${smoothEase}`,
+              zIndex: hovered ? 1 : 2,
+            }}
+          >
+            <img src={white} alt="HackTheCore Logo" className="h-8 w-auto object-contain" />
+          </Link>
+
+          <div
+            ref={menuRef}
+            className="relative flex h-full items-center gap-6 whitespace-nowrap px-6"
+            style={{
+              opacity: hovered ? 1 : 0,
+              pointerEvents: hovered ? "auto" : "none",
+              transition: `opacity 300ms ${smoothEase} ${hovered ? "150ms" : "0ms"}`,
+              zIndex: hovered ? 2 : 1,
+            }}
+            onMouseLeave={() => setIndicator((prev) => ({ ...prev, opacity: 0 }))}
+          >
+            <div
+              className="absolute rounded-full bg-[#FFFF00]"
+              style={{
+                top: "50%",
+                left: indicator.left,
+                width: indicator.width,
+                height: 38,
+                transform: "translateY(-50%)",
+                opacity: indicator.opacity,
+                transition: `left 350ms ${smoothEase}, width 350ms ${smoothEase}, opacity 200ms ${smoothEase}`,
+                zIndex: 0,
+              }}
+            />
+            {navItems.map((item, i) => (
+              <Link
+                key={item.label}
+                to={item.to}
+                ref={(el) => (itemRefs.current[i] = el)}
+                onMouseEnter={() => moveIndicator(i)}
+                className="relative px-5 py-2.5 text-sm font-bold uppercase transition-colors duration-200"
+                style={{ zIndex: 1, color: activeIndex === i ? "#000" : "#d4d4d4" }}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ============ MOBILE NAVBAR (below md) ============ */}
+
+      {/* Mobile top bar — logo left, hamburger/close button right, always visible */}
+      <div className="flex md:hidden absolute top-0 left-0 right-0 items-center justify-between px-5 py-3 pointer-events-auto bg-[#F7F8FA]/95 backdrop-blur-sm border-b border-neutral-200">
+        <Link to="/" className="flex items-center h-10" onClick={() => setMobileMenuOpen(false)}>
+          <img src={black} alt="HackTheCore Logo" className="h-9 w-auto object-contain" />
+        </Link>
+
+        <button
+          onClick={() => setMobileMenuOpen((prev) => !prev)}
+          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+          className="flex items-center justify-center w-10 h-10 rounded-full border-2 border-neutral-900 text-neutral-900"
+        >
+          {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      </div>
+
+      {/* Mobile dropdown menu */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            ref={mobileMenuRef}
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="md:hidden absolute top-16 left-3 right-3 bg-white border border-neutral-200 rounded-2xl shadow-xl py-3 pointer-events-auto overflow-hidden"
+          >
+            {navItems.map((item) => (
+              <Link
+                key={item.label}
+                to={item.to}
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-5 py-3 text-sm font-bold uppercase text-neutral-800 hover:bg-neutral-100 transition-colors"
+              >
+                {item.label}
+              </Link>
+            ))}
+
+            <div className="border-t border-neutral-200 mt-2 pt-3 px-5 pb-1">
+              {isAuthenticated && user ? (
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-neutral-900 flex-shrink-0">
+                      {user?.avatar ? (
+                        <img
+                          src={user.avatar}
+                          alt={user.name}
+                          referrerPolicy="no-referrer"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-xs font-bold text-white bg-neutral-800">
+                          {getInitials(user?.name)}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </button>
-
-                <AnimatePresence>
-                  {dropdownOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      style={{ position: "absolute", right: 0, top: "calc(100% + 8px)", zIndex: 100 }}
-                      className="w-56 bg-neutral-900 border border-neutral-800 rounded-lg shadow-xl py-2 text-white"
-                    >
-                      <div className="px-4 py-2 border-b border-neutral-800">
-                        <p className="text-sm font-semibold truncate text-white">{user.name}</p>
-                        <p className="text-xs text-neutral-400 truncate mt-0.5">{user.email}</p>
-                      </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold truncate text-neutral-900">{user?.name}</p>
                       <Link
                         to="/courses"
-                        onClick={() => setDropdownOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="text-xs text-neutral-500 hover:text-neutral-800 truncate block"
                       >
-                        <UserIcon size={16} />
                         My Profile
                       </Link>
-                      <button
-                        onClick={handleLogout}
-                        className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-400 hover:bg-neutral-800 hover:text-red-300 transition-colors cursor-pointer text-left"
-                      >
-                        <LogOut size={16} />
-                        Sign Out
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ) : (
-              <div className="flex items-center gap-3">
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    aria-label="Sign out"
+                    className="flex items-center justify-center w-9 h-9 rounded-full text-red-500 hover:bg-red-50 flex-shrink-0"
+                  >
+                    <LogOut size={16} />
+                  </button>
+                </div>
+              ) : (
                 <Link
                   to="/login"
-                  className="px-4 py-2 text-[0.78rem] font-bold uppercase transition-all duration-200"
-                  style={{ color: textColor, letterSpacing: "0.12em" }}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-center w-full py-2.5 rounded-full text-xs font-bold uppercase text-white bg-neutral-900"
                 >
                   Sign In
                 </Link>
-                <motion.a
-                  href="#contact"
-                  animate={{ borderColor: scrolled ? "#FFFF00" : "#0C0C0D" }}
-                  whileTap={{ scale: 0.97 }}
-                  className="relative overflow-hidden px-5 py-2 border text-[0.78rem] font-bold uppercase group"
-                  style={{ letterSpacing: "0.14em", borderRadius: "0px" }}
-                >
-                  <span
-                    className="absolute inset-0 origin-bottom scale-y-0 group-hover:scale-y-100 transition-transform duration-300 ease-out"
-                    style={{ background: scrolled ? "#FFFF00" : "#0C0C0D" }}
-                  />
-                  <span className="relative z-10 contact-btn-text">Contact Us</span>
-                  <style>{`
-                    .contact-btn-text {
-                      color: ${scrolled ? "#ffffff" : "#0C0C0D"};
-                      transition: color 0.15s;
-                    }
-                    .group:hover .contact-btn-text {
-                      color: ${scrolled ? "#0C0C0D" : "#ffffff"};
-                    }
-                  `}</style>
-                </motion.a>
-              </div>
-            )}
-          </div>
-
-          {/* Mobile Menu & Avatar Button */}
-          <div className="lg:hidden flex items-center gap-3">
-            {isAuthenticated && user && (
-              <div className="relative" ref={dropdownRef}>
-                <button
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center justify-center w-8 h-8 rounded-full border overflow-hidden cursor-pointer"
-                  style={{ borderColor: scrolled ? "#FFFF00" : "#0C0C0D" }}
-                >
-                  {user.avatar ? (
-                    <img
-                      src={user.avatar}
-                      alt={user.name}
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-white bg-neutral-800">
-                      {getInitials(user.name)}
-                    </div>
-                  )}
-                </button>
-
-                <AnimatePresence>
-                  {dropdownOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      style={{ position: "absolute", right: 0, top: "calc(100% + 8px)", zIndex: 100 }}
-                      className="w-48 bg-neutral-900 border border-neutral-800 rounded-lg shadow-xl py-2 text-white"
-                    >
-                      <div className="px-4 py-2 border-b border-neutral-800">
-                        <p className="text-xs font-semibold truncate text-white">{user.name}</p>
-                      </div>
-                      <button
-                        onClick={handleLogout}
-                        className="flex w-full items-center gap-2 px-4 py-2 text-xs text-red-400 hover:bg-neutral-800 hover:text-red-300 transition-colors cursor-pointer text-left"
-                      >
-                        <LogOut size={14} />
-                        Sign Out
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            )}
-
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              style={{ color: scrolled ? "#ffffff" : "#0C0C0D" }}
-              className="p-2 z-50"
-            >
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.22, ease: "easeInOut" }}
-            className="lg:hidden absolute top-full left-0 right-0 backdrop-blur-xl border-t"
-            style={{ background: "#0C0C0D", borderColor: "rgba(255,255,255,0.08)" }}
-          >
-            <div className="flex flex-col items-center py-8 gap-6">
-              {navItems.map((item) =>
-                routeMap[item] ? (
-                  <Link
-                    key={item}
-                    to={routeMap[item]}
-                    onClick={() => setIsOpen(false)}
-                    className="text-white font-semibold uppercase transition-colors hover:text-[#FFFF00]"
-                    style={{ fontSize: "0.85rem", letterSpacing: "0.14em" }}
-                  >
-                    {item}
-                  </Link>
-                ) : (
-                  <a
-                    key={item}
-                    href={item === "Home" ? "/" : `#${item.toLowerCase()}`}
-                    onClick={() => setIsOpen(false)}
-                    className="text-white font-semibold uppercase transition-colors hover:text-[#FFFF00]"
-                    style={{ fontSize: "0.85rem", letterSpacing: "0.14em" }}
-                  >
-                    {item}
-                  </a>
-                )
-              )}
-
-              {!isAuthenticated && (
-                <>
-                  <Link
-                    to="/login"
-                    onClick={() => setIsOpen(false)}
-                    className="text-white font-semibold uppercase transition-colors hover:text-[#FFFF00]"
-                    style={{ fontSize: "0.85rem", letterSpacing: "0.14em" }}
-                  >
-                    Sign In
-                  </Link>
-
-                  <a
-                    href="#contact"
-                    onClick={() => setIsOpen(false)}
-                    className="relative overflow-hidden px-6 py-3 border border-[#FFFF00] group mt-2 uppercase font-bold"
-                    style={{ fontSize: "0.75rem", letterSpacing: "0.18em" }}
-                  >
-                    <span className="absolute inset-0 bg-[#FFFF00] origin-bottom scale-y-0 group-hover:scale-y-100 transition-transform duration-300 ease-out" />
-                    <span className="relative z-10 text-white group-hover:text-black transition-colors duration-150">
-                      Contact Us
-                    </span>
-                  </a>
-                </>
               )}
             </div>
           </motion.div>
-        )
-        }
-      </AnimatePresence >
-    </header >
+        )}
+      </AnimatePresence>
+    </header>
   );
 };
 
