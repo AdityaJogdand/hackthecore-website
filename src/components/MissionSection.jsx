@@ -1,13 +1,13 @@
 import { useRef, useState } from "react";
 import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
-import video1 from "@/assets/videos/1.mp4";
-import video2 from "@/assets/videos/2.mp4";
+import video1 from "@/assets/videos/1.MP4";
+import video2 from "@/assets/videos/2.MP4";
 import video3 from "@/assets/videos/3.mov";
-import video4 from "@/assets/videos/4.mp4";
-import video5 from "@/assets/videos/5.mp4";
-import video6 from "@/assets/videos/6.mp4";
-import video7 from "@/assets/videos/7.mp4";
-import video8 from "@/assets/videos/8.mp4";
+import video4 from "@/assets/videos/4.MP4";
+import video5 from "@/assets/videos/5.MP4";
+import video6 from "@/assets/videos/6.MP4";
+import video7 from "@/assets/videos/7.MP4";
+import video8 from "@/assets/videos/8.MP4";
 const RISE_SPAN = 0.35; // shorter rise window per card = less overlap between neighbors
 
 const VIDEOS = [
