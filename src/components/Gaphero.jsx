@@ -1,18 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
+import gap1 from '@/assets/gap1.jpeg';
+import gap2 from '@/assets/gap2.jpeg';
+import gap3 from '@/assets/gap3.jpeg';
 
 // Swap these for real photography — one frame per "world" you're bridging.
 const IMAGES = [
   {
-    src: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=900&q=80',
-    label: 'Applied Research Lab',
+    src: gap1,
   },
   {
-    src: 'https://images.unsplash.com/photo-1483058712412-4245e9b90334?w=900&q=80',
-    label: 'Manufacturing Floor',
+    src: gap2,
   },
   {
-    src: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=900&q=80',
-    label: 'University Archive',
+    src: gap3,
   },
 ];
 
@@ -191,8 +191,8 @@ export default function GapHero() {
               textAlign: 'center',
             }}
           >
-            THE GAP BETWEEN INDUSTRY{' '}
-            <span style={{ color: '#eec20f' }}>& ACADEMIA</span>
+            WE BRIDGE THE GAP{' '}
+            <span style={{ color: '#eec20f' }}>BETWEEN</span>
           </h1>
         </header>
 
@@ -243,7 +243,7 @@ export default function GapHero() {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  WE CLOSE
+                  INDUSTRY
                 </div>
               </div>
 
@@ -269,7 +269,7 @@ export default function GapHero() {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  THAT GAP
+                  ACADEMIA
                 </div>
               </div>
             </div>
@@ -311,7 +311,7 @@ export default function GapHero() {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  WE CLOSE
+                  INDUSTRY
                 </div>
               </div>
 
@@ -340,7 +340,7 @@ export default function GapHero() {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  THAT GAP
+                  ACADEMIA
                 </div>
               </div>
             </div>

@@ -14,11 +14,11 @@
  *   <StatsReveal />
  *
  * Behavior:
- *  - The image section stays fixed in view (via CSS `position: sticky`,
+ *  - The media section stays fixed in view (via CSS `position: sticky`,
  *    NOT GSAP's `pin: true`) while the user scrolls through an outer
  *    tall wrapper that provides the scroll distance.
  *  - Three colored stat panels (all yellow, varying shades) slide in
- *    from the right edge over the photo, each with a count-up number,
+ *    from the right edge over the video, each with a count-up number,
  *    staggered one after the other.
  *  - Why no `pin: true`: GSAP's pin inserts a "pin-spacer" wrapper div
  *    directly into the DOM, outside of React's virtual DOM tracking.
@@ -38,7 +38,7 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import teamPhoto from "../assets/SFM_6818.JPG";
+import teamVideo from "../assets/IMG_2379.MOV";
 
 // NOTE: Lenis is initialized once at the app root via <SmoothScrollProvider>
 // (see SmoothScrollProvider.jsx). Do not create another Lenis instance here —
@@ -71,12 +71,12 @@ const STATS = [
 ];
 
 export default function StatsReveal({
-  imageSrc = teamPhoto,
-  imageAlt = "Two colleagues reviewing work together on a laptop",
+  videoSrc = teamVideo,
+  videoLabel = "Two colleagues reviewing work together on a laptop",
 }) {
   const wrapperRef = useRef(null); // tall outer element — provides scroll distance
   const stickyRef = useRef(null); // sticky visual section, pinned via CSS
-  const imageWrapRef = useRef(null);
+  const videoWrapRef = useRef(null);
   const panelRefs = useRef([]);
   const numberRefs = useRef([]);
 
@@ -129,9 +129,9 @@ export default function StatsReveal({
         );
       });
 
-      // Subtle parallax on the photo while scrolling through
+      // Subtle parallax on the video while scrolling through
       gsap.fromTo(
-        imageWrapRef.current,
+        videoWrapRef.current,
         { scale: 1.08 },
         {
           scale: 1,
@@ -158,15 +158,20 @@ export default function StatsReveal({
         className="sticky top-0 w-full h-screen overflow-hidden bg-black"
       >
         <div className="relative w-full h-full">
-          {/* Photo */}
+          {/* Video */}
           <div
-            ref={imageWrapRef}
+            ref={videoWrapRef}
             className="absolute inset-0 overflow-hidden will-change-transform"
           >
-            <img
-              src={imageSrc}
-              alt={imageAlt}
+            <video
+              src={videoSrc}
+              aria-label={videoLabel}
               className="w-full h-full object-cover block"
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
             />
           </div>
 

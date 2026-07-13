@@ -152,18 +152,32 @@ export default function MissionSection() {
 
                     {/* OUR MISSION — stays put, sits at z-10 between the "behind" and "front" videos */}
                     <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 sm:px-10 md:px-20">
-                        <h2
-                            className="font-['Caveat_Brush'] uppercase leading-[0.95] tracking-[-0.01em] text-[#EDEDE6]/80
-             text-[clamp(2.2rem,10vw,4.5rem)]
-             sm:text-[clamp(3.2rem,7vw,5.5rem)]
-             md:text-[clamp(3.8rem,6vw,6.5rem)]"
-                        >
-                            Our Mission
-                        </h2>
+                    <h2
+                        className="font-['SansPlomb'] uppercase leading-[0.95] tracking-[-0.01em] text-[#EDEDE6]/80
+                        text-[clamp(3rem,18vw,12rem)]
+                        sm:text-[clamp(4.5rem,10vw,8rem)]
+                        md:text-[clamp(6rem,8vw,10rem)]"
+                    >
+                        Our Mission
+                    </h2>
 
-                        <p className="max-w-[280px] sm:max-w-2xl md:max-w-3xl mt-4 sm:mt-8 text-white font-bold leading-[1.5] sm:leading-[1.55] text-[0.95rem] sm:text-[1.3rem] md:text-[1.5rem]">
-                            Building a thriving ecosystem where student talent meets opportunity. Through communities, hackathons, and industry collaborations, we empower aspiring developers to learn, innovate, and grow beyond traditional events.
-                        </p>
+                        <p className="max-w-[320px] sm:max-w-3xl md:max-w-4xl mt-6 sm:mt-8 text-white font-bold text-[1.15rem] sm:text-[1.55rem] md:text-[1.8rem] leading-tight">
+  Building a thriving{" "}
+  <span className="text-yellow-400 font-['Caveat'] text-[2em]">
+    ecosystem
+  </span>{" "}
+  where student talent meets{" "}
+  <span className="text-yellow-400 font-['Caveat'] text-[2em]">
+    opportunity
+  </span>
+  . Through communities, hackathons, and industry collaborations, we <span className="text-yellow-400 font-['Caveat'] text-[2em]">
+    empower
+  </span> aspiring developers to learn, innovate, and{" "}
+  <span className="text-yellow-400 font-['Caveat'] text-[2em]">
+    grow
+  </span>{" "}
+  beyond traditional events.
+</p>
                     </div>
 
                 </div>
