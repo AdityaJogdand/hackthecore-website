@@ -20,8 +20,8 @@ const C = {
   ink: "#111110",
   inkMid: "#555553",
   inkFaint: "#ABABAA",
-  yellow: "#E8D20A",
-  yellowBg: "#F4DD0E",
+  yellow: "#f6fe36",
+  yellowBg: "#f6fe36",
   rule: "#DDDDD9",
 };
 
