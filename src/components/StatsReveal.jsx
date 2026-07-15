@@ -1,203 +1,201 @@
 /**
  * StatsReveal.jsx
- * ------------------------------------------------------------------
- * Scroll-triggered stat panel reveal, built with GSAP ScrollTrigger.
- * Styled with Tailwind CSS. Relies on a single app-level Lenis instance
- * from <SmoothScrollProvider> — see that file's comments for why.
+ * Space Grotesk font pairing + horizontal stat row layout.
+ * Each card: big number + label + dot-grid waffle.
  *
- * Install dependencies:
- *   npm install gsap lenis @gsap/react
- *   (Tailwind must already be configured in your project)
+ * Add to your index.html / global CSS:
+ *   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
  *
- * Usage:
- *   import StatsReveal from "./StatsReveal";
- *   <StatsReveal />
- *
- * Behavior:
- *  - The media section stays fixed in view (via CSS `position: sticky`,
- *    NOT GSAP's `pin: true`) while the user scrolls through an outer
- *    tall wrapper that provides the scroll distance.
- *  - Three colored stat panels (all yellow, varying shades) slide in
- *    from the right edge over the video, each with a count-up number,
- *    staggered one after the other.
- *  - Why no `pin: true`: GSAP's pin inserts a "pin-spacer" wrapper div
- *    directly into the DOM, outside of React's virtual DOM tracking.
- *    In React 18/19 Strict Mode (dev), effects intentionally run,
- *    clean up, and run again — and that double cycle combined with
- *    GSAP's own DOM restructuring caused
- *    "Failed to execute 'removeChild' on 'Node'" errors, because React
- *    lost track of which nodes it actually owned. Using plain CSS
- *    sticky positioning for the pin means GSAP never touches DOM
- *    structure — it only tweens element properties (transform, opacity,
- *    a JS counter) — so there's nothing for React and GSAP to conflict
- *    over, in Strict Mode or during route changes.
- * ------------------------------------------------------------------
+ * Dependencies: gsap (Tailwind configured)
  */
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
 import teamVideo from "../assets/IMG_2379.MOV";
 
-// NOTE: Lenis is initialized once at the app root via <SmoothScrollProvider>
-// (see SmoothScrollProvider.jsx). Do not create another Lenis instance here —
-// that's what was causing navigation to break, requiring a reload between pages.
-
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+const COLS = 8;
+const ROWS = 5;
+const TOTAL_DOTS = COLS * ROWS;
 
 const STATS = [
   {
     id: "stat-1",
     value: 5000,
     suffix: "+",
-    label: "Students and Developers engaged",
-    bg: "#F6D34A", // gold
+    label: "Students and developers engaged",
+    pct: 0.72,
   },
   {
     id: "stat-2",
     value: 45,
     suffix: "+",
-    label: "Universities and Colleges",
-    bg: "#FBE9A6", // pale yellow
+    label: "Universities and colleges",
+    pct: 0.52,
   },
   {
     id: "stat-3",
     value: 500,
     suffix: "+",
-    label: "Projects Built",
-    bg: "#E8B923", // deep amber-yellow
+    label: "Projects built",
+    pct: 0.88,
   },
 ];
+
+const SG = "'Space Grotesk', sans-serif";
+
+function DotGrid({ pct, id }) {
+  const filled = Math.round(pct * TOTAL_DOTS);
+  return (
+    <div
+      aria-hidden="true"
+      style={{
+        display: "grid",
+        gridTemplateColumns: `repeat(${COLS}, 10px)`,
+        gap: "6px",
+      }}
+    >
+      {Array.from({ length: TOTAL_DOTS }).map((_, i) => (
+        <div
+          key={`${id}-dot-${i}`}
+          style={{
+            width: "10px",
+            height: "10px",
+            borderRadius: "50%",
+            background: i < filled ? "#000000" : "rgba(255,255,255,0.15)",
+            opacity: i < filled ? 1 : 0.5,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
 
 export default function StatsReveal({
   videoSrc = teamVideo,
   videoLabel = "Two colleagues reviewing work together on a laptop",
 }) {
-  const wrapperRef = useRef(null); // tall outer element — provides scroll distance
-  const stickyRef = useRef(null); // sticky visual section, pinned via CSS
   const videoWrapRef = useRef(null);
   const panelRefs = useRef([]);
   const numberRefs = useRef([]);
 
-  useGSAP(
-    () => {
-      const panels = panelRefs.current;
-      const numbers = numberRefs.current;
+  useEffect(() => {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      // Starting state: panels off-screen to the right, numbers at 0
-      gsap.set(panels, { xPercent: 100, opacity: 0 });
+    // Set final values immediately if reduced motion preferred
+    if (reduceMotion) {
+      numberRefs.current.forEach((el, i) => {
+        if (el) el.textContent = STATS[i].value.toLocaleString() + STATS[i].suffix;
+      });
+      return;
+    }
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: wrapperRef.current,
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 1,
-          // no `pin` — CSS `position: sticky` on stickyRef handles pinning
+    // Make sure all refs are available
+    const panels = panelRefs.current.filter(Boolean);
+    const numbers = numberRefs.current.filter(Boolean);
+
+    if (panels.length === 0) return;
+
+    // Set initial state manually so cards are invisible before animation
+    gsap.set(panels, { opacity: 0, y: 20 });
+    gsap.set(videoWrapRef.current, { opacity: 0, y: 24 });
+
+    const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+
+    tl.to(videoWrapRef.current, {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+    }).to(
+      panels,
+      { opacity: 1, y: 0, duration: 0.5, stagger: 0.12 },
+      "-=0.25"
+    );
+
+    // Counter animations
+    STATS.forEach((stat, i) => {
+      const numberEl = numberRefs.current[i];
+      if (!numberEl) return;
+      const counter = { val: 0 };
+      gsap.to(counter, {
+        val: stat.value,
+        duration: 1.2,
+        delay: 0.4 + i * 0.12,
+        ease: "power1.out",
+        onUpdate() {
+          numberEl.textContent =
+            Math.round(counter.val).toLocaleString() + stat.suffix;
+        },
+        onComplete() {
+          numberEl.textContent = stat.value.toLocaleString() + stat.suffix;
         },
       });
+    });
 
-      panels.forEach((panel, i) => {
-        const numberEl = numbers[i];
-        const target = STATS[i].value;
-        const counter = { val: 0 };
-
-        tl.to(
-          panel,
-          {
-            xPercent: 0,
-            opacity: 1,
-            duration: 0.6,
-            ease: "power3.out",
-          },
-          i * 0.4
-        ).to(
-          counter,
-          {
-            val: target,
-            duration: 0.6,
-            ease: "power1.out",
-            onUpdate: () => {
-              if (numberEl) {
-                numberEl.textContent =
-                  Math.round(counter.val) + STATS[i].suffix;
-              }
-            },
-          },
-          i * 0.4
-        );
-      });
-
-      // Subtle parallax on the video while scrolling through
-      gsap.fromTo(
-        videoWrapRef.current,
-        { scale: 1.08 },
-        {
-          scale: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: wrapperRef.current,
-            start: "top top",
-            end: "bottom bottom",
-            scrub: 1,
-          },
-        }
-      );
-
-      // useGSAP auto-reverts every tween/timeline/ScrollTrigger created
-      // in this callback on unmount — no manual cleanup needed.
-    },
-    { scope: wrapperRef }
-  );
+    return () => {
+      tl.kill();
+    };
+  }, []);
 
   return (
-    <div ref={wrapperRef} className="relative w-full h-[260vh]">
-      <section
-        ref={stickyRef}
-        className="sticky top-0 w-full h-screen overflow-hidden bg-black"
-      >
-        <div className="relative w-full h-full">
-          {/* Video */}
-          <div
-            ref={videoWrapRef}
-            className="absolute inset-0 overflow-hidden will-change-transform"
-          >
-            <video
-              src={videoSrc}
-              aria-label={videoLabel}
-              className="w-full h-full object-cover block"
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="auto"
-            />
-          </div>
+    <section
+      style={{ fontFamily: SG }}
+      className="relative w-full bg-white py-24 md:py-32 overflow-hidden"
+    >
+<div className="relative w-[95%] mx-auto mt-8 flex flex-col items-center gap-10 pb-16 bg-black rounded-[32px] overflow-hidden">
+        {/* Video */}
+        <div
+          ref={videoWrapRef}
+          className="relative w-[92%] md:w-[88%] lg:w-[90%] h-[72vh] overflow-hidden rounded-2xl mt-15"
+        >
+          <video
+            src={videoSrc}
+            aria-label={videoLabel}
+            className="w-full h-full object-cover"
+            autoPlay
+            loop
+            muted
+            playsInline
+          />
+        </div>
 
-          {/* Stat panels */}
-          <div className="absolute top-0 right-0 h-full w-[60vw] sm:w-[45vw] md:w-[32vw] max-w-[520px] min-w-[280px] flex flex-col">
-            {STATS.map((stat, i) => (
-              <div
-                key={stat.id}
-                ref={(el) => (panelRefs.current[i] = el)}
-                style={{ background: stat.bg }}
-                className="flex-1 flex flex-col justify-center p-5 sm:p-6 md:p-10 lg:p-12 will-change-transform"
-              >
-                <span
-                  ref={(el) => (numberRefs.current[i] = el)}
-                  className="font-sans font-bold leading-none tracking-tight text-neutral-900 text-[32px] sm:text-[44px] md:text-[60px] lg:text-[72px]"
+        {/* Stat Cards */}
+        <div className="w-[92%] md:w-[88%] lg:w-[90%] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {STATS.map((stat, i) => (
+            <div
+              key={stat.id}
+              ref={(el) => { panelRefs.current[i] = el; }}
+              className="relative overflow-hidden rounded-[28px] border border-white/10 bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+            >
+              {/* Glow */}
+              <div className="absolute -bottom-10 -right-10 h-40 w-40 rounded-full bg-[#F6FB37] blur-[80px] opacity-40 pointer-events-none" />
+
+
+
+              {/* Animated number */}
+              <div className="relative z-10 mt-8">
+                <p className="text-xs uppercase tracking-[0.3em] text-black/40">
+                  Statistics
+                </p>
+                <h2
+                  ref={(el) => { numberRefs.current[i] = el; }}
+                  className="mt-3 text-6xl font-bold text-black leading-none"
                 >
                   0{stat.suffix}
-                </span>
-                <p className="mt-3 max-w-[22ch] font-sans text-neutral-900 text-sm sm:text-base md:text-lg leading-snug">
+                </h2>
+                <p className="mt-4 text-black/60 leading-7">
                   {stat.label}
                 </p>
               </div>
-            ))}
-          </div>
+
+              {/* Dot grid */}
+              <div className="relative z-10 mt-8 overflow-hidden">
+                <DotGrid pct={stat.pct} id={stat.id} />
+              </div>
+            </div>
+          ))}
         </div>
-      </section>
-    </div>
+
+      </div>
+    </section>
   );
 }

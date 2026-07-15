@@ -35,7 +35,7 @@ const C = {
   ink: "#111110",
   inkMid: "#666664",
   inkFaint: "#ABABAA",
-  yellow: "#F4DD0E",
+  yellow: "#F6FB37",
   rule: "#DDDDD9",
 };
 const API_BASE = `${import.meta.env.VITE_API_URL}/api`;
@@ -625,15 +625,15 @@ export default function OurPartners() {
             }}>
               BACKED<br />BY THE<br />
               <span style={{
-                background: C.yellow,
-                color: C.ink,
-                fontFamily: "'Instrument Serif', serif",
-                fontStyle: "italic",
-                letterSpacing: "-0.02em",
-                padding: "0.02em 0.14em 0.06em",
-                display: "inline-block",
-                lineHeight: 1,
-              }}>BEST.</span>
+              fontFamily: "'Anton', 'Inter', sans-serif",
+              fontWeight: 400,
+              fontSize: "clamp(3.2rem,6.5vw,7.2rem)",
+              lineHeight: 0.9,
+              letterSpacing: "-0.025em",
+              color: C.ink,
+              margin: "0 0 clamp(1.5rem,3vw,2.5rem)",
+              textTransform: "uppercase",
+            }}>BEST.</span>
             </h2>
 
             <div style={{ height: 1, background: C.rule, marginBottom: "clamp(1.5rem,3vw,2.5rem)" }} />

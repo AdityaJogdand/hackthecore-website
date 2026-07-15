@@ -8,7 +8,7 @@ const C = {
   inkMid: "#555553",
   inkFaint: "#ABABAA",
   yellow: "#E8D20A",
-  yellowBg: "#F4DD0E",
+  yellowBg: "#F6FB37",
   rule: "#D8D8D4",
 };
 

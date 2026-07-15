@@ -143,6 +143,17 @@
 }
 
 
+@font-face {
+  font-family: "Druk";
+  src: url("./assets/DrukTextWide-Bold-Trial.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+.font-druk {
+  font-family: "Druk", sans-serif;
+  font-weight: 700;
+}
 
 /* ─── Editorial Gallery — responsive ─── */
 @media (max-width: 1023px) {

@@ -1,548 +1,160 @@
-import React, { useState, useEffect, useRef } from "react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import * as THREE from "three";
+import React, { useEffect, useRef } from 'react'
+import blob from '../assets/websiteback.png'
+import { gsap } from 'gsap'
 
-/* ─── constants ──────────────────────────────────────────────────────────── */
-
-const CYCLE_WORDS = ["BUILDERS", "HACKERS", "FOUNDERS", "MAKERS", "INNOVATORS"];
-
-const MARQUEE_ITEMS = [
-  "Hackathons", "✦", "Open Source", "✦", "Side Projects", "✦",
-  "AI / ML", "✦", "Community", "✦", "Product Design", "✦",
-  "Web3", "✦", "Deep Tech", "✦",
-];
-
-
-
-/* ─── tokens ─────────────────────────────────────────────────────────────── */
-const C = {
-  bg: "#FAFAF8",
-  ink: "#111110",
-  inkMid: "#555553",
-  inkFaint: "#ABABAA",
-  yellow: "#f6fe36",
-  yellowBg: "#f6fe36",
-  rule: "#DDDDD9",
-};
-
-/* ─── cycling word ───────────────────────────────────────────────────────── */
-function CycleWord() {
-  const [i, setI] = useState(0);
-  useEffect(() => {
-    const id = setInterval(() => setI(n => (n + 1) % CYCLE_WORDS.length), 1500);
-    return () => clearInterval(id);
-  }, []);
-
-  return (
-    <AnimatePresence mode="wait">
-      <motion.span
-        key={i}
-        initial={{ y: "110%", opacity: 0 }}
-        animate={{ y: "0%", opacity: 1 }}
-        exit={{ y: "-110%", opacity: 0 }}
-        transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
-        style={{ display: "block" }}
-      >
-        {CYCLE_WORDS[i]}
-      </motion.span>
-    </AnimatePresence>
-  );
-}
-
-/* ─── 3D Node Network Globe ──────────────────────────────────────────────── */
-function NodeNetwork() {
-  const mountRef = useRef(null);
-  const frameRef = useRef(null);
-  const mouseRef = useRef({ x: 0, y: 0 });
+const Herosection = () => {
+  const buildRef = useRef(null)
+  const nextRef = useRef(null)
+  const containerRef = useRef(null)
+  const eyebrowRef = useRef(null)
+  const scrollRef = useRef(null)
+  const ctaRef = useRef(null)
+  const statsRef = useRef(null)
 
   useEffect(() => {
-    const el = mountRef.current;
-    if (!el) return;
+    const tl = gsap.timeline({ defaults: { ease: 'power4.out' } })
 
-    const W = el.clientWidth;
-    const H = el.clientHeight;
+    tl.fromTo(
+      eyebrowRef.current,
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 0.6 }
+    )
 
-    /* renderer */
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      alpha: true,
-    });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(W, H);
-    renderer.setClearColor(0x000000, 0);
-    el.appendChild(renderer.domElement);
+    tl.fromTo(
+      buildRef.current,
+      { y: 80, opacity: 0, skewX: -6 },
+      { y: 0, opacity: 1, skewX: 0, duration: 1 },
+      '-=0.2'
+    )
 
-    /* scene / camera */
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, W / H, 0.1, 1000);
-    camera.position.set(0, 0, 5.2);
+    tl.fromTo(
+      nextRef.current,
+      { y: 100, opacity: 0, skewX: -6 },
+      { y: 0, opacity: 1, skewX: 0, duration: 1 },
+      '-=0.65'
+    )
 
-    /* ── geometry: fibonacci-sphere node positions ── */
-    const NODE_COUNT = 88;
-    const RADIUS = 2.0;
+    tl.fromTo(
+      ctaRef.current?.children,
+      { opacity: 0, y: 16 },
+      { opacity: 1, y: 0, duration: 0.7, stagger: 0.12 },
+      '-=0.4'
+    )
 
-    const positions = [];
-    const golden = Math.PI * (3 - Math.sqrt(5));
-    for (let i = 0; i < NODE_COUNT; i++) {
-      const y = 1 - (i / (NODE_COUNT - 1)) * 2;
-      const r = Math.sqrt(1 - y * y);
-      const theta = golden * i;
-      positions.push(
-        new THREE.Vector3(
-          Math.cos(theta) * r * RADIUS,
-          y * RADIUS,
-          Math.sin(theta) * r * RADIUS
-        )
-      );
-    }
+    tl.fromTo(
+      statsRef.current,
+      { opacity: 0, y: 16 },
+      { opacity: 1, y: 0, duration: 0.6 },
+      '-=0.3'
+    )
 
-    /* ── edges: connect nodes within distance threshold ── */
-    const EDGE_THRESHOLD = 1.18;
-    const edgePoints = [];
-    for (let a = 0; a < NODE_COUNT; a++) {
-      for (let b = a + 1; b < NODE_COUNT; b++) {
-        if (positions[a].distanceTo(positions[b]) < EDGE_THRESHOLD) {
-          edgePoints.push(positions[a].clone(), positions[b].clone());
-        }
-      }
-    }
+    tl.fromTo(
+      scrollRef.current,
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 0.6 },
+      '-=0.2'
+    )
 
-    /* edge lines */
-    const lineGeo = new THREE.BufferGeometry().setFromPoints(edgePoints);
-    const lineMat = new THREE.LineBasicMaterial({
-      color: 0xDDDDD9,
-      transparent: true,
-      opacity: 0.55,
-    });
-    const lines = new THREE.LineSegments(lineGeo, lineMat);
-    scene.add(lines);
+    gsap.to(scrollRef.current?.querySelector('.tick'), {
+      y: 6,
+      duration: 1,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut',
+      delay: 1.5,
+    })
+  }, [])
 
-    /* node dots — two sizes for depth */
-    const dotGeo = new THREE.BufferGeometry();
-    const dotPositions = new Float32Array(NODE_COUNT * 3);
-    positions.forEach((p, i) => {
-      dotPositions[i * 3] = p.x;
-      dotPositions[i * 3 + 1] = p.y;
-      dotPositions[i * 3 + 2] = p.z;
-    });
-    dotGeo.setAttribute("position", new THREE.BufferAttribute(dotPositions, 3));
-
-    const dotMat = new THREE.PointsMaterial({
-      color: 0x111110,
-      size: 0.045,
-      sizeAttenuation: true,
-      transparent: true,
-      opacity: 0.75,
-    });
-    const dots = new THREE.Points(dotGeo, dotMat);
-    scene.add(dots);
-
-    /* accent: a handful of yellow "hot" nodes */
-    const HOT_INDICES = [0, 7, 14, 23, 38, 51, 64, 77];
-    const hotPositions = new Float32Array(HOT_INDICES.length * 3);
-    HOT_INDICES.forEach((idx, i) => {
-      hotPositions[i * 3] = positions[idx].x;
-      hotPositions[i * 3 + 1] = positions[idx].y;
-      hotPositions[i * 3 + 2] = positions[idx].z;
-    });
-    const hotGeo = new THREE.BufferGeometry();
-    hotGeo.setAttribute("position", new THREE.BufferAttribute(hotPositions, 3));
-    const hotMat = new THREE.PointsMaterial({
-      color: 0xF4DD0E,
-      size: 0.09,
-      sizeAttenuation: true,
-      transparent: true,
-      opacity: 1.0,
-    });
-    const hotDots = new THREE.Points(hotGeo, hotMat);
-    scene.add(hotDots);
-
-    /* group everything for unified rotation */
-    const group = new THREE.Group();
-    group.add(lines, dots, hotDots);
-    scene.add(group);
-
-    /* mouse parallax */
-    const onMouse = (e) => {
-      const rect = el.getBoundingClientRect();
-      mouseRef.current = {
-        x: ((e.clientX - rect.left) / rect.width - 0.5) * 2,
-        y: ((e.clientY - rect.top) / rect.height - 0.5) * 2,
-      };
-    };
-    window.addEventListener("mousemove", onMouse);
-
-    /* animate */
-    const clock = new THREE.Clock();
-    const BASE_SPEED = 0.08; // rad/s, slow and dignified
-
-    const tick = () => {
-      frameRef.current = requestAnimationFrame(tick);
-      const t = clock.getElapsedTime();
-
-      /* base rotation */
-      group.rotation.y = t * BASE_SPEED;
-      group.rotation.x = Math.sin(t * 0.04) * 0.15;
-
-      /* mouse parallax — gentle lean */
-      group.rotation.y += mouseRef.current.x * 0.06;
-      group.rotation.x += mouseRef.current.y * 0.04;
-
-      /* breathing scale */
-      const breath = 1 + Math.sin(t * 0.5) * 0.012;
-      group.scale.setScalar(breath);
-
-      renderer.render(scene, camera);
-    };
-    tick();
-
-    /* resize */
-    const onResize = () => {
-      const w = el.clientWidth;
-      const h = el.clientHeight;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
-    };
-    window.addEventListener("resize", onResize);
-
-    return () => {
-      cancelAnimationFrame(frameRef.current);
-      window.removeEventListener("mousemove", onMouse);
-      window.removeEventListener("resize", onResize);
-      renderer.dispose();
-      if (el.contains(renderer.domElement)) el.removeChild(renderer.domElement);
-    };
-  }, []);
-
-  return (
-    <div
-      ref={mountRef}
-      style={{
-        position: "absolute",
-        inset: 0,
-        pointerEvents: "none",
-        zIndex: 0,
-      }}
-    />
-  );
-}
-
-/* ─── main ───────────────────────────────────────────────────────────────── */
-export default function HeroSection() {
-  const { scrollY } = useScroll();
-  const pillY = useTransform(scrollY, [0, 600], [0, -30]);
+  const handleBtnEnter = (e) => {
+    gsap.to(e.currentTarget, { scale: 1.03, duration: 0.3, ease: 'power2.out' })
+  }
+  const handleBtnLeave = (e) => {
+    gsap.to(e.currentTarget, { scale: 1, duration: 0.3, ease: 'power2.out' })
+  }
 
   return (
     <section
-      style={{
-        minHeight: "100svh",
-        display: "flex",
-        flexDirection: "column",
-        position: "relative",
-        overflow: "hidden",
-        zIndex: 0,
-      }}
+      className="relative min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center overflow-hidden px-4 py-24 sm:px-6 sm:py-20"
+      style={{ backgroundImage: `url(${blob})`, backgroundSize: '120%', backgroundPosition: 'center' , marginTop: '-1rem'}}
     >
-      {/* ── 3D background ── */}
-      <NodeNetwork />
 
-      {/* ── vignette so globe fades at edges ── */}
       <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background: `radial-gradient(ellipse 70% 70% at 50% 48%, transparent 38%, ${C.bg} 78%)`,
-          pointerEvents: "none",
-          zIndex: 1,
-        }}
-      />
-
-      {/* ══════════════════ HERO CONTENT ══════════════════ */}
-      <div
-  style={{
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    maxWidth: 1440,
-    margin: "0 auto",
-    width: "100%",
-    padding: "80px clamp(1.25rem, 5vw, 5rem) clamp(2rem, 5vw, 4rem)",
-    minHeight: 0,
-    textAlign: "center",
-    position: "relative",
-    zIndex: 2,
-  }}
->
-        {/* eyebrow */}
-        <motion.div
-          initial={{ clipPath: "inset(0 0 100% 0)", opacity: 0 }}
-          animate={{ clipPath: "inset(0 0 0% 0)", opacity: 1 }}
-          transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1], delay: 0.1 }}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "1.5rem",
-            marginBottom: "clamp(1.5rem, 3vw, 2.5rem)",
-            width: "100%",
-            maxWidth: 680,
-          }}
-        >
-          <div style={{ flex: 1, height: 1, background: C.rule }} />
-          <span
-            style={{
-              fontFamily: "'Inter', sans-serif",
-              fontWeight: 500,
-              fontSize: "0.68rem",
-              letterSpacing: "0.24em",
-              textTransform: "uppercase",
-              color: C.inkFaint,
-              whiteSpace: "nowrap",
-            }}
-          >
-            Community · Hackathons · Builders
+        ref={containerRef}
+        className="flex flex-col items-center text-center leading-none z-10 w-full max-w-5xl mt-20"
+      >
+        <div ref={eyebrowRef} className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+          <div className="w-4 sm:w-6 h-px bg-black opacity-40" />
+          <span className="text-[10px] sm:text-xs font-medium tracking-[0.2em] sm:tracking-[0.25em] uppercase text-black opacity-50">
+            We make it real
           </span>
-          <div style={{ flex: 1, height: 1, background: C.rule }} />
-        </motion.div>
+          <div className="w-4 sm:w-6 h-px bg-black opacity-40" />
+        </div>
 
-        {/* headline */}
-        <h1
-          style={{
-            fontFamily: "'SansPlomb', sans-serif",
-            fontWeight: 900,
-            fontSize: "clamp(4.4rem, 11.5vw, 20rem)",
-            lineHeight: 0.92,
-            letterSpacing: "-0.035em",
-            color: C.ink,
-            margin: 0,
-            marginBottom: "clamp(1rem, 2vw, 1.5rem)",
-            overflow: "hidden",
-          }}
+        <div
+          ref={buildRef}
+          className="font-druk uppercase tracking-tight text-black"
+          style={{ fontSize: 'clamp(1.75rem, 7vw, 7rem)', lineHeight: 0.9, fontWeight: 700 }}
         >
-          <motion.span
-            initial={{ clipPath: "inset(0 0 100% 0)", opacity: 0 }}
-            animate={{ clipPath: "inset(0 0 0% 0)", opacity: 1 }}
-            transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1], delay: 0.25 }}
-            style={{ display: "block", lineHeight: 1.1 }}
-          >
-            BUILT FOR
-          </motion.span>
+          BUILD WHAT'S
+        </div>
 
-          <motion.span
-            initial={{ clipPath: "inset(0 0 100% 0)", opacity: 0 }}
-            animate={{ clipPath: "inset(0 0 0% 0)", opacity: 1 }}
-            transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1], delay: 0.38 }}
-            style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "center", gap: "0.25em" }}
-          >
-            <span>THE</span>
-            <motion.span style={{ y: pillY, display: "inline-block", position: "relative" }}>
-              <span
-                style={{
-                  display: "inline-block",
-                  background: C.yellowBg,
-                  color: C.ink,
-                  padding: "0.04em 0.22em 0.08em",
-                  borderRadius: "0.12em",
-                  fontFamily: "'Instrument Serif', serif",
-                  fontStyle: "italic",
-                  lineHeight: 1,
-                  letterSpacing: "-0.03em",
-                  position: "relative",
-                  boxShadow: `inset 0 0 0 1.5px rgba(0,0,0,0.06)`,
-                }}
-              >
-                BEST
-              </span>
-            </motion.span>
-          </motion.span>
-
-          <motion.span
-            initial={{ clipPath: "inset(0 0 100% 0)", opacity: 0 }}
-            animate={{ clipPath: "inset(0 0 0% 0)", opacity: 1 }}
-            transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1], delay: 0.5 }}
-            style={{ display: "block", overflow: "hidden", height: "1.08em" }}
-          >
-            <CycleWord />
-          </motion.span>
-        </h1>
-
-        {/* subtitle */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.6 }}
-          style={{
-            fontFamily: "'Inter', sans-serif",
-            fontWeight: 400,
-            fontSize: "clamp(0.95rem, 2.4vw, 4rem)",
-            color: C.inkMid,
-            lineHeight: 1.6,
-            maxWidth: 1000,
-            margin: "clamp(1rem, 2vw, 1.5rem) 0 0",
-          }}
+        <div
+          ref={nextRef}
+          className="font-druk uppercase tracking-tight text-black"
+          style={{ fontSize: 'clamp(3rem, 15vw, 15rem)', lineHeight: 0.85, fontWeight: 700 }}
         >
-          India's most ambitious builder community. Ship products, win hackathons,
-          and grow with the best minds in tech.
-        </motion.p>
+          NEXT
+        </div>
 
-        {/* CTAs */}
-        <motion.div
-  initial={{ opacity: 0, y: 24 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{
-    duration: 0.8,
-    ease: [0.22, 1, 0.36, 1],
-    delay: 0.75,
-  }}
-  style={{
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: "1rem",
-    marginTop: "clamp(1.8rem, 3vw, 2.8rem)",
-    flexWrap: "wrap",
-  }}
->
-  {/* Primary CTA */}
-  <motion.button
-    whileHover={{ scale: 1.02 }}
-    whileTap={{ scale: 0.98 }}
-    onMouseEnter={(e) => (e.currentTarget.style.background = "#2d2d2d")}
-    onMouseLeave={(e) => (e.currentTarget.style.background = C.ink)}
-    style={{
-      width: "clamp(380px, 100%, 500px)",
-      height: "72px",
-      padding: "clamp(0.7rem, 2vw, 0.95rem) clamp(1.2rem, 4vw, 2rem)",
+        {/* CTA buttons */}
+        <div
+          ref={ctaRef}
+          className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 mt-8 sm:mt-10 w-full sm:w-auto px-2 sm:px-0"
+        >
+          <button
+            onMouseEnter={handleBtnEnter}
+            onMouseLeave={handleBtnLeave}
+            className="w-full sm:w-auto px-6 py-3 sm:px-9 sm:py-3.5 rounded-full bg-black text-white text-[11px] sm:text-xs font-bold tracking-[0.15em] sm:tracking-[0.2em] uppercase transition-colors duration-300 hover:bg-white hover:text-black border-2 border-black"
+          >
+            Join Community
+          </button>
 
-      background: C.ink,
-      color: C.bg,
-      border: "1.5px solid transparent",
+          <button
+            onMouseEnter={handleBtnEnter}
+            onMouseLeave={handleBtnLeave}
+            className="w-full sm:w-auto px-6 py-3 sm:px-9 sm:py-3.5 rounded-full bg-transparent text-black text-[11px] sm:text-xs font-bold tracking-[0.15em] sm:tracking-[0.2em] uppercase transition-colors duration-300 hover:bg-black hover:text-white border-2 border-black"
+          >
+            Explore Event
+          </button>
+        </div>
 
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: "0.8rem",
-
-      fontFamily: "'Inter', sans-serif",
-      fontWeight: 700,
-      fontSize: "1rem",
-      letterSpacing: "0.14em",
-      textTransform: "uppercase",
-      whiteSpace: "nowrap",
-
-      cursor: "pointer",
-      borderRadius: 4,
-      transition: "all .2s ease",
-      boxSizing: "border-box",
-    }}
-  >
-    <span>Join Community</span>
-
-    <svg width="16" height="16" viewBox="0 0 12 12" fill="none">
-      <path
-        d="M1 6h10M6 1l5 5-5 5"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  </motion.button>
-
-  {/* Secondary CTA */}
-  <motion.button
-    whileHover={{ scale: 1.02 }}
-    whileTap={{ scale: 0.98 }}
-    onMouseEnter={(e) => (e.currentTarget.style.borderColor = C.ink)}
-    onMouseLeave={(e) => (e.currentTarget.style.borderColor = C.rule)}
-    style={{
-      width: "clamp(380px, 100%, 500px)",
-
-      height: "72px",
-
-      background: "transparent",
-      color: C.ink,
-      border: `1.5px solid ${C.rule}`,
-
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-
-      fontFamily: "'Inter', sans-serif",
-      fontWeight: 700,
-      fontSize: "1rem",
-      letterSpacing: "0.14em",
-      textTransform: "uppercase",
-      whiteSpace: "nowrap",
-
-      cursor: "pointer",
-      borderRadius: 4,
-      transition: "all .2s ease",
-      boxSizing: "border-box",
-    }}
-  >
-    Explore Events
-  </motion.button>
-</motion.div>
-
-        {/* stats */}
-        
+        {/* Stats */}
+        <div
+          ref={statsRef}
+          className="flex items-center justify-center flex-wrap gap-x-5 gap-y-4 sm:gap-x-10 md:gap-x-14 mt-10 sm:mt-12 px-2"
+        >
+          {[
+            { value: '150+', label: 'Projects Shipped' },
+            { value: '40+', label: 'Clients Worldwide' },
+            { value: '8', label: 'Years Building' },
+          ].map((stat, i) => (
+            <React.Fragment key={stat.label}>
+              {i !== 0 && <div className="hidden xs:block w-px h-7 sm:h-8 bg-black opacity-20" />}
+              <div className="flex flex-col items-center min-w-[80px]">
+                <span className="font-druk text-black text-lg sm:text-xl md:text-2xl font-bold">
+                  {stat.value}
+                </span>
+                <span className="text-[8px] sm:text-[10px] tracking-[0.15em] sm:tracking-[0.2em] uppercase text-black opacity-50 mt-1 whitespace-nowrap">
+                  {stat.label}
+                </span>
+              </div>
+            </React.Fragment>
+          ))}
+        </div>
       </div>
 
-      {/* ══════════════════ MARQUEE ══════════════════ */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 1.0 }}
-        style={{
-          borderTop: `1px solid ${C.rule}`,
-          padding: "0.9rem 0",
-          overflow: "hidden",
-          position: "relative",
-          zIndex: 2,
-        }}
-      >
-        {["left", "right"].map(side => (
-          <div
-            key={side}
-            style={{
-              position: "absolute",
-              top: 0, bottom: 0,
-              [side]: 0,
-              width: 80,
-              background: `linear-gradient(to ${side === "left" ? "right" : "left"}, ${C.bg}, transparent)`,
-              zIndex: 2,
-              pointerEvents: "none",
-            }}
-          />
-        ))}
-
-        <motion.div
-          animate={{ x: ["0%", "-50%"] }}
-          transition={{ duration: 28, repeat: Infinity, ease: "linear" }}
-          style={{ display: "flex", gap: "2rem", width: "max-content", willChange: "transform" }}
-        >
-          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
-            <span
-              key={i}
-              style={{
-                fontFamily: item === "✦" ? "serif" : "'Inter', sans-serif",
-                fontWeight: item === "✦" ? 400 : 500,
-                fontSize: item === "✦" ? "0.75rem" : "0.98rem",
-                letterSpacing: item === "✦" ? 0 : "0.2em",
-                textTransform: "uppercase",
-                color: item === "✦" ? C.yellow : C.inkMid,
-                whiteSpace: "nowrap",
-              }}
-            >
-              {item}
-            </span>
-          ))}
-        </motion.div>
-      </motion.div>
     </section>
-  );
+  )
 }
+
+export default Herosection

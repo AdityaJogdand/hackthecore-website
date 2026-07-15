@@ -1,27 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import gap1 from '@/assets/gap1.jpeg';
-import gap2 from '@/assets/gap2.jpeg';
-import gap3 from '@/assets/gap3.jpeg';
-
-// Swap these for real photography — one frame per "world" you're bridging.
-const IMAGES = [
-  {
-    src: gap1,
-  },
-  {
-    src: gap2,
-  },
-  {
-    src: gap3,
-  },
-];
-
-const IMAGE_INTERVAL_MS = 1400;
 
 export default function GapHero() {
   const sectionRef = useRef(null);
   const [progress, setProgress] = useState(0);
-  const [imgIndex, setImgIndex] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -59,105 +40,39 @@ export default function GapHero() {
   }, []);
 
   useEffect(() => {
-    if (reducedMotion) return;
-    const id = setInterval(() => {
-      setImgIndex((i) => (i + 1) % IMAGES.length);
-    }, IMAGE_INTERVAL_MS);
-    return () => clearInterval(id);
-  }, [reducedMotion]);
-
-  useEffect(() => {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
     link.href =
-      'https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&family=Montserrat:wght@700;800&display=swap';
+      'https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&family=Montserrat:wght@700;800;900&display=swap';
     document.head.appendChild(link);
     return () => document.head.removeChild(link);
   }, []);
 
   const ease = reducedMotion ? 1 : progress;
-  const scale = 0.94 + ease * 0.16;
-  const imageZoom = 0.9 + ease * 0.3;
+  const scale = 0.94 + ease * 0.06;
 
+  // Desktop: words fly in from far off-screen and settle with a 10px gap
+  // The gap is handled by the flex `gap` property — no margin hacks needed.
   const leftTransform = reducedMotion
-    ? 'none'
-    : `translateX(calc(${(1 - ease) * -100}% - ${(1 - ease) * 60}vw))`;
+    ? 'translateX(0)'
+    : `translateX(${(1 - ease) * -110}vw)`;
   const rightTransform = reducedMotion
-    ? 'none'
-    : `translateX(calc(${(1 - ease) * 100}% + ${(1 - ease) * 60}vw))`;
+    ? 'translateX(0)'
+    : `translateX(${(1 - ease) * 110}vw)`;
 
+  // Mobile: same axis, larger travel distance
   const mobileLeftTransform = reducedMotion
-    ? 'none'
-    : `translateX(${(1 - ease) * -120}vw)`;
+    ? 'translateX(0)'
+    : `translateX(${(1 - ease) * -130}vw)`;
   const mobileRightTransform = reducedMotion
-    ? 'none'
-    : `translateX(${(1 - ease) * 120}vw)`;
-
-  const gapPx = 20;
-  const overlapMargin = `calc(${gapPx / 2}px - (clamp(150px, 16vw, 280px) / 2))`;
-
-  const imageBlock = (
-    <div
-      style={{
-        flex: '0 0 auto',
-        width: 'clamp(150px, 16vw, 280px)',
-        position: 'relative',
-        zIndex: 0,
-        transform: `scale(${imageZoom})`,
-        transition: reducedMotion ? 'none' : 'transform 450ms cubic-bezier(0.22, 1, 0.36, 1)',
-      }}
-    >
-      <div
-        style={{
-          width: '100%',
-          aspectRatio: '3 / 4',
-          borderRadius: 4,
-          overflow: 'hidden',
-          position: 'relative',
-          boxShadow: '0 30px 80px rgba(0,0,0,0.6)',
-          border: '1px solid rgba(236,230,216,0.15)',
-        }}
-      >
-        <img
-          key={imgIndex}
-          src={IMAGES[imgIndex].src}
-          alt={IMAGES[imgIndex].label}
-          className="gap-img"
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            position: 'absolute',
-            inset: 0,
-          }}
-        />
-      </div>
-      <div
-        style={{
-          marginTop: 12,
-          textAlign: 'center',
-          fontFamily: "'Inter', sans-serif",
-          fontSize: '0.7rem',
-          letterSpacing: '0.12em',
-          textTransform: 'uppercase',
-          color: '#B5652A',
-        }}
-      >
-        {IMAGES[imgIndex].label}
-      </div>
-    </div>
-  );
+    ? 'translateX(0)'
+    : `translateX(${(1 - ease) * 130}vw)`;
 
   return (
     <div
       ref={sectionRef}
-      style={{ height: '300vh', position: 'relative', background: '#0B0C0A' }}
+      style={{ height: '130vh', position: 'relative', background: progress === 1 ? '#F6FB37' : '#0B0C0A' }}
     >
-      <style>{`
-        @keyframes gapImgFade { from { opacity: 0; } to { opacity: 1; } }
-        .gap-img { animation: gapImgFade 900ms ease; }
-      `}</style>
-
       <div
         style={{
           position: 'sticky',
@@ -168,33 +83,7 @@ export default function GapHero() {
           overflow: 'hidden',
         }}
       >
-        {/* Header now lives inside the sticky container, so it stays pinned
-            in place for the whole scroll duration instead of scrolling
-            away before the "WE CLOSE THAT GAP" animation begins. */}
-        <header
-          style={{
-            padding: '7vh 6vw 3vh',
-            textAlign: 'left',
-            flex: '0 0 auto',
-          }}
-        >
-          <h1
-            style={{
-              margin: 0,
-              marginTop: '20px',
-              fontFamily: "'Anton', sans-serif",
-              color: '#ECE6D8',
-              fontSize: 'clamp(1.3rem, 4.4vw, 3.6rem)',
-              lineHeight: 1.05,
-              textTransform: 'uppercase',
-              whiteSpace: 'nowrap',
-              textAlign: 'center',
-            }}
-          >
-            WE BRIDGE THE GAP{' '}
-            <span style={{ color: '#eec20f' }}>BETWEEN</span>
-          </h1>
-        </header>
+        <header style={{ padding: '7vh 6vw 3vh', flex: '0 0 auto' }} />
 
         <div
           style={{
@@ -204,7 +93,7 @@ export default function GapHero() {
             justifyContent: 'center',
             alignItems: 'center',
             overflow: 'hidden',
-            padding: '0 6vw',
+            padding: '0',
             minHeight: 0,
           }}
         >
@@ -215,17 +104,14 @@ export default function GapHero() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 width: '100%',
+                gap: '6px',
                 transform: `scale(${scale})`,
                 transformOrigin: 'center center',
                 transition: reducedMotion ? 'none' : 'transform 450ms cubic-bezier(0.22, 1, 0.36, 1)',
               }}
             >
-              <div style={{ marginBottom: '4vh' }}>{imageBlock}</div>
-
               <div
                 style={{
-                  width: '100%',
-                  textAlign: 'center',
                   overflow: 'hidden',
                   transform: mobileLeftTransform,
                   transition: reducedMotion ? 'none' : 'transform 450ms cubic-bezier(0.22, 1, 0.36, 1)',
@@ -234,25 +120,22 @@ export default function GapHero() {
                 <div
                   style={{
                     fontFamily: "'Montserrat', sans-serif",
-                    fontWeight: 800,
-                    fontSize: 'clamp(2.2rem, 11vw, 3.2rem)',
-                    color: '#ECE6D8',
+                    fontWeight: 900,
+                    fontSize: 'clamp(3rem, 14vw, 5rem)',
+                    color: progress === 1 ? '#000' : '#ECE6D8',
                     lineHeight: 0.95,
-                    letterSpacing: '-0.01em',
+                    letterSpacing: '-0.02em',
                     textTransform: 'uppercase',
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  INDUSTRY
+                  LETS
                 </div>
               </div>
 
               <div
                 style={{
-                  width: '100%',
-                  textAlign: 'center',
                   overflow: 'hidden',
-                  marginTop: 4,
                   transform: mobileRightTransform,
                   transition: reducedMotion ? 'none' : 'transform 450ms cubic-bezier(0.22, 1, 0.36, 1)',
                 }}
@@ -260,105 +143,93 @@ export default function GapHero() {
                 <div
                   style={{
                     fontFamily: "'Montserrat', sans-serif",
-                    fontWeight: 800,
-                    fontSize: 'clamp(2.2rem, 11vw, 3.2rem)',
-                    color: '#ECE6D8',
+                    fontWeight: 900,
+                    fontSize: 'clamp(3rem, 14vw, 5rem)',
+                    color: progress === 1 ? '#000' : '#F6FB37',
                     lineHeight: 0.95,
-                    letterSpacing: '-0.01em',
+                    letterSpacing: '-0.02em',
                     textTransform: 'uppercase',
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  ACADEMIA
+                  BUILD
                 </div>
               </div>
             </div>
           ) : (
+            /*
+              Desktop layout: outer div is the scale + centering anchor.
+              Inner flex row holds both words with gap — translateX on each
+              word moves them relative to their natural flex position, so
+              centering is always preserved regardless of progress.
+            */
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 width: '100%',
-                maxWidth: 1600,
                 transform: `scale(${scale})`,
                 transformOrigin: 'center center',
                 transition: reducedMotion ? 'none' : 'transform 450ms cubic-bezier(0.22, 1, 0.36, 1)',
               }}
             >
-              {/* flex: 0 0 auto lets the box size to the text instead of a fixed
-                  width that was narrower than the rendered text at large font sizes. */}
+              {/* This inner row is the true layout container — centered as a unit */}
               <div
-                style={{
-                  flex: '0 0 auto',
-                  textAlign: 'right',
-                  transform: leftTransform,
-                  transition: reducedMotion ? 'none' : 'transform 450ms cubic-bezier(0.22, 1, 0.36, 1)',
-                  position: 'relative',
-                  zIndex: 1,
-                  marginRight: overlapMargin,
-                }}
-              >
+  style={{
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: '40px',
+    transform: 'translateX(45px)', // move right
+  }}
+>
                 <div
                   style={{
-                    fontFamily: "'Montserrat', sans-serif",
-                    fontWeight: 800,
-                    fontSize: 'clamp(2.3rem, 6.2vw, 5.5rem)',
-                    color: '#ECE6D8',
-                    lineHeight: 0.9,
-                    letterSpacing: '-0.01em',
-                    textTransform: 'uppercase',
-                    whiteSpace: 'nowrap',
+                    transform: leftTransform,
+                    transition: reducedMotion ? 'none' : 'transform 450ms cubic-bezier(0.22, 1, 0.36, 1)',
                   }}
                 >
-                  INDUSTRY
+                  <div
+                    style={{
+                      fontFamily: "'Montserrat', sans-serif",
+                      fontWeight: 900,
+                      fontSize: 'clamp(4rem, 10vw, 9rem)',
+                      color: progress === 1 ? '#000' : '#ffffff',
+                      lineHeight: 0.9,
+                      letterSpacing: '-0.03em',
+                      textTransform: 'uppercase',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    LET'S
+                  </div>
                 </div>
-              </div>
 
-              {imageBlock}
-
-              <div
-                style={{
-                  flex: '0 0 auto',
-                  textAlign: 'left',
-                  transform: rightTransform,
-                  transition: reducedMotion ? 'none' : 'transform 450ms cubic-bezier(0.22, 1, 0.36, 1)',
-                  position: 'relative',
-                  zIndex: 1,
-                  marginLeft: overlapMargin,
-                }}
-              >
                 <div
                   style={{
-                    fontFamily: "'Montserrat', sans-serif",
-                    fontWeight: 800,
-                    fontSize: 'clamp(2.3rem, 6.2vw, 5.5rem)',
-                    color: '#ECE6D8',
-                    lineHeight: 0.9,
-                    letterSpacing: '-0.01em',
-                    textTransform: 'uppercase',
-                    whiteSpace: 'nowrap',
+                    transform: rightTransform,
+                    transition: reducedMotion ? 'none' : 'transform 450ms cubic-bezier(0.22, 1, 0.36, 1)',
                   }}
                 >
-                  ACADEMIA
+                  <div
+                    style={{
+                      fontFamily: "'Montserrat', sans-serif",
+                      fontWeight: 900,
+                      fontSize: 'clamp(4rem, 10vw, 9rem)',
+                      color: progress === 1 ? '#000' : '#F6FB37',
+                      lineHeight: 0.9,
+                      letterSpacing: '-0.03em',
+                      textTransform: 'uppercase',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    BUILD
+                  </div>
                 </div>
               </div>
             </div>
           )}
-
-          <p
-            style={{
-              marginTop: '4vh',
-              maxWidth: 640,
-              textAlign: 'center',
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '1.05rem',
-              lineHeight: 1.6,
-              color: '#B8B2A2',
-            }}
-          >
-            Every great engineer starts somewhere. Hack The Core exists to give ambitious students the platform, mentorship, competition, and industry exposure they need to become exceptional developers.
-          </p>
         </div>
       </div>
     </div>

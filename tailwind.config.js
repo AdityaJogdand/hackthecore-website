@@ -2,7 +2,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        caveatBrush: ['"Caveat Brush"', 'cursive'],
+        caveatBrush: ['"Caveat Brush"', 'cursive','DrukTextWide'],
       },
     },
   },

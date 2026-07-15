@@ -11,6 +11,7 @@ import eventRoutes from "./routes/events.js";
 import partnershipRoutes from "./routes/partnerships.js";
 import authRoutes from "./routes/auth.js";
 
+
 const app = express();
 
 /* -------------------------------------------------------------------------- */
@@ -70,6 +71,7 @@ app.use("/api/registrations", registrationRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/partnerships", partnershipRoutes);
+
 
 /* -------------------------------------------------------------------------- */
 /*                              Admin Routes                                  */

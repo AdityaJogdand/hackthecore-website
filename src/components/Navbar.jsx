@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LogOut, User as UserIcon, Menu, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import black from "../assets/black.png";
+import black from "../assets/Logo-01.jpg";
 import white from "../assets/white.png";
 import { useAuth } from "../context/AuthContext";
 

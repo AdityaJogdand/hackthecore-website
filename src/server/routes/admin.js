@@ -57,7 +57,9 @@ export const requireAdmin = (req, res, next) => {
     return res.status(401).json({ message: "Unauthorized." });
   }
   try {
-    jwt.verify(authHeader.split(" ")[1], process.env.JWT_SECRET);
+    const decoded = jwt.verify(authHeader.split(" ")[1], process.env.JWT_SECRET);
+    // Attach admin info to request (username from env)
+    req.admin = { username: process.env.ADMIN_USERNAME };
     next();
   } catch {
     res.status(401).json({ message: "Token expired or invalid." });
