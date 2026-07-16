@@ -160,38 +160,6 @@ export default function BookACall() {
                             Schedule a brief call and let's explore how we can grow together.
                         </p>
 
-                        {/* key details */}
-                        <div style={{
-                            display: "flex", flexDirection: "column", gap: "1rem",
-                            borderLeft: `2px solid ${C.border}`,
-                            paddingLeft: "1.2rem",
-                            marginBottom: "2.5rem",
-                        }}>
-                            {[
-                                { label: "Duration", value: "20 minutes" },
-                                { label: "Format", value: "Video call or async" },
-                                { label: "Response", value: "Within 24 hours" },
-                            ].map(item => (
-                                <div key={item.label} style={{ display: "flex", gap: "0.6rem", alignItems: "baseline" }}>
-                                    <span style={{
-                                        fontFamily: "'Inter', sans-serif",
-                                        fontWeight: 500,
-                                        fontSize: "0.68rem",
-                                        letterSpacing: "0.08em",
-                                        textTransform: "uppercase",
-                                        color: C.inkMid,
-                                        minWidth: 72,
-                                    }}>{item.label}</span>
-                                    <span style={{
-                                        fontFamily: "'Inter', sans-serif",
-                                        fontWeight: 500,
-                                        fontSize: "0.88rem",
-                                        color: C.ink,
-                                    }}>{item.value}</span>
-                                </div>
-                            ))}
-                        </div>
-
                         <p style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,

@@ -3,8 +3,7 @@ import { useRef, useEffect } from "react";
 
 const ease = [0.22, 1, 0.36, 1];
 
-const description =
-    "Hackthecore is a technology-driven developer ecosystem that empowers students to learn, build, and innovate. We bridge the gap between student talent and industry through hackathons, communities, and real-world opportunities.";
+const description = "Hackthecore is a technology-driven developer ecosystem empowering students to learn, build, and innovate through hackathons, community, and real-world opportunities."
 
 const STAGE = {
     waveExitStart: 0.25,
@@ -15,7 +14,7 @@ const STAGE = {
     descEnd: 0.85,
 };
 
-const WAVE_PATH_D = `
+const WAVE_PATH_DESKTOP = `
     M -50 300
     C 60 -80, 210 -120, 320 190
     C 400 320, 500 340, 590 210
@@ -23,6 +22,192 @@ const WAVE_PATH_D = `
     C 970 260, 1060 300, 1140 190
     C 1190 130, 1220 150, 1250 210
 `;
+
+// Bold diagonal slash — enters top-left, sweeps through center, exits bottom-right
+const WAVE_PATH_MOBILE = `
+    M -60 80
+    C 40 -60, 180 -40, 260 180
+    C 320 320, 360 420, 460 380
+    C 540 340, 580 260, 660 300
+    C 720 340, 740 420, 800 460
+`;
+
+const DESC_CHUNKS = (() => {
+    const words = description.split(" ");
+    const chunks = [];
+    for (let i = 0; i < words.length; i += 2) {
+        chunks.push(words.slice(i, i + 2).join(" "));
+    }
+    return chunks;
+})();
+
+function DescChunk({ chunk, scrollYProgress, start, end }) {
+    const blurPx = useTransform(scrollYProgress, [start, end], [10, 0]);
+    const filter = useTransform(blurPx, (b) => `blur(${b}px)`);
+
+    return (
+        <motion.span
+            style={{ filter }}
+            className="inline-block mr-[0.35em] will-change-[filter]"
+        >
+            {chunk}
+        </motion.span>
+    );
+}
+
+function AnimatedHero({ scrollYProgress }) {
+    const drawProgress = useMotionValue(0);
+    useEffect(() => {
+        const controls = animate(drawProgress, 1, { duration: 1.6, ease });
+        return () => controls.stop();
+    }, []);
+
+    const exitProgress = useTransform(
+        scrollYProgress,
+        [STAGE.waveExitStart, STAGE.waveExitEnd],
+        [1, 0]
+    );
+    const pathLength = useTransform(
+        [drawProgress, exitProgress],
+        ([d, e]) => Math.min(d, e)
+    );
+
+    const bgColor = useTransform(
+        scrollYProgress,
+        [STAGE.bgStart, STAGE.bgEnd],
+        ["#FFFFFF", "#0C0C0D"]
+    );
+    const headingColor = useTransform(
+        scrollYProgress,
+        [STAGE.bgStart, STAGE.bgEnd],
+        ["#0a0a0a", "#FFFFFF"]
+    );
+
+    const headingOpacity = useTransform(
+        [drawProgress, scrollYProgress],
+        ([d, s]) => {
+            const entrance = d;
+            const exitRange = STAGE.descStart - STAGE.waveExitStart;
+            const exitT = Math.max(0, Math.min(1, (s - STAGE.waveExitStart) / exitRange));
+            return Math.min(entrance, 1 - exitT);
+        }
+    );
+
+    const headingY = useTransform(
+        [drawProgress, scrollYProgress],
+        ([d, s]) => {
+            const entranceY = (1 - d) * 30;
+            const exitRange = STAGE.descStart - STAGE.waveExitStart;
+            const exitT = Math.max(0, Math.min(1, (s - STAGE.waveExitStart) / exitRange));
+            return entranceY + exitT * -40;
+        }
+    );
+
+    const descY = useTransform(scrollYProgress, [STAGE.descStart, STAGE.descEnd], [40, 0]);
+    const waveOpacity = useTransform(
+        scrollYProgress,
+        [STAGE.waveExitStart, STAGE.waveExitEnd - 0.05, STAGE.waveExitEnd],
+        [1, 1, 0]
+    );
+
+    const chunkStep = (STAGE.descEnd - STAGE.descStart) / DESC_CHUNKS.length;
+    const chunkOverlap = chunkStep * 0.6;
+    const descVisible = useTransform(scrollYProgress, (v) => (v < STAGE.descStart ? 0 : 1));
+
+    return (
+        <motion.div style={{ backgroundColor: bgColor }} className="sticky top-0 h-screen w-full overflow-hidden">
+
+            {/* Desktop wave */}
+            <svg
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 w-full h-full z-20 hidden md:block"
+                viewBox="0 -180 1200 680"
+                preserveAspectRatio="xMidYMid slice"
+            >
+                <defs>
+                    <linearGradient id="ribbonGradient" x1="0" y1="0" x2="1200" y2="0" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stopColor="#FEF636" />
+                        <stop offset="100%" stopColor="#FEF636" />
+                    </linearGradient>
+                </defs>
+                <motion.path
+                    style={{ pathLength, opacity: waveOpacity }}
+                    d={WAVE_PATH_DESKTOP}
+                    stroke="url(#ribbonGradient)"
+                    strokeWidth="160"
+                    strokeLinecap="round"
+                    fill="none"
+                />
+            </svg>
+
+            {/* Mobile wave — diagonal slash, taller viewBox */}
+            <svg
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 w-full h-full z-20 block md:hidden"
+                viewBox="-80 -100 560 900"
+                preserveAspectRatio="xMidYMid slice"
+            >
+                <motion.path
+                    style={{ pathLength, opacity: waveOpacity }}
+                    d={WAVE_PATH_MOBILE}
+                    stroke="#FEF636"
+                    strokeWidth="150"
+                    strokeLinecap="round"
+                    fill="none"
+                />
+            </svg>
+
+            {/* Heading */}
+            <div className="relative z-40 flex h-full max-w-[1200px] mx-auto flex-col items-center justify-center text-center px-4 sm:px-6">
+                <motion.h1
+                    style={{
+                        color: headingColor,
+                        y: headingY,
+                        opacity: headingOpacity,
+                    }}
+                    className="font-druk font-black uppercase tracking-tight leading-none text-[clamp(2.8rem,7vw,7rem)]"
+                >
+                    More Than Just Hackathons
+                </motion.h1>
+            </div>
+
+            {/* Description overlay */}
+            <div className="absolute inset-0 flex items-center justify-center z-40 px-4 sm:px-8">
+                <div className="flex flex-col items-center w-full">
+                    <motion.div
+                        style={{ opacity: descVisible, y: descY }}
+                        className="mb-3 sm:mb-4 flex items-center gap-3 sm:gap-4 text-[#fef636]/70"
+                    >
+                        <span className="h-px w-8 sm:w-16 bg-[#fef636]/70" />
+                        <span className="font-Giest font-medium tracking-[0.2em] sm:tracking-[0.3em] uppercase text-xs sm:text-base">
+                            About Us
+                        </span>
+                        <span className="h-px w-8 sm:w-16 bg-[#fef636]/70" />
+                    </motion.div>
+
+                    <motion.p
+                        style={{ opacity: descVisible, y: descY }}
+                        className="max-w-xs sm:max-w-2xl md:max-w-5xl lg:max-w-6xl text-center text-[#fef636] font-Giest font-medium text-[clamp(1.45rem,3.5vw,3.5rem)] leading-tight"
+                    >
+                        {DESC_CHUNKS.map((chunk, i) => {
+                            const start = STAGE.descStart + i * chunkStep;
+                            const end = Math.min(STAGE.descEnd, start + chunkStep + chunkOverlap);
+                            return (
+                                <DescChunk
+                                    key={i}
+                                    chunk={chunk}
+                                    scrollYProgress={scrollYProgress}
+                                    start={start}
+                                    end={end}
+                                />
+                            );
+                        })}
+                    </motion.p>
+                </div>
+            </div>
+        </motion.div>
+    );
+}
 
 export default function SenseHero() {
     const containerRef = useRef(null);
@@ -32,141 +217,9 @@ export default function SenseHero() {
         offset: ["start start", "end end"],
     });
 
-    const drawProgress = useMotionValue(0);
-    useEffect(() => {
-        const controls = animate(drawProgress, 1, { duration: 1.6, ease });
-        return () => controls.stop();
-    }, []);
-
-    const exitProgress = useTransform(scrollYProgress, [STAGE.waveExitStart, STAGE.waveExitEnd], [1, 0]);
-    const pathLength = useTransform([drawProgress, exitProgress], ([d, e]) => Math.min(d, e));
-
-    const bgColor = useTransform(scrollYProgress, [STAGE.bgStart, STAGE.bgEnd], ["#FFFFFF", "#0C0C0D"]);
-    const headingColor = useTransform(scrollYProgress, [STAGE.bgStart, STAGE.bgEnd], ["#0a0a0a", "#FFFFFF"]);
-
-    // FIX: compose entrance (drawProgress 0→1) and exit (scroll-driven) into a single
-    // MotionValue so there is no initial/animate fighting with style on the same property.
-    const headingOpacity = useTransform(
-        [drawProgress, scrollYProgress],
-        ([d, s]) => {
-            // Entrance: 0→1 as drawProgress goes 0→1 on mount (1.6s animation)
-            const entrance = d;
-            // Exit: 1→0 between waveExitStart and descStart
-            const exitRange = STAGE.descStart - STAGE.waveExitStart;
-            const exitT = Math.max(0, Math.min(1, (s - STAGE.waveExitStart) / exitRange));
-            const exit = 1 - exitT;
-            return Math.min(entrance, exit);
-        }
-    );
-
-    const headingY = useTransform(
-        [drawProgress, scrollYProgress],
-        ([d, s]) => {
-            // Entrance: slides up from 30px as drawProgress animates in
-            const entranceY = (1 - d) * 30;
-            // Exit: moves up to -40px between waveExitStart and descStart
-            const exitRange = STAGE.descStart - STAGE.waveExitStart;
-            const exitT = Math.max(0, Math.min(1, (s - STAGE.waveExitStart) / exitRange));
-            const exitY = exitT * -40;
-            return entranceY + exitY;
-        }
-    );
-
-    const descOpacity = useTransform(scrollYProgress, [STAGE.descStart, STAGE.descEnd], [0, 1]);
-    const descY = useTransform(scrollYProgress, [STAGE.descStart, STAGE.descEnd], [40, 0]);
-    const descScale = useTransform(scrollYProgress, [STAGE.descStart, STAGE.descEnd], [0.85, 1]);
-
-    const waveOpacity = useTransform(
-        scrollYProgress,
-        [STAGE.waveExitStart, STAGE.waveExitEnd - 0.05, STAGE.waveExitEnd],
-        [1, 1, 0]
-    );
-
     return (
         <section ref={containerRef} className="relative h-[300vh]">
-            <motion.div
-                style={{ backgroundColor: bgColor }}
-                className="sticky top-0 h-screen w-full overflow-hidden"
-            >
-                {/* --- Desktop: scroll-driven sequence --- */}
-                <div className="relative hidden md:block h-full w-full">
-                    <svg
-                        aria-hidden="true"
-                        className="pointer-events-none absolute inset-0 w-full h-full z-20"
-                        viewBox="0 -180 1200 680"
-                        preserveAspectRatio="none"
-                    >
-                        <defs>
-                            <linearGradient id="ribbonGradient" x1="0" y1="0" x2="1200" y2="0" gradientUnits="userSpaceOnUse">
-                                <stop offset="0%" stopColor="#FEF636" />
-                                <stop offset="50%" stopColor="#FEF636" />
-                                <stop offset="100%" stopColor="#FEF636" />
-                            </linearGradient>
-                        </defs>
-                        <motion.path
-                            style={{
-                                pathLength,
-                                opacity: waveOpacity,
-                            }}
-                            d={WAVE_PATH_D}
-                            stroke="url(#ribbonGradient)"
-                            strokeWidth="160"
-                            strokeLinecap="round"
-                            fill="none"
-                        />
-                    </svg>
-
-                    <div className="relative z-40 flex h-full max-w-[1200px] mx-auto flex-col items-center justify-center text-center px-6">
-                        {/*
-                            FIX: Removed initial={{ opacity: 0, y: 30 }} and animate={{ opacity: 1, y: 0 }}.
-                            Those declarative props were fighting the style MotionValues for the same
-                            properties. In Framer Motion, style MotionValues take precedence over
-                            animate, so animate({ opacity: 1 }) never won against style={{ opacity }},
-                            leaving the element stuck at initial opacity: 0 forever.
-                            The entrance is now handled entirely inside headingOpacity / headingY above.
-                        */}
-                        <motion.h1
-                            style={{
-                                color: headingColor,
-                                y: headingY,
-                                opacity: headingOpacity,
-                            }}
-                            className="font-druk font-black uppercase tracking-tight leading-none text-[clamp(3.5rem,6vw,7rem)]"
-                        >
-                            More Than Just Hackathons
-                        </motion.h1>
-
-                        <div className="absolute inset-0 flex items-center justify-center z-40 px-8">
-                            <motion.p
-                                style={{
-                                    opacity: descOpacity,
-                                    y: descY,
-                                }}
-                                className="max-w-6xl text-center text-[#fef636] font-druk font-medium text-[clamp(2rem,3vw,3.5rem)] leading-tight"
-                            >
-                                {description}
-                            </motion.p>
-                        </div>
-                    </div>
-                </div>
-
-                {/* --- Mobile fallback: simple stacked reveal, no scroll-jacked wave --- */}
-                <div className="relative z-10 flex h-full flex-col items-center justify-center text-center px-6 md:hidden">
-                    <h1 className="font-druk font-black uppercase tracking-tight leading-none text-[clamp(3rem,14vw,4.5rem)] text-gray-950">
-                        More Than Just Hackathons
-                    </h1>
-
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, amount: 0.4 }}
-                        transition={{ duration: 0.7, ease, delay: 0.4 }}
-                        className="mt-4 max-w-md text-lg text-black-700"
-                    >
-                        {description}
-                    </motion.p>
-                </div>
-            </motion.div>
+            <AnimatedHero scrollYProgress={scrollYProgress} />
         </section>
     );
 }

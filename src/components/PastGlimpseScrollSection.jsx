@@ -56,6 +56,7 @@ const events = [
                 eyebrow: "Closing",
                 title: "Celebrating the wins",
             },
+            
         ],
     },
     // {

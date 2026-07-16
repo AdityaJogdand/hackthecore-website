@@ -167,7 +167,7 @@ export default function MissionSection() {
               Our Mission
             </h2>
 
-            <p className="max-w-[320px] sm:max-w-3xl md:max-w-4xl mt-6 sm:mt-8 text-white font-bold text-[1.15rem] sm:text-[1.55rem] md:text-[1.8rem] leading-tight">
+            <p className="max-w-[320px] sm:max-w-3xl md:max-w-4xl mt-6 sm:mt-8 text-white text-[1.15rem] sm:text-[1.55rem] md:text-[1.8rem] leading-tight">
               Building a thriving{" "}
               <span className="text-[#FEF636] font-['Caveat'] text-[2em]">ecosystem</span>{" "}
               where student talent meets{" "}

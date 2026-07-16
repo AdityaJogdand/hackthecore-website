@@ -8,39 +8,39 @@ gsap.registerPlugin(ScrollTrigger);
 const ease = [0.16, 1, 0.3, 1];
 
 const coreValues = [
-    {
-        title: "Innovation",
-        copy: "Encouraging creativity and solving real-world problems through technology.",
-        accent: "#F4DD0E",
-        seed: "innovation-circuit",
-    },
-    {
-        title: "Community First",
-        copy: "Building meaningful relationships and creating a supportive environment where everyone grows together.",
-        accent: "#6EE7B7",
-        seed: "community-hands",
-    },
-    {
-        title: "Excellence",
-        copy: "Recognizing effort, quality, and genuine talent over popularity or participation alone.",
-        accent: "#93C5FD",
-        seed: "merit-summit",
-    },
-    {
-        title: "Collaboration",
-        copy: "Bringing students, mentors, and industry leaders together to create greater impact.",
-        accent: "#F4A6C1",
-        seed: "collaboration-table",
-    },
-    {
-        title: "Growth",
-        copy: "Promoting continuous learning, experimentation, and personal development.",
-        accent: "#C4B5FD",
-        seed: "growth-path",
-    },
+  {
+    title: "Innovation",
+    copy: "Encouraging creativity and solving real-world problems through technology.",
+    accent: "#1E3A8A", // Dark Gold
+    seed: "innovation-circuit",
+  },
+  {
+    title: "Community First",
+    copy: "Building meaningful relationships and creating a supportive environment",
+    accent: "#166534", // Dark Teal
+    seed: "community-hands",
+  },
+  {
+    title: "Excellence",
+    copy: "Recognizing effort, quality, and genuine talent over popularity or participation alone.",
+    accent: "#881337", // Royal Blue
+    seed: "merit-summit",
+  },
+  {
+    title: "Collaboration",
+    copy: "Bringing students, mentors, and industry leaders together to create greater impact.",
+    accent: "#312E81", // Deep Rose
+    seed: "collaboration-table",
+  },
+  {
+    title: "Growth",
+    copy: "Promoting continuous learning, experimentation, and personal development.",
+    accent: "#5B3A29    ", // Deep Violet
+    seed: "growth-path",
+  },
 ];
 
-const INK = "#0B3D3B"; // deep teal — panel/scrim color for the reveal section
+const INK = "#fef636";
 const PAPER = "#FAFAF8";
 
 function CoreValuesReveal() {
@@ -149,12 +149,12 @@ function CoreValuesReveal() {
                     >
                         <span
                             className="mb-2 sm:mb-4 font-mono text-[0.65rem] sm:text-[0.75rem] font-bold uppercase tracking-[0.3em]"
-                            style={{ color: `${PAPER}99` }}
+                            style={{ color: `#000000` }}
                         >
                             What we build on
                         </span>
 
-                        <ul className="flex w-full flex-col gap-0 divide-y divide-white/10">
+                        <ul className="flex w-full flex-col gap-0 divide-y divide-black/20">
                             {coreValues.map((value, i) => (
                                 <li
                                     key={value.title}
@@ -164,10 +164,10 @@ function CoreValuesReveal() {
                                     className="group relative flex cursor-pointer flex-col items-center justify-center gap-1 py-1 sm:py-1.5 lg:cursor-default lg:gap-0 lg:py-0.5"
                                 >
                                     <h3
-                                        className="font-['Bebas_Neue',sans-serif] uppercase leading-[0.86] tracking-[-0.01em] text-center transition-colors duration-300"
+                                        className="font-['Bebas_Neue',sans-serif] uppercase  leading-[0.86] tracking-[-0.01em] text-center transition-colors duration-300"
                                         style={{
                                             fontSize: "clamp(2.5rem, min(13vw, 12vh), 11rem)",
-                                            color: hovered === i ? value.accent : PAPER,
+                                            color: hovered === i ? value.accent : "#000000",
                                         }}
                                     >
                                         {value.title}
@@ -177,7 +177,7 @@ function CoreValuesReveal() {
                                     <p
                                         className="block max-w-[20rem] overflow-hidden text-center text-sm font-medium leading-relaxed transition-all duration-300 lg:hidden"
                                         style={{
-                                            color: `${PAPER}CC`,
+                                            color: `#000000`,
                                             maxHeight: hovered === i ? "6rem" : "0px",
                                             opacity: hovered === i ? 1 : 0,
                                         }}
@@ -189,7 +189,7 @@ function CoreValuesReveal() {
                                     <p
                                         className="pointer-events-none absolute right-4 sm:right-10 lg:right-16 hidden max-w-[24rem] text-right text-base sm:text-lg font-medium leading-relaxed lg:block transition-opacity duration-300"
                                         style={{
-                                            color: `${PAPER}CC`,
+                                            color: `#000000`,
                                             opacity: hovered === i ? 1 : 0,
                                         }}
                                     >
