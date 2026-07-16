@@ -32,25 +32,31 @@ const WAVE_PATH_MOBILE = `
     C 720 340, 740 420, 800 460
 `;
 
-const DESC_CHUNKS = (() => {
-    const words = description.split(" ");
-    const chunks = [];
-    for (let i = 0; i < words.length; i += 2) {
-        chunks.push(words.slice(i, i + 2).join(" "));
-    }
-    return chunks;
-})();
+// Updated to split into single words instead of word chunks
+const DESC_WORDS = description.split(" ");
 
-function DescChunk({ chunk, scrollYProgress, start, end }) {
-    const blurPx = useTransform(scrollYProgress, [start, end], [10, 0]);
+function DescWord({ word, scrollYProgress, start, end }) {
+    const blurPx = useTransform(scrollYProgress, [start, end], [20, 0]);
     const filter = useTransform(blurPx, (b) => `blur(${b}px)`);
+
+    const opacity = useTransform(scrollYProgress, [start, end], [0, 1]);
+
+    // Move upward
+    const y = useTransform(scrollYProgress, [start, end], [30, 0]);
+
+    // Pop effect
+    const scale = useTransform(scrollYProgress, [start, end], [0.85, 1]);
 
     return (
         <motion.span
-            style={{ filter }}
-            className="inline-block mr-[0.35em] will-change-[filter]"
+            style={{
+                filter,
+                y,
+                scale,
+            }}
+            className="inline-block mr-[0.25em] origin-bottom"
         >
-            {chunk}
+            {word}
         </motion.span>
     );
 }
@@ -110,8 +116,9 @@ function AnimatedHero({ scrollYProgress }) {
         [1, 1, 0]
     );
 
-    const chunkStep = (STAGE.descEnd - STAGE.descStart) / DESC_CHUNKS.length;
-    const chunkOverlap = chunkStep * 0.6;
+    // Calculated based on single word length now
+    const wordStep = (STAGE.descEnd - STAGE.descStart) / DESC_WORDS.length;
+    const wordOverlap = 0;
     const descVisible = useTransform(scrollYProgress, (v) => (v < STAGE.descStart ? 0 : 1));
 
     return (
@@ -176,7 +183,7 @@ function AnimatedHero({ scrollYProgress }) {
                 <div className="flex flex-col items-center w-full">
                     <motion.div
                         style={{ opacity: descVisible, y: descY }}
-                        className="mb-3 sm:mb-4 flex items-center gap-3 sm:gap-4 text-[#fef636]/70"
+                        className="mb-3 sm:mb-4 flex items-center gap-3 sm:gap-4 text-[#ffffff]/70"
                     >
                         <span className="h-px w-8 sm:w-16 bg-[#fef636]/70" />
                         <span className="font-Giest font-medium tracking-[0.2em] sm:tracking-[0.3em] uppercase text-xs sm:text-base">
@@ -187,15 +194,15 @@ function AnimatedHero({ scrollYProgress }) {
 
                     <motion.p
                         style={{ opacity: descVisible, y: descY }}
-                        className="max-w-xs sm:max-w-2xl md:max-w-5xl lg:max-w-6xl text-center text-[#fef636] font-Giest font-medium text-[clamp(1.45rem,3.5vw,3.5rem)] leading-tight"
+                        className="max-w-xs sm:max-w-2xl md:max-w-5xl lg:max-w-6xl text-center text-[#FFFFFF] font-Giest font-medium text-[clamp(1.45rem,3.5vw,3.5rem)] leading-tight"
                     >
-                        {DESC_CHUNKS.map((chunk, i) => {
-                            const start = STAGE.descStart + i * chunkStep;
-                            const end = Math.min(STAGE.descEnd, start + chunkStep + chunkOverlap);
+                        {DESC_WORDS.map((word, i) => {
+                            const start = STAGE.descStart + i * wordStep;
+                            const end = Math.min(STAGE.descEnd, start + wordStep + wordOverlap);
                             return (
-                                <DescChunk
+                                <DescWord
                                     key={i}
-                                    chunk={chunk}
+                                    word={word}
                                     scrollYProgress={scrollYProgress}
                                     start={start}
                                     end={end}

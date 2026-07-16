@@ -60,7 +60,6 @@ const Navbar = () => {
     { label: "Home", to: "/" },
     { label: "About", to: "/aboutpage" },
     { label: "Events", to: "/events" },
-    { label: "Merch", to: "/merchstore" },
     { label: "Showcase", to: "/showcase" },
   ];
 
@@ -218,7 +217,7 @@ const Navbar = () => {
           className="relative overflow-hidden rounded-full pointer-events-auto"
           style={{
             height: 64,
-            width: hovered ? 640 : 64,
+            width: hovered ? 510 : 64,
             background: "#0C0C0D",
             pointerEvents: scrolled ? "auto" : "none",
             transition: `width 450ms ${smoothEase}`,
