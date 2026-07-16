@@ -12,15 +12,15 @@
 import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import teamVideo from "../assets/IMG_2379.MOV";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-const COLS = 8;
-const ROWS = 5;
-const TOTAL_DOTS = COLS * ROWS;
+gsap.registerPlugin(ScrollTrigger);
+
 
 const STATS = [
   {
     id: "stat-1",
-    value: 5000,
+    value: 4800,
     suffix: "+",
     label: "Students and developers engaged",
     pct: 0.72,
@@ -34,7 +34,7 @@ const STATS = [
   },
   {
     id: "stat-3",
-    value: 500,
+    value: 240,
     suffix: "+",
     label: "Projects built",
     pct: 0.88,
@@ -43,37 +43,11 @@ const STATS = [
 
 const SG = "'Space Grotesk', sans-serif";
 
-function DotGrid({ pct, id }) {
-  const filled = Math.round(pct * TOTAL_DOTS);
-  return (
-    <div
-      aria-hidden="true"
-      style={{
-        display: "grid",
-        gridTemplateColumns: `repeat(${COLS}, 10px)`,
-        gap: "6px",
-      }}
-    >
-      {Array.from({ length: TOTAL_DOTS }).map((_, i) => (
-        <div
-          key={`${id}-dot-${i}`}
-          style={{
-            width: "10px",
-            height: "10px",
-            borderRadius: "50%",
-            background: i < filled ? "#000000" : "rgba(255,255,255,0.15)",
-            opacity: i < filled ? 1 : 0.5,
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
 export default function StatsReveal({
   videoSrc = teamVideo,
   videoLabel = "Two colleagues reviewing work together on a laptop",
 }) {
+  const sectionRef = useRef(null);
   const videoWrapRef = useRef(null);
   const panelRefs = useRef([]);
   const numberRefs = useRef([]);
@@ -91,57 +65,84 @@ export default function StatsReveal({
 
     // Make sure all refs are available
     const panels = panelRefs.current.filter(Boolean);
-    const numbers = numberRefs.current.filter(Boolean);
 
     if (panels.length === 0) return;
 
     // Set initial state manually so cards are invisible before animation
     gsap.set(panels, { opacity: 0, y: 20 });
     gsap.set(videoWrapRef.current, { opacity: 0, y: 24 });
+    // Reset numbers to 0 so the count-up has somewhere to animate from
+    numberRefs.current.forEach((el, i) => {
+      if (el) el.textContent = "0" + STATS[i].suffix;
+    });
 
-    const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+    let tl;
+    let counterTweens = [];
 
-    tl.to(videoWrapRef.current, {
-      opacity: 1,
-      y: 0,
-      duration: 0.6,
-    }).to(
-      panels,
-      { opacity: 1, y: 0, duration: 0.5, stagger: 0.12 },
-      "-=0.25"
-    );
+    // Only kick off the reveal + count-up once the section scrolls into view
+    const st = ScrollTrigger.create({
+      trigger: sectionRef.current,
+      start: "top 80%", // fires when the section is ~80% down the viewport
+      once: true,
+      onEnter: () => {
+        tl = gsap.timeline({ defaults: { ease: "power2.out" } });
 
-    // Counter animations
-    STATS.forEach((stat, i) => {
-      const numberEl = numberRefs.current[i];
-      if (!numberEl) return;
-      const counter = { val: 0 };
-      gsap.to(counter, {
-        val: stat.value,
-        duration: 1.2,
-        delay: 0.4 + i * 0.12,
-        ease: "power1.out",
-        onUpdate() {
-          numberEl.textContent =
-            Math.round(counter.val).toLocaleString() + stat.suffix;
-        },
-        onComplete() {
-          numberEl.textContent = stat.value.toLocaleString() + stat.suffix;
-        },
-      });
+        tl.to(videoWrapRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+        }).to(
+          panels,
+          { opacity: 1, y: 0, duration: 0.5, stagger: 0.12 },
+          "-=0.25"
+        );
+
+        // Counter animations, now gated behind viewport entry
+        STATS.forEach((stat, i) => {
+          const numberEl = numberRefs.current[i];
+          if (!numberEl) return;
+          const counter = { val: 0 };
+          const tween = gsap.to(counter, {
+            val: stat.value,
+            duration: 1.8,
+            delay: 0.4 + i * 0.12,
+            ease: "power1.out",
+            onUpdate() {
+              numberEl.textContent =
+                Math.round(counter.val).toLocaleString() + stat.suffix;
+            },
+            onComplete() {
+              numberEl.textContent = stat.value.toLocaleString() + stat.suffix;
+            },
+          });
+          counterTweens.push(tween);
+        });
+      },
     });
 
     return () => {
-      tl.kill();
+      st.kill();
+      if (tl) tl.kill();
+      counterTweens.forEach((t) => t.kill());
     };
   }, []);
 
   return (
     <section
+      ref={sectionRef}
       style={{ fontFamily: SG }}
       className="relative w-full bg-white py-24 md:py-32 overflow-hidden"
     >
+      {/* Section header */}
+      <h1
+        style={{ fontFamily: "'Sansplomb', sans-serif" }}
+        className="w-[95%] mx-auto text-center text-6xl md:text-7xl lg:text-9xl font-bold text-black leading-tight tracking-tight mb-10"
+      >
+        What is Hackup
+      </h1>
+
 <div className="relative w-[95%] mx-auto mt-8 flex flex-col items-center gap-10 pb-16 bg-black rounded-[32px] overflow-hidden">
+
         {/* Video */}
         <div
           ref={videoWrapRef}
@@ -173,24 +174,19 @@ export default function StatsReveal({
 
               {/* Animated number */}
               <div className="relative z-10 mt-8">
-                <p className="text-xs uppercase tracking-[0.3em] text-black/40">
-                  Statistics
-                </p>
                 <h2
                   ref={(el) => { numberRefs.current[i] = el; }}
                   className="mt-3 text-6xl font-bold text-black leading-none"
                 >
                   0{stat.suffix}
                 </h2>
-                <p className="mt-4 text-black/60 leading-7">
+                <p className="mt-4 text-xl text-black/60 leading-7">
                   {stat.label}
                 </p>
               </div>
 
               {/* Dot grid */}
-              <div className="relative z-10 mt-8 overflow-hidden">
-                <DotGrid pct={stat.pct} id={stat.id} />
-              </div>
+
             </div>
           ))}
         </div>

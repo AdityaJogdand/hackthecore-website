@@ -1,150 +1,172 @@
-import { motion } from "framer-motion";
-import aboutImage1 from "../assets/aboutus.jpeg";
-import aboutImage2 from "../assets/SFM_5081.JPG";
-import aboutImage3 from "../assets/SFM_5083.JPG";
+import { motion, useScroll, useTransform, useMotionValue, animate } from "framer-motion";
+import { useRef, useEffect } from "react";
 
 const ease = [0.22, 1, 0.36, 1];
 
-const photos = [
-    { src: aboutImage2, alt: "Hack The Core community" },
-    { src: aboutImage1, alt: "Hack The Core community" },
-    { src: aboutImage3, alt: "Hack The Core community" },
-];
+const description =
+    "Hackthecore is a technology-driven developer ecosystem that empowers students to learn, build, and innovate. We bridge the gap between student talent and industry through hackathons, communities, and real-world opportunities.";
 
-// Script accent font — make sure Caveat is linked in index.html:
-// <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap" rel="stylesheet">
-const scriptFont = { fontFamily: "'Caveat', cursive" };
+const STAGE = {
+    waveExitStart: 0.25,
+    waveExitEnd: 0.55,
+    bgStart: 0.3,
+    bgEnd: 0.62,
+    descStart: 0.62,
+    descEnd: 0.85,
+};
 
-export default function AboutIntro() {
+const WAVE_PATH_D = `
+    M -50 300
+    C 60 -80, 210 -120, 320 190
+    C 400 320, 500 340, 590 210
+    C 660 100, 760 30, 880 160
+    C 970 260, 1060 300, 1140 190
+    C 1190 130, 1220 150, 1250 210
+`;
+
+export default function SenseHero() {
+    const containerRef = useRef(null);
+
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start start", "end end"],
+    });
+
+    const drawProgress = useMotionValue(0);
+    useEffect(() => {
+        const controls = animate(drawProgress, 1, { duration: 1.6, ease });
+        return () => controls.stop();
+    }, []);
+
+    const exitProgress = useTransform(scrollYProgress, [STAGE.waveExitStart, STAGE.waveExitEnd], [1, 0]);
+    const pathLength = useTransform([drawProgress, exitProgress], ([d, e]) => Math.min(d, e));
+
+    const bgColor = useTransform(scrollYProgress, [STAGE.bgStart, STAGE.bgEnd], ["#FFFFFF", "#0C0C0D"]);
+    const headingColor = useTransform(scrollYProgress, [STAGE.bgStart, STAGE.bgEnd], ["#0a0a0a", "#FFFFFF"]);
+
+    // FIX: compose entrance (drawProgress 0→1) and exit (scroll-driven) into a single
+    // MotionValue so there is no initial/animate fighting with style on the same property.
+    const headingOpacity = useTransform(
+        [drawProgress, scrollYProgress],
+        ([d, s]) => {
+            // Entrance: 0→1 as drawProgress goes 0→1 on mount (1.6s animation)
+            const entrance = d;
+            // Exit: 1→0 between waveExitStart and descStart
+            const exitRange = STAGE.descStart - STAGE.waveExitStart;
+            const exitT = Math.max(0, Math.min(1, (s - STAGE.waveExitStart) / exitRange));
+            const exit = 1 - exitT;
+            return Math.min(entrance, exit);
+        }
+    );
+
+    const headingY = useTransform(
+        [drawProgress, scrollYProgress],
+        ([d, s]) => {
+            // Entrance: slides up from 30px as drawProgress animates in
+            const entranceY = (1 - d) * 30;
+            // Exit: moves up to -40px between waveExitStart and descStart
+            const exitRange = STAGE.descStart - STAGE.waveExitStart;
+            const exitT = Math.max(0, Math.min(1, (s - STAGE.waveExitStart) / exitRange));
+            const exitY = exitT * -40;
+            return entranceY + exitY;
+        }
+    );
+
+    const descOpacity = useTransform(scrollYProgress, [STAGE.descStart, STAGE.descEnd], [0, 1]);
+    const descY = useTransform(scrollYProgress, [STAGE.descStart, STAGE.descEnd], [40, 0]);
+    const descScale = useTransform(scrollYProgress, [STAGE.descStart, STAGE.descEnd], [0.85, 1]);
+
+    const waveOpacity = useTransform(
+        scrollYProgress,
+        [STAGE.waveExitStart, STAGE.waveExitEnd - 0.05, STAGE.waveExitEnd],
+        [1, 1, 0]
+    );
+
     return (
-        <section
-            id="about-scroll"
-            className="relative overflow-hidden bg-[#FAFAF8] py-24 lg:py-32 px-6 md:px-12 lg:px-20"
-        >
-            {/* --- Background texture layer (no gradients, no glows) --- */}
-            <div className="pointer-events-none absolute inset-0 z-0">
-
-                {/* fine dot grid */}
-                <svg className="absolute inset-0 w-full h-full opacity-[0.5]" xmlns="http://www.w3.org/2000/svg">
-                    <pattern id="aboutDotGrid" x="0" y="0" width="28" height="28" patternUnits="userSpaceOnUse">
-                        <circle cx="1.4" cy="1.4" r="1.4" fill="#0a0a0a" fillOpacity="0.07" />
-                    </pattern>
-                    <rect width="100%" height="100%" fill="url(#aboutDotGrid)" />
-                </svg>
-
-                {/* large oversized outline wordmark, sits behind content */}
-                <span
-                    aria-hidden="true"
-                    className="absolute -bottom-6 left-1/2 -translate-x-1/2 select-none whitespace-nowrap font-sans font-black uppercase text-[clamp(6rem,16vw,13rem)] leading-none tracking-tight text-transparent"
-                    style={{ WebkitTextStroke: "1.5px rgba(10,10,10,0.06)" }}
-                >
-                    HACK THE CORE
-                </span>
-
-                {/* thin frame lines for structure */}
-                <div className="absolute inset-x-6 md:inset-x-12 lg:inset-x-20 top-10 bottom-10 border border-neutral-900/[0.06]" />
-                <div className="absolute left-1/2 top-10 bottom-10 w-px bg-neutral-900/[0.05] hidden lg:block" />
-
-                {/* corner brackets */}
-                <div className="absolute left-6 md:left-12 lg:left-20 top-10 w-10 h-10 border-l-2 border-t-2 border-neutral-900/15" />
-                <div className="absolute right-6 md:right-12 lg:right-20 bottom-10 w-10 h-10 border-r-2 border-b-2 border-neutral-900/15" />
-
-                {/* subtle grain/noise texture for tactile depth */}
-                <svg className="absolute inset-0 w-full h-full mix-blend-multiply opacity-[0.035]">
-                    <filter id="aboutGrain">
-                        <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" />
-                        <feColorMatrix type="saturate" values="0" />
-                    </filter>
-                    <rect width="100%" height="100%" filter="url(#aboutGrain)" />
-                </svg>
-            </div>
-
-            <div className="relative z-10 mx-auto max-w-[1400px] grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-16 items-center">
-
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: .8, ease }}
-                >
-                    <p className="flex items-center gap-4 uppercase tracking-[0.28em] text-[13px] font-semibold text-neutral-900">
-                        <span className="w-10 h-[3px] bg-[#F4DD0E]" />
-                        About Us
-                    </p>
-
-                    <h2 className="mt-8 font-sans font-black uppercase tracking-[-0.02em] leading-[0.95] text-[clamp(3.2rem,7vw,6rem)] text-neutral-950">
-                        Beyond the
-                        <br />
-                        <span style={scriptFont} className="capitalize text-[1.3em] text-[#F4DD0E]">
-                            Hack
-                        </span>
-                    </h2>
-
-                    <p className="mt-10 max-w-[640px] text-[1.08rem] leading-[1.9] text-neutral-600 font-medium">
-                        Hack The Core is a community-driven technology platform focused on
-                        empowering student developers through hackathons, meetups, and
-                        industry collaborations. We aim to build a strong ecosystem where
-                        ambitious builders can learn, innovate, and connect with
-                        opportunities that extend beyond a single event.
-                    </p>
-
-                    <motion.a
-                        href="#"
-                        whileHover={{ y: -4, scale: 1.03 }}
-                        whileTap={{ scale: .98 }}
-                        className="inline-flex mt-12 rounded-full bg-neutral-950 px-10 py-4 text-white font-semibold shadow-2xl transition hover:bg-[#F4DD0E] hover:text-black"
+        <section ref={containerRef} className="relative h-[300vh]">
+            <motion.div
+                style={{ backgroundColor: bgColor }}
+                className="sticky top-0 h-screen w-full overflow-hidden"
+            >
+                {/* --- Desktop: scroll-driven sequence --- */}
+                <div className="relative hidden md:block h-full w-full">
+                    <svg
+                        aria-hidden="true"
+                        className="pointer-events-none absolute inset-0 w-full h-full z-20"
+                        viewBox="0 -180 1200 680"
+                        preserveAspectRatio="none"
                     >
-                        Explore Us
-                    </motion.a>
-                </motion.div>
+                        <defs>
+                            <linearGradient id="ribbonGradient" x1="0" y1="0" x2="1200" y2="0" gradientUnits="userSpaceOnUse">
+                                <stop offset="0%" stopColor="#FEF636" />
+                                <stop offset="50%" stopColor="#FEF636" />
+                                <stop offset="100%" stopColor="#FEF636" />
+                            </linearGradient>
+                        </defs>
+                        <motion.path
+                            style={{
+                                pathLength,
+                                opacity: waveOpacity,
+                            }}
+                            d={WAVE_PATH_D}
+                            stroke="url(#ribbonGradient)"
+                            strokeWidth="160"
+                            strokeLinecap="round"
+                            fill="none"
+                        />
+                    </svg>
 
-                <motion.div
-                    initial={{ opacity: 0, y: 40 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: .9, ease }}
-                    className="relative h-[380px] sm:h-[480px] lg:h-[620px]"
-                >
-                    <motion.div animate={{ y: [0, -18, 0] }} transition={{ repeat: Infinity, duration: 8 }} className="absolute left-[5%] top-[12%] w-20 h-20 sm:w-28 sm:h-28 lg:w-36 lg:h-36 rounded-full bg-[#F4DD0E]" />
-                    <motion.div animate={{ y: [0, 14, 0] }} transition={{ repeat: Infinity, duration: 6 }} className="absolute right-[8%] top-6 w-14 h-14 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-full bg-black" />
-                    <motion.div animate={{ y: [0, -12, 0] }} transition={{ repeat: Infinity, duration: 7 }} className="absolute right-0 bottom-10 w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 rounded-full bg-[#F4DD0E]" />
-                    <motion.div animate={{ y: [0, -16, 0] }} transition={{ repeat: Infinity, duration: 5.5 }} className="absolute right-[28%] top-[2%] w-8 h-8 sm:w-10 sm:h-10 lg:w-14 lg:h-14 rounded-full bg-[#F4DD0E]" />
-
-                    {/* bottom-left corner circles */}
-                    <motion.div animate={{ y: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 6.5 }} className="absolute left-[-2%] bottom-[-2%] w-16 h-16 sm:w-20 sm:h-20 lg:w-28 lg:h-28 rounded-full bg-[#F4DD0E]" />
-                    <motion.div animate={{ y: [0, 12, 0] }} transition={{ repeat: Infinity, duration: 7.5 }} className="absolute left-[10%] bottom-[-4%] w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full bg-black" />
-                    <motion.div animate={{ y: [0, -8, 0] }} transition={{ repeat: Infinity, duration: 5 }} className="absolute left-[-4%] bottom-[18%] w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 rounded-full bg-[#F4DD0E]" />
-
-                    <div className="absolute inset-0">
-
-                        <motion.figure
-                            animate={{ y: [0, -10, 0] }}
-                            transition={{ repeat: Infinity, duration: 5 }}
-                            className="absolute left-0 top-6 w-[26%] h-[82%] overflow-hidden rounded-[999px] ring-2 sm:ring-4 lg:ring-8 ring-white shadow-[0_30px_70px_rgba(0,0,0,.18)]"
+                    <div className="relative z-40 flex h-full max-w-[1200px] mx-auto flex-col items-center justify-center text-center px-6">
+                        {/*
+                            FIX: Removed initial={{ opacity: 0, y: 30 }} and animate={{ opacity: 1, y: 0 }}.
+                            Those declarative props were fighting the style MotionValues for the same
+                            properties. In Framer Motion, style MotionValues take precedence over
+                            animate, so animate({ opacity: 1 }) never won against style={{ opacity }},
+                            leaving the element stuck at initial opacity: 0 forever.
+                            The entrance is now handled entirely inside headingOpacity / headingY above.
+                        */}
+                        <motion.h1
+                            style={{
+                                color: headingColor,
+                                y: headingY,
+                                opacity: headingOpacity,
+                            }}
+                            className="font-druk font-black uppercase tracking-tight leading-none text-[clamp(3.5rem,6vw,7rem)]"
                         >
-                            <img src={photos[0].src} alt={photos[0].alt} className="w-full h-full object-cover" />
-                        </motion.figure>
+                            More Than Just Hackathons
+                        </motion.h1>
 
-                        <motion.figure
-                            animate={{ y: [0, -14, 0] }}
-                            transition={{ repeat: Infinity, duration: 6 }}
-                            className="absolute left-1/2 -translate-x-1/2 top-0 w-[38%] h-full overflow-hidden rounded-[999px] ring-2 sm:ring-4 lg:ring-8 ring-white shadow-[0_35px_80px_rgba(0,0,0,.22)] z-20"
-                        >
-                            <img src={photos[1].src} alt={photos[1].alt} className="w-full h-full object-cover" />
-                        </motion.figure>
-
-                        <motion.figure
-                            animate={{ y: [0, -8, 0] }}
-                            transition={{ repeat: Infinity, duration: 5.5 }}
-                            className="absolute right-0 bottom-6 w-[26%] h-[82%] overflow-hidden rounded-[999px] ring-2 sm:ring-4 lg:ring-8 ring-white shadow-[0_30px_70px_rgba(0,0,0,.18)]"
-                        >
-                            <img src={photos[2].src} alt={photos[2].alt} className="w-full h-full object-cover" />
-                        </motion.figure>
-
+                        <div className="absolute inset-0 flex items-center justify-center z-40 px-8">
+                            <motion.p
+                                style={{
+                                    opacity: descOpacity,
+                                    y: descY,
+                                }}
+                                className="max-w-6xl text-center text-[#fef636] font-druk font-medium text-[clamp(2rem,3vw,3.5rem)] leading-tight"
+                            >
+                                {description}
+                            </motion.p>
+                        </div>
                     </div>
-                </motion.div>
+                </div>
 
-            </div>
+                {/* --- Mobile fallback: simple stacked reveal, no scroll-jacked wave --- */}
+                <div className="relative z-10 flex h-full flex-col items-center justify-center text-center px-6 md:hidden">
+                    <h1 className="font-druk font-black uppercase tracking-tight leading-none text-[clamp(3rem,14vw,4.5rem)] text-gray-950">
+                        More Than Just Hackathons
+                    </h1>
+
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.4 }}
+                        transition={{ duration: 0.7, ease, delay: 0.4 }}
+                        className="mt-4 max-w-md text-lg text-black-700"
+                    >
+                        {description}
+                    </motion.p>
+                </div>
+            </motion.div>
         </section>
     );
 }

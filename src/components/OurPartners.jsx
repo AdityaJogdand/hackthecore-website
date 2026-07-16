@@ -31,7 +31,7 @@ const C = {
   bgDark: "#111110",
   border: "#E8E8E6",
   borderDark: "#2a2e2c",
-  borderHover: "#F4DD0E",
+  borderHover: "#FEF636",
   ink: "#111110",
   inkMid: "#666664",
   inkFaint: "#ABABAA",

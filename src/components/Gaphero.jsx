@@ -71,7 +71,7 @@ export default function GapHero() {
   return (
     <div
       ref={sectionRef}
-      style={{ height: '130vh', position: 'relative', background: progress === 1 ? '#F6FB37' : '#0B0C0A' }}
+      style={{ height: '130vh', position: 'relative', background: progress === 1 ? '#FEF636' : '#0B0C0A' }}
     >
       <div
         style={{
@@ -145,7 +145,7 @@ export default function GapHero() {
                     fontFamily: "'Montserrat', sans-serif",
                     fontWeight: 900,
                     fontSize: 'clamp(3rem, 14vw, 5rem)',
-                    color: progress === 1 ? '#000' : '#F6FB37',
+                    color: progress === 1 ? '#000' : '#FEF636',
                     lineHeight: 0.95,
                     letterSpacing: '-0.02em',
                     textTransform: 'uppercase',
