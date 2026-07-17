@@ -25,7 +25,7 @@ const LOGOS = [
 
 /* ─── tokens ─────────────────────────────────────────────────────────────── */
 const C = {
-  bg: "#FAFAF8",
+  bg: "#FFFFFF",
   bg2: "#F2F2EF",
   bgCard: "#ffffff",
   bgDark: "#111110",
@@ -589,7 +589,6 @@ export default function OurPartners() {
   return (
     <>
       {/* ══════════════ PARTNERS SECTION ══════════════ */}
-      <section style={{ background: C.bg, borderTop: `1px solid ${C.rule}`, borderBottom: `1px solid ${C.rule}` }}>
         <div style={{
           maxWidth: 1440,
           margin: "0 auto",
@@ -703,10 +702,6 @@ export default function OurPartners() {
             <ScrollColumn logos={col2} direction="down" duration={24} />
           </div>
         </div>
-      </section>
-
-      {/* ══════════════ BOOK A CALL SECTION ══════════════ */}
-      {/* <BookACall /> */}
     </>
   );
 }

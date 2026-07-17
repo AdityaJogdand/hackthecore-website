@@ -89,7 +89,7 @@ export default function GapHero() {
   return (
     <div
       ref={sectionRef}
-      className={`relative h-[130vh] ${merged ? 'bg-[#FEF636]' : 'bg-[#0B0C0A]'}`}
+      className={`relative h-[180vh] ${merged ? 'bg-[#FEF636]' : 'bg-[#0B0C0A]'}`}
     >
       <style>{`
         @keyframes ripple-expand {

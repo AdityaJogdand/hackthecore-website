@@ -1,43 +1,105 @@
 import { useState } from "react";
+import footerbg from "../assets/1.png";
+import wordmark from "../assets/hackthecore_Neonlogowhitetext.png";
+import { Link } from "react-router-dom";
 
 /* ─── tokens ──────────────────────────────────────────────────────────── */
 const C = {
     bg: "#0C0C0D",
-    ink: "#FAFAF8",
-    inkMid: "#5A5A58",
+    ink: "#fef636",
+    inkMid: "#DDDDDD",
     inkFaint: "#2A2A28",
-    yellow: "#F4DD0E",
+    yellow: "#FEF636",
     rule: "#1E1E1C",
+    white: "#FFFFFF"
 };
+
+const IconMail = () => (
+    <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        style={{ color: C.yellow, flexShrink: 0 }}
+    >
+        <path
+            d="M4 6h16v12H4V6zm0 0 8 6 8-6"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
+
+const IconPhone = () => (
+    <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        style={{ color: C.yellow, flexShrink: 0 }}
+    >
+        <path
+            d="M22 16.92v3a2 2 0 0 1-2.18 2A19.8 19.8 0 0 1 3.09 5.18 2 2 0 0 1 5.08 3h3a2 2 0 0 1 2 1.72l.38 2.66a2 2 0 0 1-.57 1.73l-1.27 1.27a16 16 0 0 0 6.26 6.26l1.27-1.27a2 2 0 0 1 1.73-.57l2.66.38A2 2 0 0 1 22 16.92z"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
+const IconLocation = () => (
+    <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        style={{ color: C.yellow, flexShrink: 0 }}
+    >
+        <path
+            d="M12 21s7-5.33 7-11a7 7 0 1 0-14 0c0 5.67 7 11 7 11Z"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+        <circle
+            cx="12"
+            cy="10"
+            r="2.5"
+            stroke="currentColor"
+            strokeWidth="2"
+        />
+    </svg>
+);
 
 /* ─── nav columns ─────────────────────────────────────────────────────── */
 const NAV_COLS = [
     {
-        heading: "Platform",
-        links: [
-            { label: "Hackathons", href: "/hackathons" },
-            { label: "Events", href: "/events" },
-            { label: "Courses", href: "/courses" },
-            { label: "Merch", href: "/merch" },
+        heading: "Get Involved",
+        buttons: [
+            { label: "Join Community", href: "/community" },
+            { label: "Be a Partner", href: "/partner" },
         ],
     },
     {
-        heading: "Community",
+        heading: "Pages",
         links: [
-            { label: "Discord", href: "/discord" },
-            { label: "Blog", href: "/blog" },
-            { label: "Leaderboard", href: "/leaderboard" },
+            { label: "Home", href: "/" },
+            { label: "About", href: "/aboutpage" },
+            { label: "Event", href: "/events" },
             { label: "Showcase", href: "/showcase" },
         ],
     },
     {
-        heading: "Company",
-        links: [
-            { label: "About", href: "/about" },
-            { label: "Partner", href: "/partner" },
-            { label: "Press", href: "/press" },
-            { label: "Contact", href: "/contact" },
-        ],
+        contact: {
+            heading: "Get in touch",
+            name: "connect@hackthecore.in",
+            phone: "+91 83080 78534",
+            location: "Navi Mumbai, Maharashtra",
+
+        },
     },
 ];
 
@@ -63,9 +125,9 @@ const IconLinkedIn = () => (
         <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
     </svg>
 );
-const IconGitHub = () => (
+const IconWhatsApp = () => (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
     </svg>
 );
 
@@ -73,11 +135,11 @@ const SOCIALS = [
     { label: "X", Icon: IconX, href: "https://x.com/hackthecore" },
     { label: "Instagram", Icon: IconInstagram, href: "https://instagram.com/hackthecore" },
     { label: "LinkedIn", Icon: IconLinkedIn, href: "https://linkedin.com/company/hackthecore" },
-    { label: "GitHub", Icon: IconGitHub, href: "https://github.com/hackthecore" },
+    { label: "WhatsApp", Icon: IconWhatsApp, href: "https://wa.me/hackthecore" },
 ];
 
 /* ─── hover link ──────────────────────────────────────────────────────── */
-function FootLink({ href, children, size = "0.78rem", color = C.inkMid, hoverColor = C.ink, underline = false }) {
+function FootLink({ href, children, size = "0.88rem", color = C.inkMid, hoverColor = C.ink, underline = false }) {
     const [hov, setHov] = useState(false);
     return (
         <a
@@ -112,9 +174,9 @@ function SocialBtn({ label, Icon, href }) {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                width: 32,
-                height: 32,
-                borderRadius: 6,
+                width: 34,
+                height: 34,
+                borderRadius: 10,
                 border: `1px solid ${hov ? C.yellow + "55" : C.rule}`,
                 color: hov ? C.yellow : C.inkMid,
                 background: hov ? C.yellow + "0D" : "transparent",
@@ -131,6 +193,37 @@ function SocialBtn({ label, Icon, href }) {
     );
 }
 
+/* ─── nav CTA button ──────────────────────────────────────────────────── */
+function NavButton({ label, href }) {
+    const [hov, setHov] = useState(false);
+    return (
+        <a
+            href={href}
+            style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "0.5rem 0.9rem",
+                borderRadius: 8,
+                border: `1px solid ${hov ? C.yellow : "#444442"}`,
+                background: hov ? C.yellow + "12" : "transparent",
+                color: hov ? C.yellow : C.inkMid,
+                fontSize: "0.8rem",
+                fontWeight: 500,
+                letterSpacing: "0.01em",
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+                transition: "all 0.16s",
+                cursor: "pointer",
+            }}
+            onMouseEnter={() => setHov(true)}
+            onMouseLeave={() => setHov(false)}
+        >
+            {label}
+        </a>
+    );
+}
+
 /* ─── footer ──────────────────────────────────────────────────────────── */
 export default function Footer() {
     const year = new Date().getFullYear();
@@ -138,13 +231,18 @@ export default function Footer() {
     return (
         <footer
             style={{
-                background: C.bg,
+                backgroundImage: `url(${footerbg})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
                 borderTop: `1px solid ${C.rule}`,
                 fontFamily: "'Inter', sans-serif",
                 overflow: "hidden",
+                borderRadius: "68px 68px 0 0",
+                position: "relative",
             }}
         >
-            {/* Google Fonts — Bebas Neue for the wordmark */}
+
             <style>{`
                 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap');
 
@@ -155,10 +253,12 @@ export default function Footer() {
                     align-items: start;
                 }
                 .htc-footer-nav {
-                    display: grid;
-                    grid-template-columns: repeat(3, minmax(100px, 1fr));
-                    gap: clamp(1.75rem, 4vw, 4rem);
-                }
+    display: grid;
+    grid-template-columns: max-content max-content max-content;
+    column-gap: clamp(4rem, 8vw, 8rem);
+    justify-content: space-between;
+    align-items: start;
+}
                 .htc-footer-bottom {
                     display: flex;
                     align-items: center;
@@ -208,7 +308,7 @@ export default function Footer() {
                 }
             `}</style>
 
-            <div style={{ maxWidth: 1280, margin: "0 auto", padding: "clamp(2.5rem, 5vw, 5rem) clamp(1.25rem, 5vw, 5rem) 0" }}>
+            <div style={{ maxWidth: 1280, margin: "0 auto", padding: "clamp(2.5rem, 5vw, 5rem) clamp(1.25rem, 5vw, 5rem) 0", position: "relative", zIndex: 1 }}>
 
                 {/* ── main grid ── */}
                 <div
@@ -222,27 +322,16 @@ export default function Footer() {
                     <div className="htc-footer-left" style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: 320 }}>
 
                         {/* wordmark */}
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.55rem" }}>
-                            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                                <rect width="22" height="22" rx="4" fill={C.yellow} />
-                                <path d="M7 6v10M15 6v10M7 11h8" stroke="#0C0C0D" strokeWidth="2" strokeLinecap="round" />
-                            </svg>
-                            <span
-                                style={{
-                                    fontFamily: "'Bebas Neue', sans-serif",
-                                    fontWeight: 400,
-                                    fontSize: "1.35rem",
-                                    letterSpacing: "0.06em",
-                                    color: C.ink,
-                                    lineHeight: 1,
-                                }}
-                            >
-                                HackTheCore
-                            </span>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                            <img
+                                src={wordmark}
+                                alt="HackTheCore"
+                                style={{ height: 48, width: "auto", objectFit: "contain" }}
+                            />
                         </div>
 
                         {/* tagline */}
-                        <p style={{ fontSize: "0.82rem", color: C.inkMid, lineHeight: 1.65, margin: 0, letterSpacing: "0.01em" }}>
+                        <p style={{ fontSize: "0.93rem", color: C.inkMid, lineHeight: 1.65, margin: 0, letterSpacing: "0.01em" }}>
                             India's builder community — where hackers, creators, and founders come to ship.
                         </p>
 
@@ -252,29 +341,123 @@ export default function Footer() {
                         </div>
                     </div>
 
-                    {/* right: nav columns */}
-                    <div className="htc-footer-nav">
-                        {NAV_COLS.map(col => (
-                            <div key={col.heading} style={{ display: "flex", flexDirection: "column", gap: "1rem", minWidth: 0 }}>
-                                <span
-                                    style={{
-                                        fontSize: "0.63rem",
-                                        fontWeight: 600,
-                                        letterSpacing: "0.14em",
-                                        textTransform: "uppercase",
-                                        color: C.ink,
-                                        marginBottom: "0.25rem",
-                                    }}
-                                >
-                                    {col.heading}
-                                </span>
-                                {col.links.map(link => (
-                                    <FootLink key={link.label} href={link.href}>{link.label}</FootLink>
-                                ))}
-                            </div>
-                        ))}
+                   {/* right: nav columns */}
+<div className="htc-footer-nav">
+    {NAV_COLS.map((col, i) => (
+        <div
+            key={col.heading || i}
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "1rem",
+                minWidth: 0,
+            }}
+        >
+            {col.heading && (
+                <span
+                    style={{
+                        fontSize: "0.72rem",
+                        fontWeight: 600,
+                        letterSpacing: "0.14em",
+                        textTransform: "uppercase",
+                        color: C.ink,
+                        marginBottom: "0.25rem",
+                    }}
+                >
+                    {col.heading}
+                </span>
+            )}
+
+            {col.links &&
+                col.links.map((link) => (
+                    <FootLink key={link.label} href={link.href}>
+                        {link.label}
+                    </FootLink>
+                ))}
+
+            {col.buttons && (
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "0.6rem",
+                    }}
+                >
+                    {col.buttons.map((btn) => (
+                        <NavButton key={btn.label} {...btn} />
+                    ))}
+                </div>
+            )}
+
+            {col.contact && (
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "0.9rem",
+                    }}
+                >
+                    <span
+                        style={{
+                            fontSize: "0.72rem",
+                            fontWeight: 600,
+                            letterSpacing: "0.14em",
+                            textTransform: "uppercase",
+                            color: C.ink,
+                        }}
+                    >
+                        {col.contact.heading}
+                    </span>
+
+                    <a
+                        href={`mailto:${col.contact.name}`}
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "0.65rem",
+                            color: C.inkMid,
+                            textDecoration: "none",
+                            fontSize: "0.88rem",
+                            fontWeight: 500,
+                        }}
+                    >
+                        <IconMail />
+                        {col.contact.name}
+                    </a>
+
+                    <a
+                        href={`tel:${col.contact.phone.replace(/\s/g, "")}`}
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "0.65rem",
+                            color: C.inkMid,
+                            textDecoration: "none",
+                            fontSize: "0.88rem",
+                        }}
+                    >
+                        <IconPhone />
+                        {col.contact.phone}
+                    </a>
+
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "0.65rem",
+                            color: C.inkMid,
+                            fontSize: "0.88rem",
+                        }}
+                    >
+                        <IconLocation />
+                        {col.contact.location}
                     </div>
                 </div>
+            )}
+        </div>
+    ))}
+</div>
+</div>
 
                 {/* ── bottom bar ── */}
                 <div
@@ -283,12 +466,12 @@ export default function Footer() {
                         padding: "clamp(1.25rem, 2vw, 1.75rem) 0 clamp(1rem, 2vw, 1.5rem)",
                     }}
                 >
-                    <span style={{ fontSize: "0.68rem", color: C.inkMid, letterSpacing: "0.01em" }}>
+                    <span style={{ fontSize: "0.78rem", color: C.inkMid, letterSpacing: "0.01em" }}>
                         © {year} HackTheCore — All rights reserved.
                     </span>
                     <div className="htc-footer-legal">
                         {LEGAL.map(l => (
-                            <FootLink key={l.label} href={l.href} size="0.68rem" underline>{l.label}</FootLink>
+                            <FootLink key={l.label} href={l.href} size="0.78rem" underline>{l.label}</FootLink>
                         ))}
                     </div>
                 </div>
@@ -302,24 +485,9 @@ export default function Footer() {
                     lineHeight: 0.85,
                     pointerEvents: "none",
                     userSelect: "none",
+                    zIndex: 1,
                 }}
             >
-                <span
-                    style={{
-                        display: "block",
-                        fontFamily: "'Bebas Neue', sans-serif",
-                        fontSize: "clamp(3rem, 16vw, 14rem)",
-                        letterSpacing: "0.04em",
-                        textTransform: "uppercase",
-                        color: C.ink,
-                        WebkitMaskImage: "linear-gradient(to bottom, rgba(250,250,248,0.08) 0%, rgba(250,250,248,0) 100%)",
-                        maskImage: "linear-gradient(to bottom, rgba(250,250,248,0.08) 0%, rgba(250,250,248,0) 100%)",
-                        textAlign: "center",
-                        whiteSpace: "nowrap",
-                    }}
-                >
-                    HACKTHECORE
-                </span>
             </div>
         </footer>
     );
