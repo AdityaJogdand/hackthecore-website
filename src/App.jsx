@@ -23,6 +23,7 @@ import SmoothScrollProvider from "./components/SmoothScrollProvider";
 import ScrollToTop from "./components/ScrollToTop";
 import StatsReveal from "./components/StatsReveal";
 import ShowCase from "./pages/ShowCase";
+import MarqueeSection from "./components/MarqueeSection";
 
 // Salted admin login path — set VITE_ADMIN_LOGIN_SALT in your .env file.
 // Falls back to a default so the app doesn't crash if the env var is missing,
@@ -37,6 +38,7 @@ function Home() {
       <GapHero />
       <FeaturedEvents />
       <StatsReveal />
+      <MarqueeSection />
       <OurPartners />
       <Footer />
       
