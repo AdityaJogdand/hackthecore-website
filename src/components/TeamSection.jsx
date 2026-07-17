@@ -11,43 +11,53 @@ import Rugvedkid from "@/assets/Rugvedkid.png";
 import Bhaveshkid from "@/assets/Bhaveskid.png";
 import Rahulkid from "@/assets/Rahulkid.png";
 import Melonikid from "@/assets/Melonikid.png";
+import Janvhi from "@/assets/Janvhi.jpg";
+import Janvhikid from "@/assets/Janvhi.jpg"
+
 
 const team = [
     {
         name: "Shravan Kadam",
         img: Shravan,
         hoverImg: ShravanKid,
-        linkedin: "https://linkedin.com/in/shravankadam",
-        instagram: "https://instagram.com/shravankadam",
+        linkedin: "https://www.linkedin.com/in/shravan-kadam-107b13308?utm_source=share_via&utm_content=profile&utm_medium=member_ios",
+        instagram: "https://www.instagram.com/shravxnkadam",
     },
     {
         name: "Bhavesh Rajdev",
         img: Bhavesh,
         hoverImg: Bhaveshkid,
-        linkedin: "https://linkedin.com/in/bhaveshrajdev",
-        instagram: "https://instagram.com/bhaveshrajdev",
+        linkedin: "https://www.linkedin.com/in/bhavesh-rajdev-734288297?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+        instagram: "https://www.instagram.com/bhaveshrajdev7?igsh=Y2U0NTA5OGxld3V0",
     },
     {
         name: "Rugved Dalvi",
         img: Rugved,
         hoverImg: Rugvedkid,
-        linkedin: "https://linkedin.com/in/rugveddalvi",
-        instagram: "https://instagram.com/rugveddalvi",
+        linkedin: "https://www.linkedin.com/in/rugved-dalvi-0246843bb?utm_source=share_via&utm_content=profile&utm_medium=member_ios",
+        instagram: "https://www.instagram.com/_rugveddalvi?igsh=Z2Z0N3hnYWN6Znpk&utm_source=qr",
     },
     {
         name: "Rahul Patil",
         img: Rahul,
         hoverImg: Rahulkid,
-        linkedin: "https://linkedin.com/in/rahulpatil",
-        instagram: "https://instagram.com/rahulpatil",
+        linkedin: "https://www.linkedin.com/in/rahul-patil-253319377?utm_source=share_via&utm_content=profile&utm_medium=member_ios",
+        instagram: "https://www.instagram.com/_rahull.p?utm_source=qr",
     },
     {
         name: "Meloni Shah",
         img: Meloni,
         hoverImg: Melonikid,
-        linkedin: "https://linkedin.com/in/melonishah",
-        instagram: "https://instagram.com/melonishah",
+        linkedin: "https://www.linkedin.com/in/meloni-shah-3a9533420?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+        instagram: "https://www.instagram.com/meloni.shah?igsh=cXIyNGg4cHl5ZHV0",
     },
+    {
+        name:"Jaanvi Naidu",
+        img:Janvhi,
+        hoverImg: Janvhikid,
+        linkedin: "https://www.linkedin.com/in/jaanvi-naidu-794b253ba?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+        instagram: "https://www.instagram.com/jaanviii__05?igsh=a2t5OGQxM3ZzcW1j"
+    }
 ];
 
 const words = ["Builders.", "Designers.", "Developers.", "Dreamers."];
