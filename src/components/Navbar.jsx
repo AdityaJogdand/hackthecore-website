@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LogOut, User as UserIcon, Menu, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import black from "../assets/Logo-01.jpg";
+import black from "../assets/hackthecorelogo.png";
 import white from "../assets/white.png";
 import { useAuth } from "../context/AuthContext";
 
@@ -163,7 +163,7 @@ const Navbar = () => {
         }}
       >
         <Link to="/" className="flex items-center h-16">
-          <img src={black} alt="HackTheCore Logo" className="h-16 w-auto object-contain" />
+          <img src={black} alt="HackTheCore Logo" className="h-9   w-auto object-contain" />
         </Link>
       </div>
 
