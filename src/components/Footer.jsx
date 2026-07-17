@@ -1,4 +1,9 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// Register ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
 import footerbg from "../assets/1.png";
 import wordmark from "../assets/hackthecore_Neonlogowhitetext.png";
 import { Link } from "react-router-dom";
@@ -31,7 +36,6 @@ const IconMail = () => (
         />
     </svg>
 );
-
 const IconPhone = () => (
     <svg
         width="20"
@@ -227,9 +231,50 @@ function NavButton({ label, href }) {
 /* ─── footer ──────────────────────────────────────────────────────────── */
 export default function Footer() {
     const year = new Date().getFullYear();
+    const [isVisible, setIsVisible] = useState(false);
+    const footerRef = useRef(null);
+
+useEffect(() => {
+    const ctx = gsap.context(() => {
+        gsap.fromTo(
+            footerRef.current,
+            { y: 200 },
+            {
+                y: -40,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: footerRef.current,
+                    start: "top bottom",
+                    end: "bottom bottom",
+                    scrub: true,
+                },
+            }
+        );
+    });
+
+    return () => ctx.revert();
+}, []);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            const entry = entries[0];
+            if (entry.isIntersecting) {
+                setIsVisible(true);
+                if (footerRef.current) observer.unobserve(footerRef.current);
+            }
+        }, { threshold: 0.1 });
+
+        const currentRef = footerRef.current;
+        if (currentRef) observer.observe(currentRef);
+
+        return () => {
+            if (footerRef.current) observer.unobserve(footerRef.current);
+        };
+    }, []);
 
     return (
         <footer
+            ref={footerRef}
             style={{
                 backgroundImage: `url(${footerbg})`,
                 backgroundSize: "cover",
