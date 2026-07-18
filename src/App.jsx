@@ -26,6 +26,7 @@ import Community from "./pages/Community";
 import VideoIntro from "./components/VideoIntro";
 import EventDetail from "./pages/EventDetail";
 import FAQ from "./components/FAQ";
+import BookACall from "./components/BookACall";
 import LegalPage from "./pages/LegalPage";
 import HackTerms from "./pages/HackTerms";
 
@@ -99,6 +100,7 @@ function App() {
             <Route path="/merchstore" element={<AppLayout><MerchStore /></AppLayout>} />
             <Route path="/showcase" element={<AppLayout><ShowCase /></AppLayout>} />
             <Route path="/community" element={<AppLayout><Community /></AppLayout>} />
+            <Route path="/partner" element={<AppLayout><BookACall /></AppLayout>} />
             <Route path="/privacy" element={<AppLayout><LegalPage /></AppLayout>} />
             <Route path="/terms" element={<AppLayout><HackTerms /></AppLayout>} />
 

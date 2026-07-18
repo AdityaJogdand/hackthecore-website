@@ -389,7 +389,9 @@ useEffect(() => {
                         <div style={{ display: "flex", gap: "0.6rem", flexWrap: "nowrap" }}>
                             {/* App Store */}
                             <a
-                                href="#"
+                                href="https://apps.apple.com/in/app/hack-the-core/id6758599070"
+                                target="_blank"
+                                rel="noreferrer"
                                 style={{
                                     display: "inline-flex",
                                     alignItems: "center",
@@ -415,7 +417,9 @@ useEffect(() => {
 
                             {/* Google Play */}
                             <a
-                                href="#"
+                                href="https://play.google.com/store/apps/details?id=com.unitecloud.hackthecore.app&hl=en_IN"
+                                target="_blank"
+                                rel="noreferrer"
                                 style={{
                                     display: "inline-flex",
                                     alignItems: "center",
@@ -566,7 +570,7 @@ useEffect(() => {
                     }}
                 >
                     <span style={{ fontSize: "0.78rem", color: C.inkMid, letterSpacing: "0.01em" }}>
-                        © {year} HackTheCore — All rights reserved.
+                        © {year} Hackthecore — All rights reserved.
                     </span>
                     <div className="htc-footer-legal">
                         {LEGAL.map(l => (
