@@ -63,6 +63,7 @@ export default function SenseHero() {
     const pathDesktopRef = useRef(null);
     const pathMobileRef = useRef(null);
     const headingRef = useRef(null);
+    const mobileHeadingRef = useRef(null);
     const eyebrowRef = useRef(null);
     const descParaRef = useRef(null);
     const wordRefs = useRef([]);
@@ -107,6 +108,10 @@ export default function SenseHero() {
         if (headingRef.current) {
             headingRef.current.style.opacity = headingOpacity;
             headingRef.current.style.transform = `translateY(${headingY}px)`;
+        }
+        if (mobileHeadingRef.current) {
+            mobileHeadingRef.current.style.opacity = headingOpacity;
+            mobileHeadingRef.current.style.transform = `translateY(${headingY}px)`;
         }
 
         // --- description block (eyebrow + paragraph wrapper) ---
@@ -226,7 +231,7 @@ export default function SenseHero() {
                 </div>
 
                 {/* Heading — mobile only */}
-                <div className="relative z-40 flex md:hidden h-full w-full flex-col items-center justify-center text-center px-2">
+                <div ref={mobileHeadingRef} className="relative z-40 flex md:hidden h-full w-full flex-col items-center justify-center text-center px-2">
                     <h1 className="uppercase leading-none w-full text-center">
                         <span className="block" style={{ fontFamily: "Impact, 'Arial Narrow', sans-serif", fontSize: "clamp(3rem,17vw,6rem)", letterSpacing: "0.02em", color: "#ffffff" }}>MORE THAN</span>
                         <span className="block" style={{ fontFamily: "'Anton', sans-serif", fontSize: "clamp(4.5rem,27vw,10rem)", letterSpacing: "0.05em", color: "#ffffff" }}>JUST</span>
