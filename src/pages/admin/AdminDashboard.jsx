@@ -48,6 +48,7 @@ export default function AdminDashboard() {
   const [error, setError]                   = useState("");
   const [portalTab, setPortalTab]           = useState("events"); // "events", "bookings", "projects"
   const [pendingProjects, setPendingProjects] = useState([]);
+  const [approvedProjects, setApprovedProjects] = useState([]);
   const [projectsLoading, setProjectsLoading] = useState(false);
 
   /* Selection states for event specific dashboard */
@@ -124,11 +125,17 @@ export default function AdminDashboard() {
   const fetchProjects = async () => {
     setProjectsLoading(true);
     try {
-      const res = await fetch(`${API}/api/projects?status=pending`, { headers: authHeaders() });
-      const data = await res.json();
-      setPendingProjects(Array.isArray(data) ? data : []);
+      const [pendingRes, approvedRes] = await Promise.all([
+        fetch(`${API}/api/projects?status=pending`, { headers: authHeaders() }),
+        fetch(`${API}/api/projects?status=approved`, { headers: authHeaders() }),
+      ]);
+      const pendingData = await pendingRes.json();
+      const approvedData = await approvedRes.json();
+      setPendingProjects(Array.isArray(pendingData) ? pendingData : []);
+      setApprovedProjects(Array.isArray(approvedData) ? approvedData : []);
     } catch {
       setPendingProjects([]);
+      setApprovedProjects([]);
     } finally {
       setProjectsLoading(false);
     }
@@ -144,6 +151,21 @@ export default function AdminDashboard() {
       setPendingProjects((prev) => prev.filter((p) => p._id !== id));
     } catch {
       alert(`Failed to ${action} project.`);
+    }
+  };
+
+  const deleteProject = async (id) => {
+    if (!confirm("Delete this project permanently?")) return;
+    try {
+      const res = await fetch(`${API}/api/projects/${id}`, {
+        method: "DELETE",
+        headers: authHeaders(),
+      });
+      if (!res.ok) throw new Error();
+      setPendingProjects((prev) => prev.filter((p) => p._id !== id));
+      setApprovedProjects((prev) => prev.filter((p) => p._id !== id));
+    } catch {
+      alert("Failed to delete project.");
     }
   };
 
@@ -479,6 +501,7 @@ export default function AdminDashboard() {
 
                 <section style={{ display: "flex", gap: 16, marginBottom: 48 }}>
                   <StatCard label="Pending Review" value={pendingProjects.length} color="#FF9800" />
+                  <StatCard label="Live on Showcase" value={approvedProjects.length} color="#4CAF50" />
                 </section>
 
                 {projectsLoading ? (
@@ -536,9 +559,43 @@ export default function AdminDashboard() {
                           >
                             ✕ Reject
                           </button>
+                          <button
+                            onClick={() => deleteProject(project._id)}
+                            style={{ fontFamily: FONT, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", background: "rgba(255,255,255,0.03)", color: "rgba(255,255,255,0.3)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "10px 20px", cursor: "pointer" }}
+                          >
+                            🗑 Delete
+                          </button>
                         </div>
                       </div>
                     ))}
+                  </div>
+                )}
+
+                {/* ── Live / Approved Projects ── */}
+                {!projectsLoading && approvedProjects.length > 0 && (
+                  <div style={{ marginTop: 48 }}>
+                    <h2 style={{ fontFamily: FONT, fontWeight: 900, fontSize: "1.1rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "rgba(255,255,255,0.4)", marginBottom: 16 }}>
+                      Live on Showcase
+                    </h2>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                      {approvedProjects.map((project) => (
+                        <div key={project._id} style={{ background: "rgba(76,175,80,0.04)", border: "1px solid rgba(76,175,80,0.15)", borderRadius: 16, padding: "20px 24px", display: "flex", gap: 20, alignItems: "center" }}>
+                          {project.thumbnail && (
+                            <img src={project.thumbnail} alt="" style={{ width: 80, height: 56, objectFit: "cover", borderRadius: 8, border: "1px solid rgba(255,255,255,0.08)", flexShrink: 0 }} />
+                          )}
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <span style={{ fontFamily: FONT, fontSize: 15, fontWeight: 900, color: "#fff", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{project.title}</span>
+                            <span style={{ fontFamily: FONT, fontSize: 12, color: "rgba(255,255,255,0.4)" }}>🏆 {project.hackathon}{project.submittedBy?.name ? ` · 👤 ${project.submittedBy.name}` : ""}</span>
+                          </div>
+                          <button
+                            onClick={() => deleteProject(project._id)}
+                            style={{ fontFamily: FONT, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", background: "rgba(244,67,54,0.08)", color: "#F44336", border: "1px solid rgba(244,67,54,0.25)", borderRadius: 8, padding: "10px 20px", cursor: "pointer", flexShrink: 0 }}
+                          >
+                            🗑 Delete
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
               </>

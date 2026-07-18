@@ -12,8 +12,14 @@ function safeStr(val, max) {
 }
 function safeUrl(val) {
   const s = safeStr(val, 500);
-  // Reject blob:, data:, javascript: and anything not http/https
   return HTTP_URL.test(s) ? s : "";
+}
+function safeThumbnail(val) {
+  const s = typeof val === "string" ? val.trim() : "";
+  // Allow http/https URLs or data:image/ base64 strings (local uploads)
+  if (HTTP_URL.test(s)) return s;
+  if (s.startsWith("data:image/")) return s.slice(0, 2_000_000); // cap at ~2MB
+  return "";
 }
 
 // POST /api/projects - Submit a new project (authenticated user)
@@ -46,7 +52,7 @@ router.post("/", requireAuth, async (req, res) => {
       github: safeUrl(github),
       demo: safeUrl(demo),
       team: team.map(t => safeStr(t, 100)).filter(Boolean),
-      thumbnail: safeUrl(thumbnail),
+      thumbnail: safeThumbnail(thumbnail),
       submittedBy: req.userId,
     });
 
@@ -148,6 +154,18 @@ router.patch("/:id/reject", requireAdmin, async (req, res) => {
     res.json({ message: "Project rejected.", project: updated });
   } catch (err) {
     console.error("Error rejecting project:", err);
+    res.status(500).json({ message: "Server error." });
+  }
+});
+
+// DELETE /api/projects/:id - Admin permanently deletes a project
+router.delete("/:id", requireAdmin, async (req, res) => {
+  try {
+    const deleted = await Project.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ message: "Project not found." });
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Error deleting project:", err);
     res.status(500).json({ message: "Server error." });
   }
 });

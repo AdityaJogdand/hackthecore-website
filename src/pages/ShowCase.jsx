@@ -1,12 +1,7 @@
-"use client";
-
 import { useState, useMemo, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Lenis from "lenis";
 import {
   Calendar,
   Building2,
@@ -16,8 +11,6 @@ import {
   Search,
   Upload as UploadIcon,
 } from "lucide-react";
-
-gsap.registerPlugin(ScrollTrigger);
 
 // ── GitHub mark (lucide-react dropped brand icons, so this is inline) ──────
 function GithubIcon({ className }) {
@@ -180,6 +173,15 @@ function ProjectCard({ project }) {
 function UploadModal({ open, onClose, onSubmit, userName }) {
   const [form, setForm] = useState(emptyForm);
   const [submitting, setSubmitting] = useState(false);
+  const fileRef = useRef(null);
+
+  const handleFile = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => setForm((f) => ({ ...f, thumbnail: reader.result }));
+    reader.readAsDataURL(file);
+  };
 
   // Pre-fill team with logged-in user's name
   useEffect(() => {
@@ -195,8 +197,10 @@ function UploadModal({ open, onClose, onSubmit, userName }) {
     if (!form.title || !form.hackathon) return;
     setSubmitting(true);
 
-    // blob: URLs are client-side only — never send them to the backend
-    const thumbnail = form.thumbnail.startsWith("blob:") ? "" : form.thumbnail;
+    const normalizeUrl = (url) => {
+      if (!url || url.startsWith("data:")) return url;
+      return /^https?:\/\//i.test(url) ? url : `https://${url}`;
+    };
 
     await onSubmit({
       title: form.title,
@@ -204,10 +208,10 @@ function UploadModal({ open, onClose, onSubmit, userName }) {
       date: form.date || "Undated",
       track: form.track || "General",
       stack: form.stack.split(",").map((s) => s.trim()).filter(Boolean),
-      github: form.github,
-      demo: form.demo,
+      github: normalizeUrl(form.github),
+      demo: normalizeUrl(form.demo),
       team: form.team.split(",").map((s) => s.trim()).filter(Boolean),
-      thumbnail,
+      thumbnail: normalizeUrl(form.thumbnail),
     });
 
     setSubmitting(false);
@@ -260,15 +264,27 @@ function UploadModal({ open, onClose, onSubmit, userName }) {
                 />
               </label>
 
-              <label className="block">
-                <span className="text-sm font-bold text-black">Banner / Thumbnail URL</span>
-                <input
-                  value={form.thumbnail}
-                  onChange={update("thumbnail")}
-                  placeholder="https://images.unsplash.com/…"
-                  className="mt-1.5 w-full rounded-xl border border-black/10 px-3.5 py-2.5
-                             text-sm outline-none focus:border-black transition-colors"
-                />
+              <div>
+                <span className="text-sm font-bold text-black">Banner / Thumbnail</span>
+                <div className="mt-1.5 flex gap-2">
+                  <input
+                    value={form.thumbnail.startsWith("data:") ? "" : form.thumbnail}
+                    onChange={update("thumbnail")}
+                    placeholder="https://images.unsplash.com/…"
+                    className="flex-1 rounded-xl border border-black/10 px-3.5 py-2.5
+                               text-sm outline-none focus:border-black transition-colors"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    className="shrink-0 h-10 w-10 rounded-xl border border-black/10 flex items-center
+                               justify-center hover:bg-neutral-100 transition-colors"
+                    title="Upload from device"
+                  >
+                    <UploadIcon className="h-4 w-4 text-neutral-500" />
+                  </button>
+                  <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} className="hidden" />
+                </div>
                 {form.thumbnail && (
                   <img
                     src={form.thumbnail}
@@ -277,7 +293,7 @@ function UploadModal({ open, onClose, onSubmit, userName }) {
                     onError={(e) => { e.target.style.display = "none"; }}
                   />
                 )}
-              </label>
+              </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <label className="block">
@@ -441,26 +457,6 @@ export default function ShowCase() {
     }
   };
 
-  useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.1,
-      easing: (t) => 1 - Math.pow(1 - t, 3),
-      smoothWheel: true,
-    });
-
-    lenis.on("scroll", ScrollTrigger.update);
-
-    const raf = (time) => {
-      lenis.raf(time * 1000);
-    };
-    gsap.ticker.add(raf);
-    gsap.ticker.lagSmoothing(0);
-
-    return () => {
-      gsap.ticker.remove(raf);
-      lenis.destroy();
-    };
-  }, []);
 
   return (
     <div className="min-h-screen bg-white">

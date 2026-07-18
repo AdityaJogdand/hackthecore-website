@@ -238,9 +238,9 @@ useEffect(() => {
     const ctx = gsap.context(() => {
         gsap.fromTo(
             footerRef.current,
-            { y: 200 },
+            { y: 40 },
             {
-                y: -40,
+                y: 0,
                 ease: "none",
                 scrollTrigger: {
                     trigger: footerRef.current,
