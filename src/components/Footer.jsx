@@ -6,6 +6,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 import footerbg from "../assets/1.png";
 import wordmark from "../assets/hackthecore_Neonlogowhitetext.png";
+import appleLogo from "../assets/apple.png";
+import playLogo from "../assets/play.png";
 import { Link } from "react-router-dom";
 
 /* ─── tokens ──────────────────────────────────────────────────────────── */
@@ -381,6 +383,60 @@ useEffect(() => {
                         {/* social icons */}
                         <div style={{ display: "flex", gap: "0.6rem", alignItems: "center", flexWrap: "wrap" }}>
                             {SOCIALS.map(s => <SocialBtn key={s.label} {...s} />)}
+                        </div>
+
+                        {/* app store buttons */}
+                        <div style={{ display: "flex", gap: "0.6rem", flexWrap: "nowrap" }}>
+                            {/* App Store */}
+                            <a
+                                href="#"
+                                style={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: "0.5rem",
+                                    padding: "0.5rem 1rem 0.5rem 0.8rem",
+                                    borderRadius: 8,
+                                    border: `1px solid rgba(255,255,255,0.18)`,
+                                    background: "#111",
+                                    textDecoration: "none",
+                                    color: "#fff",
+                                    transition: "border-color 0.18s",
+                                    overflow: "hidden",
+                                }}
+                                onMouseEnter={e => e.currentTarget.style.borderColor = C.yellow}
+                                onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)"}
+                            >
+                                <img src={appleLogo} alt="Apple" style={{ width: 18, height: 22, objectFit: "contain", flexShrink: 0 }} />
+                                <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.15 }}>
+                                    <span style={{ fontSize: "0.6rem", letterSpacing: "0.04em", color: "rgba(255,255,255,0.6)" }}>Download on the</span>
+                                    <span style={{ fontSize: "0.85rem", fontWeight: 600, letterSpacing: "0.01em" }}>App Store</span>
+                                </div>
+                            </a>
+
+                            {/* Google Play */}
+                            <a
+                                href="#"
+                                style={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: "0.5rem",
+                                    padding: "0.5rem 1rem 0.5rem 0.8rem",
+                                    borderRadius: 8,
+                                    border: `1px solid rgba(255,255,255,0.18)`,
+                                    background: "#111",
+                                    textDecoration: "none",
+                                    color: "#fff",
+                                    transition: "border-color 0.18s",
+                                }}
+                                onMouseEnter={e => e.currentTarget.style.borderColor = C.yellow}
+                                onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)"}
+                            >
+                                <img src={playLogo} alt="Google Play" style={{ width: 22, height: 24, objectFit: "contain", flexShrink: 0 }} />
+                                <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.15 }}>
+                                    <span style={{ fontSize: "0.6rem", letterSpacing: "0.04em", color: "rgba(255,255,255,0.6)" }}>GET IT ON</span>
+                                    <span style={{ fontSize: "0.85rem", fontWeight: 600, letterSpacing: "0.01em" }}>Google Play</span>
+                                </div>
+                            </a>
                         </div>
                     </div>
 

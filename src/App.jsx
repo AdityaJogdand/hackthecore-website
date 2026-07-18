@@ -79,7 +79,7 @@ function App() {
       <AuthProvider>
         <BrowserRouter>
           <ScrollToTop />
-          <Routes>
+<Routes>
             {/* Auth pages — no navbar */}
             <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
             <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
