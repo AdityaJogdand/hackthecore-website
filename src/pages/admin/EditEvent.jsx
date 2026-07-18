@@ -56,6 +56,40 @@ const TextArea = ({ label, required, rows = 3, ...props }) => (
   </Field>
 );
 
+function fmtDate(ymd) {
+  if (!ymd) return "";
+  const d = new Date(ymd + "T00:00:00");
+  return d.toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" });
+}
+function fmtRange(start, end) {
+  if (!start) return "";
+  if (!end || end === start) return fmtDate(start);
+  const s = new Date(start + "T00:00:00");
+  const e = new Date(end + "T00:00:00");
+  if (s.getMonth() === e.getMonth() && s.getFullYear() === e.getFullYear()) {
+    return `${s.toLocaleDateString("en-IN", { month: "short", day: "numeric" })}–${e.getDate()}, ${s.getFullYear()}`;
+  }
+  return `${fmtDate(start)} – ${fmtDate(end)}`;
+}
+function toInputDate(str) {
+  if (!str) return "";
+  const d = new Date(str);
+  if (isNaN(d)) return "";
+  return d.toISOString().split("T")[0];
+}
+
+const DatePicker = ({ label, required, value, onChange }) => (
+  <Field label={label} required={required}>
+    <input
+      type="date"
+      value={value}
+      onChange={onChange}
+      style={{ ...fieldBase, colorScheme: "dark", cursor: "pointer" }}
+      {...focusHandlers}
+    />
+  </Field>
+);
+
 const SectionLabel = ({ children, action }) => (
   <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 20, marginTop: 44 }}>
     <span style={{ fontFamily: FONT, fontSize: 11, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,0,0.6)", whiteSpace: "nowrap" }}>{children}</span>
@@ -105,7 +139,8 @@ export default function EditEvent() {
   const [thumbnail, setThumbnail] = useState("");
   const [venue, setVenue]   = useState("");
   const [city, setCity]     = useState("");
-  const [date, setDate]     = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate]     = useState("");
   const [time, setTime]     = useState("");
   const [capacity, setCapacity] = useState("");
   const [deadline, setDeadline] = useState("");
@@ -134,10 +169,11 @@ export default function EditEvent() {
         setThumbnail(data.thumbnail || "");
         setVenue(data.venue || "");
         setCity(data.city || "");
-        setDate(data.date || "");
+        setStartDate(toInputDate(data.date) || "");
+        setEndDate("");
         setTime(data.time || "");
         setCapacity(data.capacity || "");
-        setDeadline(data.registrationDeadline || "");
+        setDeadline(toInputDate(data.registrationDeadline) || "");
         setRegistrationLink(data.registrationLink || "");
         setDescription(data.description || "");
         setTimeline(data.timeline && data.timeline.length > 0 ? data.timeline : [emptyTimelineItem()]);
@@ -188,8 +224,8 @@ export default function EditEvent() {
 
     const payload = {
       eventType,
-      title, banner, thumbnail, venue, city, date, time,
-      capacity, registrationDeadline: deadline, registrationLink,
+      title, banner, thumbnail, venue, city, date: fmtRange(startDate, endDate), time,
+      capacity, registrationDeadline: fmtDate(deadline), registrationLink,
       description,
       timeline: timeline.filter(t => t.time && t.label),
       contact,
@@ -276,12 +312,13 @@ export default function EditEvent() {
               <Input label="City" required placeholder="e.g. Bengaluru" value={city} onChange={e => setCity(e.target.value)} />
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-              <Input label="Date" required placeholder="e.g. Sat–Sun, Aug 2–3 2026" value={date} onChange={e => setDate(e.target.value)} />
+              <DatePicker label="Start Date" required value={startDate} onChange={e => setStartDate(e.target.value)} />
+              <DatePicker label="End Date" value={endDate} onChange={e => setEndDate(e.target.value)} />
               <Input label="Time" required placeholder="e.g. Starts 10:00 AM IST" value={time} onChange={e => setTime(e.target.value)} />
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
               <Input label="Capacity" placeholder={eventType === "hackathon" ? "e.g. 300 hackers · 60 teams" : "e.g. 80 seats"} value={capacity} onChange={e => setCapacity(e.target.value)} />
-              <Input label="Registration deadline" placeholder="e.g. Jul 25 2026" value={deadline} onChange={e => setDeadline(e.target.value)} />
+              <DatePicker label="Registration Deadline" value={deadline} onChange={e => setDeadline(e.target.value)} />
               <Input label="Registration link (external)" placeholder="https://devfolio.co/..." value={registrationLink} onChange={e => setRegistrationLink(e.target.value)} />
             </div>
             <TextArea label="Description" required rows={4} placeholder="Use a blank line between paragraphs." value={description} onChange={e => setDescription(e.target.value)} />

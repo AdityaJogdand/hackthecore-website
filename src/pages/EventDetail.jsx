@@ -2,11 +2,24 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Calendar, MapPin, Clock, Users, ExternalLink, ChevronLeft } from "lucide-react";
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 const API_BASE = `${import.meta.env.VITE_API_URL}/api`;
 const ease = [0.22, 1, 0.36, 1];
+
+// Normalize a social/URL value to a full URL
+const toHref = (val, platform) => {
+  if (!val) return "";
+  val = val.trim();
+  if (/^https?:\/\//i.test(val)) return val;
+  // Handle @handle for Twitter
+  if (platform === "twitter") {
+    const handle = val.startsWith("@") ? val.slice(1) : val;
+    return `https://twitter.com/${handle}`;
+  }
+  // Bare domain or path — prepend https://
+  return `https://${val}`;
+};
 
 export default function EventDetail() {
   const { id } = useParams();
@@ -29,7 +42,6 @@ export default function EventDetail() {
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <Navbar />
         <p className="text-neutral-400 text-sm tracking-widest uppercase">Loading…</p>
       </div>
     );
@@ -38,7 +50,6 @@ export default function EventDetail() {
   if (error || !event) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center gap-4">
-        <Navbar />
         <p className="text-neutral-500">{error || "Event not found."}</p>
         <button onClick={() => navigate("/events")} className="text-sm font-bold underline">
           Back to Events
@@ -58,7 +69,6 @@ export default function EventDetail() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
 
       {/* ── Banner ── */}
       <div className="relative w-full h-[55vh] overflow-hidden">
@@ -317,13 +327,13 @@ export default function EventDetail() {
                       <a href={`mailto:${event.contact.email}`} className="text-sm text-black hover:underline">{event.contact.email}</a>
                     )}
                     {event.contact.discord && (
-                      <a href={event.contact.discord} target="_blank" rel="noreferrer" className="text-sm text-black hover:underline">Discord</a>
+                      <a href={toHref(event.contact.discord)} target="_blank" rel="noreferrer" className="text-sm text-black hover:underline">Discord</a>
                     )}
                     {event.contact.whatsapp && (
-                      <a href={event.contact.whatsapp} target="_blank" rel="noreferrer" className="text-sm text-black hover:underline">WhatsApp</a>
+                      <a href={toHref(event.contact.whatsapp)} target="_blank" rel="noreferrer" className="text-sm text-black hover:underline">WhatsApp</a>
                     )}
                     {event.contact.twitter && (
-                      <a href={event.contact.twitter} target="_blank" rel="noreferrer" className="text-sm text-black hover:underline">Twitter / X</a>
+                      <a href={toHref(event.contact.twitter, "twitter")} target="_blank" rel="noreferrer" className="text-sm text-black hover:underline">Twitter / X</a>
                     )}
                   </div>
                 </div>

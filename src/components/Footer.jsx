@@ -289,8 +289,6 @@ useEffect(() => {
         >
 
             <style>{`
-                @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap');
-
                 .htc-footer-main {
                     display: grid;
                     grid-template-columns: 1fr auto;
@@ -516,7 +514,22 @@ useEffect(() => {
                     </span>
                     <div className="htc-footer-legal">
                         {LEGAL.map(l => (
-                            <FootLink key={l.label} href={l.href} size="0.78rem" underline>{l.label}</FootLink>
+                            <Link
+                                key={l.label}
+                                to={l.href}
+                                style={{
+                                    fontSize: "0.78rem",
+                                    color: C.inkMid,
+                                    textDecoration: "underline",
+                                    textUnderlineOffset: "3px",
+                                    transition: "color 0.16s",
+                                    letterSpacing: "0.01em",
+                                }}
+                                onMouseEnter={e => e.currentTarget.style.color = C.ink}
+                                onMouseLeave={e => e.currentTarget.style.color = C.inkMid}
+                            >
+                                {l.label}
+                            </Link>
                         ))}
                     </div>
                 </div>

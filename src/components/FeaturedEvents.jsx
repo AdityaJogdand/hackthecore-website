@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 /* ─── tokens ──────────────────────────────────────────────────────────── */
 const C = {
@@ -12,26 +13,22 @@ const C = {
   rule: "#D8D8D4",
 };
 
-/* ─── featured event data ─────────────────────────────────────────────── */
-const FEATURED_EVENT = {
-  tag: "FLAGSHIP HACKATHON",
-  title: "HackTheCore 3.0",
-  date: "Aug 15 – 17, 2025",
-  location: "Pune, Maharashtra",
-  description:
-    "48-hour flagship hackathon. Build, break, and ship with 500+ builders from across India. ₹5L+ in prizes, mentorship from industry leaders, and a stage to launch your next big idea.",
-  status: "REGISTRATIONS OPEN",
-  image: "/hackathon-banner.png",
-  highlights: [
-    { value: "500+", label: "Builders" },
-    { value: "48h", label: "Non-Stop" },
-    { value: "₹5L+", label: "In Prizes" },
-  ],
-};
+const API_BASE = `${import.meta.env.VITE_API_URL}/api`;
 
 /* ─── main section ─────────────────────────────────────────────────────── */
 export default function FeaturedEvents() {
   const [hovered, setHovered] = useState(false);
+  const [event, setEvent] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetch(`${API_BASE}/events/featured`)
+      .then((r) => r.json())
+      .then((data) => { if (Array.isArray(data) && data.length > 0) setEvent(data[0]); })
+      .catch(() => {});
+  }, []);
+
+  if (!event) return null;
 
   return (
     <section
@@ -213,8 +210,8 @@ export default function FeaturedEvents() {
               }}
             >
               <img
-                src={FEATURED_EVENT.image}
-                alt="HackTheCore 3.0 Banner"
+                src={event.banner}
+                alt={event.title}
                 style={{
                   width: "100%",
                   height: "100%",
@@ -261,7 +258,7 @@ export default function FeaturedEvents() {
                     borderRadius: 2,
                   }}
                 >
-                  {FEATURED_EVENT.tag}
+                  {event.eventType === "hackathon" ? "FLAGSHIP HACKATHON" : "MEETUP"}
                 </span>
 
                 <span
@@ -291,7 +288,7 @@ export default function FeaturedEvents() {
                       animation: "pulse-dot 2s ease infinite",
                     }}
                   />
-                  {FEATURED_EVENT.status}
+                  {event.registrationLink ? "REGISTRATIONS OPEN" : "COMING SOON"}
                 </span>
               </motion.div>
 
@@ -320,7 +317,7 @@ export default function FeaturedEvents() {
                     margin: 0,
                   }}
                 >
-                  {FEATURED_EVENT.title}
+                  {event.title}
                 </motion.h3>
 
                 <motion.p
@@ -338,7 +335,7 @@ export default function FeaturedEvents() {
                     marginBottom: 0,
                   }}
                 >
-                  {FEATURED_EVENT.description}
+                  {event.description}
                 </motion.p>
               </div>
             </div>
@@ -374,7 +371,7 @@ export default function FeaturedEvents() {
                   <path d="M1 5.5h12" stroke="rgba(255,255,255,0.5)" strokeWidth="1.2" />
                   <path d="M4.5 1v2M9.5 1v2" stroke="rgba(255,255,255,0.5)" strokeWidth="1.2" strokeLinecap="round" />
                 </svg>
-                {FEATURED_EVENT.date}
+                {event.date}
               </span>
 
               <span
@@ -392,7 +389,7 @@ export default function FeaturedEvents() {
                   <path d="M7 1C4.79 1 3 2.79 3 5c0 3.5 4 8 4 8s4-4.5 4-8c0-2.21-1.79-4-4-4z" stroke="rgba(255,255,255,0.5)" strokeWidth="1.2" />
                   <circle cx="7" cy="5" r="1.5" stroke="rgba(255,255,255,0.5)" strokeWidth="1.2" />
                 </svg>
-                {FEATURED_EVENT.location}
+                {event.city}
               </span>
 
               <div
@@ -405,65 +402,82 @@ export default function FeaturedEvents() {
                 className="info-divider"
               />
 
-              {FEATURED_EVENT.highlights.map(h => (
-                <div
-                  key={h.label}
-                  style={{ display: "flex", alignItems: "baseline", gap: "0.35em" }}
-                >
-                  <span
-                    style={{
-                      fontFamily: "'Inter', sans-serif",
-                      fontWeight: 800,
-                      fontSize: "clamp(1rem, 1.8vw, 1.3rem)",
-                      color: C.yellowBg,
-                      letterSpacing: "-0.02em",
-                    }}
-                  >
-                    {h.value}
-                  </span>
-                  <span
-                    style={{
-                      fontFamily: "'Inter', sans-serif",
-                      fontWeight: 400,
-                      fontSize: "0.62rem",
-                      letterSpacing: "0.12em",
-                      textTransform: "uppercase",
-                      color: "rgba(255,255,255,0.45)",
-                    }}
-                  >
-                    {h.label}
-                  </span>
+              {[
+                { value: "500+", label: "Builders" },
+                { value: "48h", label: "Non-Stop" },
+                { value: "₹5L+", label: "In Prizes" },
+              ].map(h => (
+                <div key={h.label} style={{ display: "flex", alignItems: "baseline", gap: "0.35em" }}>
+                  <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: "clamp(1rem, 1.8vw, 1.3rem)", color: C.yellowBg, letterSpacing: "-0.02em" }}>{h.value}</span>
+                  <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 400, fontSize: "0.62rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.45)" }}>{h.label}</span>
                 </div>
               ))}
 
-              <motion.button
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.97 }}
-                animate={{ x: hovered ? 2 : 0 }}
-                style={{
-                  marginLeft: "auto",
-                  background: C.yellowBg,
-                  color: C.ink,
-                  border: "none",
-                  padding: "0.7em 1.6em",
-                  fontFamily: "'Inter', sans-serif",
-                  fontWeight: 700,
-                  fontSize: "0.68rem",
-                  letterSpacing: "0.16em",
-                  textTransform: "uppercase",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5em",
-                  borderRadius: 2,
-                  transition: "background 0.2s",
-                }}
-              >
-                Register Now
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </motion.button>
+              <div style={{ marginLeft: "auto", display: "flex", gap: "0.6em" }}>
+                <motion.button
+                  onClick={() => navigate(`/events/${event._id}`)}
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.97 }}
+                  style={{
+                    background: "transparent",
+                    color: "#fff",
+                    border: "1px solid rgba(255,255,255,0.25)",
+                    padding: "0.7em 2.2em",
+                    fontFamily: "'Inter', sans-serif",
+                    fontWeight: 700,
+                    fontSize: "0.68rem",
+                    letterSpacing: "0.16em",
+                    textTransform: "uppercase",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "0.5em",
+                    borderRadius: 2,
+                    minWidth: 160,
+                  }}
+                >
+                  Details
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </motion.button>
+
+                {event.registrationLink && (
+                  <motion.a
+                    href={/^https?:\/\//i.test(event.registrationLink) ? event.registrationLink : `https://${event.registrationLink}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    whileHover={{ scale: 1.04 }}
+                    whileTap={{ scale: 0.97 }}
+                    animate={{ x: hovered ? 2 : 0 }}
+                    style={{
+                      background: C.yellowBg,
+                      color: C.ink,
+                      border: "none",
+                      padding: "0.7em 2.2em",
+                      fontFamily: "'Inter', sans-serif",
+                      fontWeight: 700,
+                      fontSize: "0.68rem",
+                      letterSpacing: "0.16em",
+                      textTransform: "uppercase",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "0.5em",
+                      borderRadius: 2,
+                      textDecoration: "none",
+                      minWidth: 160,
+                    }}
+                  >
+                    Register Now
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                      <path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </motion.a>
+                )}
+              </div>
             </motion.div>
           </motion.div>
         </div>

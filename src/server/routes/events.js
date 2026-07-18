@@ -14,6 +14,16 @@ router.get("/", async (req, res) => {
   }
 });
 
+// PUBLIC — get featured events
+router.get("/featured", async (req, res) => {
+  try {
+    const events = await Event.find({ featured: true }).sort({ createdAt: -1 });
+    res.json(events);
+  } catch {
+    res.status(500).json({ message: "Failed to fetch featured events." });
+  }
+});
+
 // PUBLIC — get single event by id
 router.get("/:id", async (req, res) => {
   try {
@@ -31,7 +41,7 @@ function pickEventFields(body) {
     "eventType","title","banner","thumbnail","venue","city","date","time",
     "capacity","registrationDeadline","registrationLink","description","venueImages","timeline",
     "sponsors","contact","edition","themeImage","problemStatement","prizes",
-    "judges","faqs","rsvpRole",
+    "judges","faqs","rsvpRole","featured",
   ];
   const out = {};
   for (const key of allowed) {
@@ -58,6 +68,19 @@ router.put("/:id", requireAdmin, async (req, res) => {
     res.json(event);
   } catch (err) {
     res.status(400).json({ message: err.message || "Failed to update event." });
+  }
+});
+
+// ADMIN ONLY — toggle featured
+router.patch("/:id/featured", requireAdmin, async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ message: "Event not found." });
+    event.featured = !event.featured;
+    await event.save();
+    res.json({ featured: event.featured });
+  } catch {
+    res.status(500).json({ message: "Failed to toggle featured." });
   }
 });
 

@@ -123,6 +123,7 @@ const Herosection = () => {
           </button>
 
           <button
+            onClick={() => navigate('/events')}
             onMouseEnter={handleBtnEnter}
             onMouseLeave={handleBtnLeave}
             className="w-full sm:w-auto px-6 py-3 sm:px-9 sm:py-3.5 rounded-full bg-transparent text-black text-[11px] sm:text-xs font-bold tracking-[0.15em] sm:tracking-[0.2em] uppercase transition-colors duration-300 hover:bg-black hover:text-white border-2 border-black"

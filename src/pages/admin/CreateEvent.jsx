@@ -74,6 +74,36 @@ const Select = ({ label, required, value, onChange, options }) => (
   </Field>
 );
 
+// Format YYYY-MM-DD → "Aug 15, 2026"
+function fmtDate(ymd) {
+  if (!ymd) return "";
+  const d = new Date(ymd + "T00:00:00");
+  return d.toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" });
+}
+// Format two YYYY-MM-DD values → "Aug 15–16, 2026" or "Aug 15, 2026"
+function fmtRange(start, end) {
+  if (!start) return "";
+  if (!end || end === start) return fmtDate(start);
+  const s = new Date(start + "T00:00:00");
+  const e = new Date(end + "T00:00:00");
+  if (s.getMonth() === e.getMonth() && s.getFullYear() === e.getFullYear()) {
+    return `${s.toLocaleDateString("en-IN", { month: "short", day: "numeric" })}–${e.getDate()}, ${s.getFullYear()}`;
+  }
+  return `${fmtDate(start)} – ${fmtDate(end)}`;
+}
+
+const DatePicker = ({ label, required, value, onChange }) => (
+  <Field label={label} required={required}>
+    <input
+      type="date"
+      value={value}
+      onChange={onChange}
+      style={{ ...fieldBase, colorScheme: "dark", cursor: "pointer" }}
+      {...focusHandlers}
+    />
+  </Field>
+);
+
 const SectionLabel = ({ children, action }) => (
   <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 20, marginTop: 44 }}>
     <span style={{ fontFamily: FONT, fontSize: 11, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,0,0.6)", whiteSpace: "nowrap" }}>{children}</span>
@@ -218,7 +248,8 @@ export default function CreateEvent() {
   const [city, setCity] = useState("");
   const [eventMode, setEventMode] = useState("offline");
   const [fee, setFee] = useState("");
-  const [date, setDate] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [time, setTime] = useState("");
   const [capacity, setCapacity] = useState("");
   const [deadline, setDeadline] = useState("");
@@ -279,10 +310,10 @@ export default function CreateEvent() {
 
     const payload = {
       eventType,
-      title, banner, thumbnail, venue, city, date, time,
+      title, banner, thumbnail, venue, city, date: fmtRange(startDate, endDate), time,
       mode: eventMode,
       fee,
-      capacity, registrationDeadline: deadline, registrationLink,
+      capacity, registrationDeadline: fmtDate(deadline), registrationLink,
       description,
       venueImages: [venueImage1, venueImage2].filter(Boolean),
       timeline: timeline.filter(t => t.time && t.label),
@@ -397,12 +428,15 @@ export default function CreateEvent() {
                   />
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                  <Input label="Date" required placeholder="e.g. Sat–Sun, Aug 2–3 2026" value={date} onChange={e => setDate(e.target.value)} />
+                  <DatePicker label="Start Date" required value={startDate} onChange={e => setStartDate(e.target.value)} />
+                  <DatePicker label="End Date" value={endDate} onChange={e => setEndDate(e.target.value)} />
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                   <Input label="Time" required placeholder="e.g. Starts 10:00 AM IST" value={time} onChange={e => setTime(e.target.value)} />
+                  <DatePicker label="Registration Deadline" value={deadline} onChange={e => setDeadline(e.target.value)} />
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                   <Input label="Capacity" placeholder={eventType === "hackathon" ? "e.g. 300 hackers · 60 teams" : "e.g. 80 seats"} value={capacity} onChange={e => setCapacity(e.target.value)} />
-                  <Input label="Registration deadline" placeholder="e.g. Jul 25 2026" value={deadline} onChange={e => setDeadline(e.target.value)} />
                   <Input label="Registration link (external)" placeholder="https://devfolio.co/..." value={registrationLink} onChange={e => setRegistrationLink(e.target.value)} />
                 </div>
                 <TextArea label="Description" required rows={4} placeholder="Use a blank line between paragraphs." value={description} onChange={e => setDescription(e.target.value)} />

@@ -25,6 +25,9 @@ import MarqueeSection from "./components/MarqueeSection";
 import Community from "./pages/Community";
 import VideoIntro from "./components/VideoIntro";
 import EventDetail from "./pages/EventDetail";
+import FAQ from "./components/FAQ";
+import LegalPage from "./pages/LegalPage";
+import HackTerms from "./pages/HackTerms";
 
 // Salted admin login path — set VITE_ADMIN_LOGIN_SALT in your .env file.
 // Falls back to a default so the app doesn't crash if the env var is missing,
@@ -42,6 +45,7 @@ function Home() {
       <StatsReveal />
       <MarqueeSection />
       <OurPartners />
+      <FAQ />
       <Footer />
       
     </>
@@ -95,6 +99,8 @@ function App() {
             <Route path="/merchstore" element={<AppLayout><MerchStore /></AppLayout>} />
             <Route path="/showcase" element={<AppLayout><ShowCase /></AppLayout>} />
             <Route path="/community" element={<AppLayout><Community /></AppLayout>} />
+            <Route path="/privacy" element={<AppLayout><LegalPage /></AppLayout>} />
+            <Route path="/terms" element={<AppLayout><HackTerms /></AppLayout>} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

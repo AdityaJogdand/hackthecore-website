@@ -30,6 +30,12 @@ function GithubIcon({ className }) {
 
 const API_BASE = `${import.meta.env.VITE_API_URL}/api`;
 
+const fmtDate = (ymd) => {
+  if (!ymd) return "";
+  const d = new Date(ymd + "T00:00:00");
+  return isNaN(d) ? ymd : d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+};
+
 const emptyForm = {
   title: "",
   hackathon: "",
@@ -205,7 +211,7 @@ function UploadModal({ open, onClose, onSubmit, userName }) {
     await onSubmit({
       title: form.title,
       hackathon: form.hackathon,
-      date: form.date || "Undated",
+      date: fmtDate(form.date) || "Undated",
       track: form.track || "General",
       stack: form.stack.split(",").map((s) => s.trim()).filter(Boolean),
       github: normalizeUrl(form.github),
@@ -310,11 +316,12 @@ function UploadModal({ open, onClose, onSubmit, userName }) {
                 <label className="block">
                   <span className="text-sm font-bold text-black">Date</span>
                   <input
+                    type="date"
                     value={form.date}
                     onChange={update("date")}
-                    placeholder="3–4 Apr 2026"
                     className="mt-1.5 w-full rounded-xl border border-black/10 px-3.5 py-2.5
                                text-sm outline-none focus:border-black transition-colors"
+                    style={{ colorScheme: "light" }}
                   />
                 </label>
               </div>

@@ -220,6 +220,21 @@ export default function AdminDashboard() {
     }
   }, [selectedEvent]);
 
+  const toggleFeatured = async (id) => {
+    try {
+      const res = await fetch(`${API}/api/events/${id}/featured`, {
+        method: "PATCH",
+        headers: authHeaders(),
+      });
+      if (!res.ok) throw new Error();
+      const { featured } = await res.json();
+      setSelectedEvent((prev) => prev ? { ...prev, featured } : prev);
+      fetchData();
+    } catch {
+      alert("Failed to toggle featured status.");
+    }
+  };
+
   const deleteEvent = async (id, title) => {
     if (!window.confirm(`Are you sure you want to delete "${title}"?`)) return;
     try {
@@ -793,12 +808,20 @@ export default function AdminDashboard() {
                           <h2 style={{ fontFamily: FONT, fontWeight: 900, fontSize: "2rem", textTransform: "uppercase", color: "#fff", margin: "0 0 6px 0", letterSpacing: "-0.01em" }}>{selectedEvent.title}</h2>
                           <p style={{ fontFamily: FONT, fontSize: 14, color: "rgba(255,255,255,0.7)", margin: 0 }}>{selectedEvent.venue}, {selectedEvent.city}</p>
                         </div>
-                        <button
-                          onClick={() => navigate(`/admin/edit-event/${selectedEvent._id}`)}
-                          style={{ fontFamily: FONT, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", background: "#FFFF00", color: "#0C0C0D", border: "none", borderRadius: 8, padding: "10px 20px", cursor: "pointer" }}
-                        >
-                          Modify Setup Settings
-                        </button>
+                        <div style={{ display: "flex", gap: 8 }}>
+                          <button
+                            onClick={() => toggleFeatured(selectedEvent._id)}
+                            style={{ fontFamily: FONT, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", background: selectedEvent.featured ? "rgba(255,255,0,0.15)" : "rgba(255,255,255,0.05)", color: selectedEvent.featured ? "#FFFF00" : "rgba(255,255,255,0.4)", border: `1px solid ${selectedEvent.featured ? "rgba(255,255,0,0.4)" : "rgba(255,255,255,0.1)"}`, borderRadius: 8, padding: "10px 20px", cursor: "pointer" }}
+                          >
+                            {selectedEvent.featured ? "★ Featured" : "☆ Set Featured"}
+                          </button>
+                          <button
+                            onClick={() => navigate(`/admin/edit-event/${selectedEvent._id}`)}
+                            style={{ fontFamily: FONT, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", background: "#FFFF00", color: "#0C0C0D", border: "none", borderRadius: 8, padding: "10px 20px", cursor: "pointer" }}
+                          >
+                            Modify Setup Settings
+                          </button>
+                        </div>
                       </div>
                     </div>
 
