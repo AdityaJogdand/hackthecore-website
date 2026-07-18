@@ -1,6 +1,7 @@
 import { useRef, useEffect, useLayoutEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import mobileBg from "../assets/1.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -27,13 +28,10 @@ const WAVE_PATH_DESKTOP = `
     C 1190 130, 1220 150, 1250 210
 `;
 
-// Bold diagonal slash — enters top-left, sweeps through center, exits bottom-right
+// Single bold arc — enters top-right, bows far left through center, exits bottom-right
 const WAVE_PATH_MOBILE = `
-    M -60 80
-    C 40 -60, 180 -40, 260 180
-    C 320 320, 360 420, 460 380
-    C 540 340, 580 260, 660 300
-    C 720 340, 740 420, 800 460
+    M 480 -100
+    C -300 100, -300 700, 480 900
 `;
 
 const DESC_WORDS = description.split(" ");
@@ -208,31 +206,31 @@ export default function SenseHero() {
                     />
                 </svg>
 
-                {/* Mobile wave — diagonal slash, taller viewBox */}
-                <svg
+                {/* Mobile background image */}
+                <img
+                    src={mobileBg}
+                    alt=""
                     aria-hidden="true"
-                    className="pointer-events-none absolute inset-0 w-full h-full z-20 block md:hidden"
-                    viewBox="-80 -100 560 900"
-                    preserveAspectRatio="xMidYMid slice"
-                >
-                    <path
-                        ref={pathMobileRef}
-                        d={WAVE_PATH_MOBILE}
-                        stroke="#FEF636"
-                        strokeWidth="150"
-                        strokeLinecap="round"
-                        fill="none"
-                    />
-                </svg>
+                    className="pointer-events-none absolute inset-0 w-full h-full object-cover z-10 block md:hidden"
+                />
 
-                {/* Heading */}
-                <div className="relative z-40 flex h-full max-w-[1200px] mx-auto flex-col items-center justify-center text-center px-4 sm:px-6">
+                {/* Heading — desktop (md+) */}
+                <div className="relative z-40 hidden md:flex h-full max-w-[1200px] mx-auto flex-col items-center justify-center text-center px-6">
                     <h1
                         ref={headingRef}
-                        className="font-druk font-black uppercase tracking-tight leading-none text-[clamp(2.8rem,7vw,7rem)]"
+                        className="font-druk font-black uppercase tracking-tight leading-none text-[clamp(1.8rem,7vw,7rem)]"
                         style={{ color: "#0a0a0a" }}
                     >
                         More Than Just Hackathons
+                    </h1>
+                </div>
+
+                {/* Heading — mobile only */}
+                <div className="relative z-40 flex md:hidden h-full w-full flex-col items-center justify-center text-center px-2">
+                    <h1 className="uppercase leading-none w-full text-center">
+                        <span className="block" style={{ fontFamily: "Impact, 'Arial Narrow', sans-serif", fontSize: "clamp(3rem,17vw,6rem)", letterSpacing: "0.02em", color: "#ffffff" }}>MORE THAN</span>
+                        <span className="block" style={{ fontFamily: "'Anton', sans-serif", fontSize: "clamp(4.5rem,27vw,10rem)", letterSpacing: "0.05em", color: "#ffffff" }}>JUST</span>
+                        <span className="block" style={{ fontFamily: "Impact, 'Arial Narrow', sans-serif", fontSize: "clamp(3rem,17vw,6rem)", letterSpacing: "0.02em", color: "#FEF636" }}>HACKATHONS</span>
                     </h1>
                 </div>
 

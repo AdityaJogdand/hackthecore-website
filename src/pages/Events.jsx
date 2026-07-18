@@ -231,17 +231,17 @@ const Events = () => {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="border border-black/10 rounded-3xl p-8 cursor-pointer bg-white"
+                className="border border-black/10 rounded-3xl p-5 sm:p-8 cursor-pointer bg-white"
                 whileHover={{
                   y: -8,
                   borderColor: "rgba(244,221,14,0.8)",
                 }}
                 transition={{ duration: 0.25 }}
               >
-                <h3 className="text-[#0C0C0D] text-5xl font-black mb-2">
+                <h3 className="text-[#0C0C0D] text-3xl sm:text-5xl font-black mb-2 break-words">
                   {value}
                 </h3>
-                <p className="text-[#0C0C0D]/50 uppercase tracking-widest text-xs">
+                <p className="text-[#0C0C0D]/50 uppercase tracking-widest text-[10px] sm:text-xs">
                   {label}
                 </p>
               </motion.div>

@@ -287,15 +287,15 @@ const Navbar = () => {
       {/* ============ MOBILE NAVBAR (below md) ============ */}
 
       {/* Mobile top bar — logo left, hamburger/close button right, always visible */}
-      <div className="flex md:hidden absolute top-0 left-0 right-0 items-center justify-between px-5 py-3 pointer-events-auto bg-[#F7F8FA]/95 backdrop-blur-sm border-b border-neutral-200">
+      <div className="flex md:hidden absolute top-0 left-0 right-0 items-center justify-between px-5 py-3 pointer-events-auto bg-[#0C0C0D]/95 backdrop-blur-sm border-b border-white/10">
         <Link to="/" className="flex items-center h-10" onClick={() => setMobileMenuOpen(false)}>
-          <img src={black} alt="HackTheCore Logo" className="h-9 w-auto object-contain" />
+          <img src={white} alt="HackTheCore Logo" className="h-9 w-auto object-contain" />
         </Link>
 
         <button
           onClick={() => setMobileMenuOpen((prev) => !prev)}
           aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-          className="flex items-center justify-center w-10 h-10 rounded-full border-2 border-neutral-900 text-neutral-900"
+          className="flex items-center justify-center w-10 h-10 rounded-full border-2 border-white text-white"
         >
           {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>

@@ -82,23 +82,26 @@ function LogoCard({ logo }) {
   );
 }
 
-/* ─── animated scroll column ─────────────────────────────────────────────── */
-function ScrollColumn({ logos, direction, duration }) {
+/* ─── animated scroll row (horizontal) ───────────────────────────────────── */
+function ScrollRow({ logos, direction, duration }) {
   const items = [...logos, ...logos, ...logos];
-  const anim = direction === "up" ? "htcUp" : "htcDown";
+  const anim = direction === "right" ? "htcRight" : "htcLeft";
   return (
-    <div style={{ flex: 1, overflow: "hidden", minWidth: 0 }}>
+    <div style={{ overflow: "hidden", minWidth: 0 }}>
       <div
         style={{
           display: "flex",
-          flexDirection: "column",
-          gap: 10,
+          flexDirection: "row",
+          gap: 12,
           animation: `${anim} ${duration}s linear infinite`,
           willChange: "transform",
+          width: "max-content",
         }}
       >
         {items.map((logo, i) => (
-          <LogoCard key={`${logo.name}-${i}`} logo={logo} />
+          <div key={`${logo.name}-${i}`} style={{ width: 160, flexShrink: 0 }}>
+            <LogoCard logo={logo} />
+          </div>
         ))}
       </div>
     </div>
@@ -572,16 +575,12 @@ export default function OurPartners() {
     const s = document.createElement("style");
     s.id = id;
     s.textContent = `
-      @keyframes htcUp   { 0%{transform:translateY(0)}        100%{transform:translateY(-33.333%)} }
-      @keyframes htcDown { 0%{transform:translateY(-33.333%)} 100%{transform:translateY(0)} }
+      @keyframes htcLeft  { 0%{transform:translateX(0)}         100%{transform:translateX(-33.333%)} }
+      @keyframes htcRight { 0%{transform:translateX(-33.333%)}  100%{transform:translateX(0)} }
     `;
     document.head.appendChild(s);
     return () => { const el = document.getElementById(id); if (el) el.remove(); };
   }, []);
-
-  const half = Math.ceil(LOGOS.length / 2);
-  const col1 = LOGOS.slice(0, half);
-  const col2 = LOGOS.slice(half);
 
   const pause = e => e.currentTarget.querySelectorAll("div[style*='animation']").forEach(el => el.style.animationPlayState = "paused");
   const resume = e => e.currentTarget.querySelectorAll("div[style*='animation']").forEach(el => el.style.animationPlayState = "running");
@@ -589,29 +588,26 @@ export default function OurPartners() {
   return (
     <>
       {/* ══════════════ PARTNERS SECTION ══════════════ */}
-        <div style={{
-          maxWidth: 1440,
-          margin: "0 auto",
-          padding: "clamp(4rem,8vw,108px) clamp(1.5rem,5vw,80px)",
-          boxSizing: "border-box",
-          display: "grid",
-          gridTemplateColumns: "2fr 3fr",
-          gap: "clamp(3rem,6vw,100px)",
-          alignItems: "center",
-        }}>
-          {/* left copy */}
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: 22 }}>
-              <span style={{
-                fontFamily: "'Inter', sans-serif",
-                fontWeight: 500,
-                fontSize: "clamp(0.62rem,1.4vw,5rem)",
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                color: C.inkFaint,
-              }}>Our Partners</span>
-            </div>
+      <div style={{
+        maxWidth: 1440,
+        margin: "0 auto",
+        padding: "clamp(4rem,8vw,108px) clamp(1.5rem,5vw,80px) clamp(2rem,4vw,60px)",
+        boxSizing: "border-box",
+      }}>
+        {/* copy */}
+        <div style={{ display: "flex", flexDirection: "column", marginBottom: "clamp(2.5rem,5vw,4rem)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: 22 }}>
+            <span style={{
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 500,
+              fontSize: "clamp(0.62rem,1.4vw,0.75rem)",
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: C.inkFaint,
+            }}>Our Partners</span>
+          </div>
 
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: "1.5rem" }}>
             <h2 style={{
               fontFamily: "'Anton', 'Inter', sans-serif",
               fontWeight: 400,
@@ -619,44 +615,20 @@ export default function OurPartners() {
               lineHeight: 0.9,
               letterSpacing: "-0.025em",
               color: C.ink,
-              margin: "0 0 clamp(1.5rem,3vw,2.5rem)",
+              margin: 0,
               textTransform: "uppercase",
             }}>
-              BACKED<br />BY THE<br />
-              <span style={{
-              fontFamily: "'Anton', 'Inter', sans-serif",
-              fontWeight: 400,
-              fontSize: "clamp(3.2rem,6.5vw,7.2rem)",
-              lineHeight: 0.9,
-              letterSpacing: "-0.025em",
-              color: C.ink,
-              margin: "0 0 clamp(1.5rem,3vw,2.5rem)",
-              textTransform: "uppercase",
-            }}>BEST.</span>
+              BACKED BY THE BEST.
             </h2>
-
-            <div style={{ height: 1, background: C.rule, marginBottom: "clamp(1.5rem,3vw,2.5rem)" }} />
-
-            <p style={{
-              fontFamily: "'Inter', sans-serif",
-              fontWeight: 400,
-              fontSize: "clamp(0.85rem,1.4vw,2rem)",
-              lineHeight: 1.75,
-              color: C.inkMid,
-              margin: "0 0 clamp(2rem,3.5vw,3rem)",
-              maxWidth: 400,
-            }}>
-              Supported by the world's most ambitious organisations — from global tech giants to India's most active startup accelerators.
-            </p>
 
             <div
               style={{
                 display: "inline-flex",
                 alignItems: "center",
                 gap: "0.6rem",
-                alignSelf: "flex-start",
+                flexShrink: 0,
                 fontFamily: "'Inter', sans-serif",
-                fontSize: "clamp(0.65rem,1vw,2rem)",
+                fontSize: "0.72rem",
                 fontWeight: 700,
                 letterSpacing: "0.18em",
                 textTransform: "uppercase",
@@ -665,6 +637,7 @@ export default function OurPartners() {
                 paddingBottom: 4,
                 cursor: "pointer",
                 transition: "opacity 0.2s",
+                marginBottom: 6,
               }}
               onMouseEnter={e => (e.currentTarget.style.opacity = "0.4")}
               onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
@@ -676,32 +649,41 @@ export default function OurPartners() {
             </div>
           </div>
 
-          {/* carousel */}
-          <div
-            style={{
-              position: "relative",
-              height: "clamp(420px,55vw,580px)",
-              overflow: "hidden",
-              display: "flex",
-              gap: 10,
-            }}
-            onMouseEnter={pause}
-            onMouseLeave={resume}
-          >
-            <div style={{
-              position: "absolute", inset: "0 0 auto 0", height: 90, zIndex: 10,
-              background: `linear-gradient(to bottom, ${C.bg}, transparent)`,
-              pointerEvents: "none",
-            }} />
-            <div style={{
-              position: "absolute", inset: "auto 0 0 0", height: 90, zIndex: 10,
-              background: `linear-gradient(to top, ${C.bg}, transparent)`,
-              pointerEvents: "none",
-            }} />
-            <ScrollColumn logos={col1} direction="up" duration={18} />
-            <ScrollColumn logos={col2} direction="down" duration={24} />
-          </div>
+          <div style={{ height: 1, background: C.rule, margin: "clamp(1.2rem,2.5vw,2rem) 0 clamp(1rem,2vw,1.5rem)" }} />
+
+          <p style={{
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 400,
+            fontSize: "clamp(0.85rem,1.4vw,1rem)",
+            lineHeight: 1.75,
+            color: C.inkMid,
+            margin: 0,
+            maxWidth: 560,
+          }}>
+            Supported by the world's most ambitious organisations — from global tech giants to India's most active startup accelerators.
+          </p>
         </div>
+
+        {/* horizontal carousel — 2 rows, opposite directions */}
+        <div
+          style={{ position: "relative", overflow: "hidden", display: "flex", flexDirection: "column", gap: 12 }}
+          onMouseEnter={pause}
+          onMouseLeave={resume}
+        >
+          <div style={{
+            position: "absolute", inset: "0 auto 0 0", width: 80, zIndex: 10,
+            background: `linear-gradient(to right, ${C.bg}, transparent)`,
+            pointerEvents: "none",
+          }} />
+          <div style={{
+            position: "absolute", inset: "0 0 0 auto", width: 80, zIndex: 10,
+            background: `linear-gradient(to left, ${C.bg}, transparent)`,
+            pointerEvents: "none",
+          }} />
+          <ScrollRow logos={LOGOS} direction="left" duration={28} />
+          <ScrollRow logos={[...LOGOS].reverse()} direction="right" duration={32} />
+        </div>
+      </div>
     </>
   );
 }

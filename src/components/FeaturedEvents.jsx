@@ -413,7 +413,7 @@ export default function FeaturedEvents() {
                 </div>
               ))}
 
-              <div style={{ marginLeft: "auto", display: "flex", gap: "0.6em" }}>
+              <div style={{ marginLeft: "auto", display: "flex", flexWrap: "wrap", gap: "0.6em", justifyContent: "flex-end" }}>
                 <motion.button
                   onClick={() => navigate(`/events/${event._id}`)}
                   whileHover={{ scale: 1.04 }}
@@ -434,7 +434,7 @@ export default function FeaturedEvents() {
                     justifyContent: "center",
                     gap: "0.5em",
                     borderRadius: 2,
-                    minWidth: 160,
+                    minWidth: 120,
                   }}
                 >
                   Details
@@ -443,7 +443,7 @@ export default function FeaturedEvents() {
                   </svg>
                 </motion.button>
 
-                {event.registrationLink && (
+                {event.registrationLink ? (
                   <motion.a
                     href={/^https?:\/\//i.test(event.registrationLink) ? event.registrationLink : `https://${event.registrationLink}`}
                     target="_blank"
@@ -468,7 +468,7 @@ export default function FeaturedEvents() {
                       gap: "0.5em",
                       borderRadius: 2,
                       textDecoration: "none",
-                      minWidth: 160,
+                      minWidth: 120,
                     }}
                   >
                     Register Now
@@ -476,6 +476,30 @@ export default function FeaturedEvents() {
                       <path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </motion.a>
+                ) : (
+                  <motion.button
+                    disabled
+                    style={{
+                      background: "rgba(254,246,54,0.15)",
+                      color: "rgba(254,246,54,0.4)",
+                      border: "1px solid rgba(254,246,54,0.2)",
+                      padding: "0.7em 2.2em",
+                      fontFamily: "'Inter', sans-serif",
+                      fontWeight: 700,
+                      fontSize: "0.68rem",
+                      letterSpacing: "0.16em",
+                      textTransform: "uppercase",
+                      cursor: "not-allowed",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "0.5em",
+                      borderRadius: 2,
+                      minWidth: 120,
+                    }}
+                  >
+                    Coming Soon
+                  </motion.button>
                 )}
               </div>
             </motion.div>

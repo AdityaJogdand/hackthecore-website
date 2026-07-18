@@ -81,10 +81,10 @@ export default function GapHero() {
     : `translateX(${(1 - ease) * 60}vw) skewX(${rightSkew}deg) rotate(${rightRotate}deg)`;
   const mobileLeftTransform = reducedMotion
     ? 'translateX(0) skewX(0deg) rotate(0deg)'
-    : `translateX(${(1 - ease) * -70}vw) skewX(${leftSkew}deg) rotate(${leftRotate}deg)`;
+    : `translateX(${(1 - ease) * -110}vw) skewX(${leftSkew}deg) rotate(${leftRotate}deg)`;
   const mobileRightTransform = reducedMotion
     ? 'translateX(0) skewX(0deg) rotate(0deg)'
-    : `translateX(${(1 - ease) * 70}vw) skewX(${rightSkew}deg) rotate(${rightRotate}deg)`;
+    : `translateX(${(1 - ease) * 110}vw) skewX(${rightSkew}deg) rotate(${rightRotate}deg)`;
 
   return (
     <div
@@ -130,7 +130,7 @@ export default function GapHero() {
 
       <div
         key={shakeKey}
-        className={`sticky top-0 h-screen flex flex-col overflow-hidden ${
+        className={`sticky top-0 h-screen flex flex-col overflow-hidden [clip-path:inset(0)] ${
           merged && !reducedMotion ? 'section-vibrate' : ''
         }`}
       >
@@ -149,7 +149,7 @@ export default function GapHero() {
               style={{ transform: `scale(${scale})`, transformOrigin: 'center center' }}
             >
               <div
-                className="overflow-hidden transition-transform duration-[450ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
+                className="transition-transform duration-[450ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
                 style={{ transform: mobileLeftTransform }}
               >
                 <div
@@ -164,7 +164,7 @@ export default function GapHero() {
               </div>
 
               <div
-                className="overflow-hidden transition-transform duration-[450ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
+                className="transition-transform duration-[450ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
                 style={{ transform: mobileRightTransform }}
               >
                 <div

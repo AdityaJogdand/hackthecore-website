@@ -75,9 +75,11 @@ const Herosection = () => {
   }
 
   return (
+    <>
+    <style>{`@media (max-width: 767px) { .hero-section { background-size: 300% !important; background-position: 35% calc(50% + 40px) !important; } }`}</style>
     <section
-      className="relative min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center overflow-hidden px-4 py-24 sm:px-6 sm:py-20"
-      style={{ backgroundImage: `url(${blob})`, backgroundSize: '120%', backgroundPosition: 'center' , marginTop: '-1rem'}}
+      className="relative min-h-screen bg-center bg-no-repeat flex items-center justify-center overflow-hidden px-4 py-24 sm:px-6 sm:py-20 hero-section"
+      style={{ backgroundImage: `url(${blob})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundColor: '#F5F914', marginTop: '-1rem' }}
     >
 
       <div
@@ -158,6 +160,7 @@ const Herosection = () => {
       </div>
 
     </section>
+    </>
   )
 }
 

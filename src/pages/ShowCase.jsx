@@ -469,7 +469,7 @@ export default function ShowCase() {
     <div className="min-h-screen bg-white">
       {/* ── Page Header ── */}
       <section className="px-6 md:px-12 py-8 border-b border-black/5" style={{ marginTop: "100px" }}>
-        <div className="mx-auto max-w-6xl flex items-center justify-between">
+        <div className="mx-auto max-w-6xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl md:text-4xl font-black tracking-tight text-black uppercase">
               Project <span style={{ color: "#1DCA23" }}>Showcase</span>
@@ -480,7 +480,7 @@ export default function ShowCase() {
           </div>
           <button
             onClick={handleUploadClick}
-            className="inline-flex items-center gap-2 rounded-full font-bold px-6 py-3 transition-colors border-2 bg-transparent text-black hover:bg-black/5"
+            className="inline-flex items-center gap-2 rounded-full font-bold px-6 py-3 transition-colors border-2 bg-transparent text-black hover:bg-black/5 w-full sm:w-auto justify-center"
             style={{ borderColor: "#52B816" }}
           >
             <UploadIcon className="h-4 w-4" />
