@@ -40,119 +40,15 @@ const StatCard = ({ label, value, color = "#FFFF00" }) => (
 );
 
 // ── Shared Table Sub-Components ───────────────────────────
-function HackathonTable({ data }) {
-  const [expandedId, setExpandedId] = useState(null);
-  if (!data.length) return (
-    <p style={{ fontFamily: FONT, fontSize: 14, color: "rgba(255,255,255,0.25)", padding: "40px 0", textAlign: "center" }}>No hackathon teams registered yet.</p>
-  );
-  return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "1.8fr 1.2fr 1fr 1fr 60px", gap: 16, padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.01)" }}>
-        {["Team Name", "Track Preference", "Members count", "Date Registered", ""].map(h => (
-          <span key={h} style={{ fontFamily: FONT, fontSize: 10, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)" }}>{h}</span>
-        ))}
-      </div>
-      {data.map((reg) => (
-        <div key={reg._id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-          <div
-            onClick={() => setExpandedId(expandedId === reg._id ? null : reg._id)}
-            style={{ display: "grid", gridTemplateColumns: "1.8fr 1.2fr 1fr 1fr 60px", gap: 16, padding: "16px 20px", cursor: "pointer", transition: "background 0.15s", alignItems: "center" }}
-            onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.02)"}
-            onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-          >
-            <span style={{ fontFamily: FONT, fontSize: 15, fontWeight: 700, color: "#fff" }}>{reg.teamName}</span>
-            <div><Pill color="#FFFF00">{reg.track}</Pill></div>
-            <span style={{ fontFamily: FONT, fontSize: 14, color: "rgba(255,255,255,0.6)" }}>{reg.members.length} Hacker{reg.members.length !== 1 ? "s" : ""}</span>
-            <span style={{ fontFamily: FONT, fontSize: 13, color: "rgba(255,255,255,0.4)" }}>{new Date(reg.submittedAt).toLocaleDateString("en-IN")}</span>
-            <span style={{
-              fontFamily: FONT, fontSize: 14, color: "rgba(255,255,0,0.6)",
-              transform: expandedId === reg._id ? "rotate(90deg)" : "none",
-              transition: "transform 0.2s", display: "inline-block", textAlign: "center"
-            }}>→</span>
-          </div>
-          <AnimatePresence>
-            {expandedId === reg._id && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.25, ease }}
-                style={{ overflow: "hidden", background: "rgba(255,255,0,0.01)", borderTop: "1px solid rgba(255,255,255,0.03)" }}
-              >
-                <div style={{ padding: "20px 24px" }}>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12, marginBottom: 18 }}>
-                    {reg.members.map((m, i) => (
-                      <div key={i} style={{ display: "flex", flexDirection: "column", gap: 8, padding: "14px 16px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 10 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <span style={{ fontFamily: FONT, fontSize: 9, fontWeight: 700, color: i === 0 ? "#FFFF00" : "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-                            {i === 0 ? "★ Team Lead" : `Hacker ${i + 1}`}
-                          </span>
-                          <Pill color="rgba(255,255,255,0.45)">{m.role || "Developer"}</Pill>
-                        </div>
-                        <span style={{ fontFamily: FONT, fontSize: 14, fontWeight: 700, color: "#fff" }}>{m.name}</span>
-                        <span style={{ fontFamily: FONT, fontSize: 12, color: "rgba(255,255,255,0.4)", wordBreak: "break-all" }}>{m.email}</span>
-                        {m.github && (
-                          <a href={`https://github.com/${m.github}`} target="_blank" rel="noreferrer" style={{ fontFamily: FONT, fontSize: 12, color: "#FFFF00", textDecoration: "none", marginTop: 4, display: "inline-flex", alignItems: "center", gap: 4 }}>
-                            github.com/{m.github} ↗
-                          </a>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                  {reg.idea && (
-                    <div style={{ background: "rgba(255,255,255,0.015)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: 10, padding: 14 }}>
-                      <p style={{ fontFamily: FONT, fontSize: 10, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", margin: "0 0 6px 0" }}>Project Concept</p>
-                      <p style={{ fontFamily: FONT, fontSize: 14, color: "rgba(255,255,255,0.65)", lineHeight: 1.6, margin: 0 }}>{reg.idea}</p>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function MeetupTable({ data }) {
-  if (!data.length) return (
-    <p style={{ fontFamily: FONT, fontSize: 14, color: "rgba(255,255,255,0.25)", padding: "40px 0", textAlign: "center" }}>No meetup RSVPs registered yet.</p>
-  );
-  return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "1.8fr 1.8fr 1fr 1fr 1fr", gap: 16, padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.01)" }}>
-        {["Name", "Email Address", "Phone", "Exp. Level", "Date RSVP'd"].map(h => (
-          <span key={h} style={{ fontFamily: FONT, fontSize: 10, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)" }}>{h}</span>
-        ))}
-      </div>
-      {data.map((reg) => (
-        <div
-          key={reg._id}
-          style={{ display: "grid", gridTemplateColumns: "1.8fr 1.8fr 1fr 1fr 1fr", gap: 16, padding: "16px 20px", borderBottom: "1px solid rgba(255,255,255,0.05)", alignItems: "center" }}
-        >
-          <span style={{ fontFamily: FONT, fontSize: 15, fontWeight: 700, color: "#fff" }}>{reg.name}</span>
-          <span style={{ fontFamily: FONT, fontSize: 14, color: "rgba(255,255,255,0.6)", wordBreak: "break-all" }}>{reg.email}</span>
-          <span style={{ fontFamily: FONT, fontSize: 14, color: "rgba(255,255,255,0.5)" }}>{reg.phone || "—"}</span>
-          <div>
-            <Pill color={reg.experience === "advanced" ? "#FFFF00" : reg.experience === "intermediate" ? "#00FFFF" : "#FF00FF"}>
-              {reg.experience || "beginner"}
-            </Pill>
-          </div>
-          <span style={{ fontFamily: FONT, fontSize: 13, color: "rgba(255,255,255,0.4)" }}>{new Date(reg.submittedAt).toLocaleDateString("en-IN")}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 // ── Main Dashboard Panel ──────────────────────────────────
 export default function AdminDashboard() {
   const [events, setEvents]                 = useState([]);
-  const [hackathons, setHackathons]         = useState([]);
-  const [meetups, setMeetups]               = useState([]);
   const [bookings, setBookings]             = useState([]);
   const [loading, setLoading]               = useState(true);
   const [error, setError]                   = useState("");
-  const [portalTab, setPortalTab]           = useState("events"); // "events" or "bookings"
+  const [portalTab, setPortalTab]           = useState("events"); // "events", "bookings", "projects"
+  const [pendingProjects, setPendingProjects] = useState([]);
+  const [projectsLoading, setProjectsLoading] = useState(false);
 
   /* Selection states for event specific dashboard */
   const [selectedEvent, setSelectedEvent]   = useState(null);
@@ -185,28 +81,22 @@ export default function AdminDashboard() {
     setLoading(true);
     setError("");
     try {
-      const [eRes, hRes, mRes, bRes] = await Promise.all([
+      const [eRes, bRes] = await Promise.all([
         fetch(`${API}/api/events`),
-        fetch(`${API}/api/admin/registrations/hackathon`, { headers: authHeaders() }),
-        fetch(`${API}/api/admin/registrations/meetup`,    { headers: authHeaders() }),
-        fetch(`${API}/api/partnerships/admin/list`,       { headers: authHeaders() }),
+        fetch(`${API}/api/partnerships/admin/list`, { headers: authHeaders() }),
       ]);
 
-      if (hRes.status === 401 || mRes.status === 401 || bRes.status === 401) {
+      if (bRes.status === 401) {
         sessionStorage.removeItem("htc_admin_token");
         navigate("/admin/login", { replace: true });
         return;
       }
 
-      const [eData, hData, mData, bData] = await Promise.all([
+      const [eData, bData] = await Promise.all([
         eRes.json(),
-        hRes.json(),
-        mRes.json(),
         bRes.json(),
       ]);
       setEvents(eData);
-      setHackathons(hData);
-      setMeetups(mData);
       setBookings(bData);
     } catch {
       setError("Failed to sync records. Check server connection.");
@@ -231,9 +121,39 @@ export default function AdminDashboard() {
     }
   };
 
+  const fetchProjects = async () => {
+    setProjectsLoading(true);
+    try {
+      const res = await fetch(`${API}/api/projects?status=pending`, { headers: authHeaders() });
+      const data = await res.json();
+      setPendingProjects(Array.isArray(data) ? data : []);
+    } catch {
+      setPendingProjects([]);
+    } finally {
+      setProjectsLoading(false);
+    }
+  };
+
+  const reviewProject = async (id, action) => {
+    try {
+      const res = await fetch(`${API}/api/projects/${id}/${action}`, {
+        method: "PATCH",
+        headers: authHeaders(),
+      });
+      if (!res.ok) throw new Error();
+      setPendingProjects((prev) => prev.filter((p) => p._id !== id));
+    } catch {
+      alert(`Failed to ${action} project.`);
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (portalTab === "projects") fetchProjects();
+  }, [portalTab]);
 
   /* Load Mock Event-Specific details when selectedEvent changes */
   useEffect(() => {
@@ -296,16 +216,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const getEventRegs = (ev) => {
-    if (!ev) return [];
-    return ev.eventType === "hackathon"
-      ? hackathons.filter(h => h.eventId === ev._id)
-      : meetups.filter(m => m.eventId === ev._id);
-  };
-
-  // Helper selectors
-  const totalRegistrations = hackathons.length + meetups.length;
-  const eventRegs = getEventRegs(selectedEvent);
 
   return (
     <div style={{ background: "#0C0C0D", minHeight: "100vh", color: "#fff", display: "flex", flexDirection: "column" }}>
@@ -361,6 +271,22 @@ export default function AdminDashboard() {
               >
                 Partnership Bookings
               </button>
+              <button
+                onClick={() => setPortalTab("projects")}
+                style={{
+                  fontFamily: FONT, fontSize: 14, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase",
+                  background: "none", border: "none", borderBottom: portalTab === "projects" ? "2px solid #FFFF00" : "2px solid transparent",
+                  color: portalTab === "projects" ? "#FFFF00" : "rgba(255,255,255,0.4)",
+                  padding: "12px 4px", cursor: "pointer", transition: "all 0.2s", display: "flex", alignItems: "center", gap: 8
+                }}
+              >
+                Showcase Projects
+                {pendingProjects.length > 0 && (
+                  <span style={{ background: "#FF4444", color: "#fff", borderRadius: 99, fontSize: 10, fontWeight: 900, padding: "2px 7px", lineHeight: 1.4 }}>
+                    {pendingProjects.length}
+                  </span>
+                )}
+              </button>
             </div>
 
             {portalTab === "events" ? (
@@ -378,7 +304,6 @@ export default function AdminDashboard() {
                   <StatCard label="Total Listed Events" value={events.length} color="#FFFF00" />
                   <StatCard label="Active Hackathons" value={events.filter(e => e.eventType === "hackathon").length} color="#FFFF00" />
                   <StatCard label="Programmed Meetups" value={events.filter(e => e.eventType === "meetup").length} color="#00FFFF" />
-                  <StatCard label="Portal-wide Registrations" value={totalRegistrations} color="#FF00FF" />
                 </section>
 
                 {loading ? (
@@ -387,8 +312,8 @@ export default function AdminDashboard() {
                   </div>
                 ) : (
                   <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 16, overflow: "hidden" }}>
-                    <div style={{ display: "grid", gridTemplateColumns: "80px 2.5fr 1fr 1.5fr 1fr 1.2fr", gap: 16, padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.01)" }}>
-                      {["", "Event Info", "Type", "Schedule", "Entries", "Actions"].map(h => (
+                    <div style={{ display: "grid", gridTemplateColumns: "80px 2.5fr 1fr 1.5fr 1.2fr", gap: 16, padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.01)" }}>
+                      {["", "Event Info", "Type", "Schedule", "Actions"].map(h => (
                         <span key={h} style={{ fontFamily: FONT, fontSize: 10, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)" }}>{h}</span>
                       ))}
                     </div>
@@ -398,7 +323,7 @@ export default function AdminDashboard() {
                       events.map(event => (
                         <div
                           key={event._id}
-                          style={{ display: "grid", gridTemplateColumns: "80px 2.5fr 1fr 1.5fr 1fr 1.2fr", gap: 16, padding: "18px 20px", borderBottom: "1px solid rgba(255,255,255,0.05)", alignItems: "center" }}
+                          style={{ display: "grid", gridTemplateColumns: "80px 2.5fr 1fr 1.5fr 1.2fr", gap: 16, padding: "18px 20px", borderBottom: "1px solid rgba(255,255,255,0.05)", alignItems: "center" }}
                         >
                           <div style={{ width: 64, height: 44, borderRadius: 6, overflow: "hidden", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}>
                             <img src={event.thumbnail || event.banner} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -415,10 +340,6 @@ export default function AdminDashboard() {
                           <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
                             <span style={{ fontFamily: FONT, fontSize: 13, color: "rgba(255,255,255,0.7)" }}>{event.date}</span>
                             <span style={{ fontFamily: FONT, fontSize: 11, color: "rgba(255,255,255,0.35)", textTransform: "uppercase" }}>{event.city}</span>
-                          </div>
-                          <div>
-                            <span style={{ fontFamily: FONT, fontSize: 16, fontWeight: 700, color: "#FFFF00" }}>{getEventRegs(event).length}</span>
-                            <span style={{ fontFamily: FONT, fontSize: 12, color: "rgba(255,255,255,0.35)", marginLeft: 4 }}>RSVPs</span>
                           </div>
                           <div>
                             <button
@@ -438,7 +359,7 @@ export default function AdminDashboard() {
                   </div>
                 )}
               </>
-            ) : (
+            ) : portalTab === "bookings" ? (
               // ═══ PARTNERSHIP BOOKINGS VIEW ═══
               <>
                 <div style={{ marginBottom: 44 }}>
@@ -544,7 +465,84 @@ export default function AdminDashboard() {
                   </div>
                 )}
               </>
-            )}
+            ) : portalTab === "projects" ? (
+              // ═══ SHOWCASE PROJECTS VIEW ═══
+              <>
+                <div style={{ marginBottom: 44 }}>
+                  <h1 style={{ fontFamily: FONT, fontWeight: 900, fontSize: "clamp(2rem, 5vw, 3.5rem)", textTransform: "uppercase", letterSpacing: "-0.04em", lineHeight: 0.9, color: "#fff", margin: "0 0 10px" }}>
+                    Showcase Projects
+                  </h1>
+                  <p style={{ fontFamily: FONT, fontSize: 14, color: "rgba(255,255,255,0.35)", margin: 0 }}>
+                    Review and approve or reject user-submitted projects for the public showcase.
+                  </p>
+                </div>
+
+                <section style={{ display: "flex", gap: 16, marginBottom: 48 }}>
+                  <StatCard label="Pending Review" value={pendingProjects.length} color="#FF9800" />
+                </section>
+
+                {projectsLoading ? (
+                  <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 16, padding: "80px 0", textAlign: "center" }}>
+                    <span style={{ fontFamily: FONT, fontSize: 12, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.2)" }}>Loading projects…</span>
+                  </div>
+                ) : pendingProjects.length === 0 ? (
+                  <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 16, padding: "80px 0", textAlign: "center" }}>
+                    <p style={{ fontFamily: FONT, fontSize: 14, color: "rgba(255,255,255,0.25)", margin: 0 }}>No pending projects. All caught up!</p>
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                    {pendingProjects.map((project) => (
+                      <div key={project._id} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 16, padding: "24px", display: "flex", gap: 20, alignItems: "flex-start" }}>
+                        {project.thumbnail && (
+                          <img src={project.thumbnail} alt="" style={{ width: 120, height: 80, objectFit: "cover", borderRadius: 8, border: "1px solid rgba(255,255,255,0.08)", flexShrink: 0 }} />
+                        )}
+                        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                            <span style={{ fontFamily: FONT, fontSize: 18, fontWeight: 900, color: "#fff" }}>{project.title}</span>
+                            <Pill color="#FFFF00">{project.track || "General"}</Pill>
+                          </div>
+                          <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+                            <span style={{ fontFamily: FONT, fontSize: 13, color: "rgba(255,255,255,0.5)" }}>🏆 {project.hackathon}</span>
+                            {project.date && <span style={{ fontFamily: FONT, fontSize: 13, color: "rgba(255,255,255,0.5)" }}>📅 {project.date}</span>}
+                            {project.submittedBy?.name && (
+                              <span style={{ fontFamily: FONT, fontSize: 13, color: "rgba(255,255,0,0.7)" }}>👤 {project.submittedBy.name}</span>
+                            )}
+                          </div>
+                          {project.stack?.length > 0 && (
+                            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                              {project.stack.map((t) => (
+                                <span key={t} style={{ fontFamily: FONT, fontSize: 11, color: "rgba(255,255,255,0.5)", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, padding: "2px 8px" }}>{t}</span>
+                              ))}
+                            </div>
+                          )}
+                          {project.team?.length > 0 && (
+                            <span style={{ fontFamily: FONT, fontSize: 12, color: "rgba(255,255,255,0.4)" }}>Team: {project.team.join(", ")}</span>
+                          )}
+                          <div style={{ display: "flex", gap: 8, marginTop: 4, flexWrap: "wrap" }}>
+                            {project.github && <a href={project.github} target="_blank" rel="noreferrer" style={{ fontFamily: FONT, fontSize: 12, color: "#FFFF00", textDecoration: "none" }}>GitHub ↗</a>}
+                            {project.demo && <a href={project.demo} target="_blank" rel="noreferrer" style={{ fontFamily: FONT, fontSize: 12, color: "#00FFFF", textDecoration: "none" }}>Live Demo ↗</a>}
+                          </div>
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "column", gap: 8, flexShrink: 0 }}>
+                          <button
+                            onClick={() => reviewProject(project._id, "approve")}
+                            style={{ fontFamily: FONT, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", background: "rgba(76,175,80,0.12)", color: "#4CAF50", border: "1px solid rgba(76,175,80,0.3)", borderRadius: 8, padding: "10px 20px", cursor: "pointer" }}
+                          >
+                            ✓ Approve
+                          </button>
+                          <button
+                            onClick={() => reviewProject(project._id, "reject")}
+                            style={{ fontFamily: FONT, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", background: "rgba(244,67,54,0.08)", color: "#F44336", border: "1px solid rgba(244,67,54,0.25)", borderRadius: 8, padding: "10px 20px", cursor: "pointer" }}
+                          >
+                            ✕ Reject
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : null}
           </main>
         </>
       ) : (
@@ -552,7 +550,7 @@ export default function AdminDashboard() {
         <div style={{ display: "flex", flex: 1, minHeight: "100vh" }}>
           
           {/* LEFT CONSOLE SIDEBAR */}
-          <aside style={{ width: 260, borderRight: "1px solid rgba(255,255,255,0.07)", background: "#080809", display: "flex", flexDirection: "column", position: "sticky", top: 0, height: "100vh", overflowY: "auto" }}>
+          <aside data-lenis-prevent style={{ width: 260, borderRight: "1px solid rgba(255,255,255,0.07)", background: "#080809", display: "flex", flexDirection: "column", position: "sticky", top: 0, height: "100vh", overflowY: "auto" }}>
             
             {/* Header info */}
             <div style={{ padding: "20px 24px", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
@@ -598,7 +596,7 @@ export default function AdminDashboard() {
               <div>
                 <p style={{ fontFamily: FONT, fontSize: 9, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", paddingLeft: 10, marginBottom: 10 }}>Participants</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                  {["Registrations", "Problem Statements", "Submissions"].map(tab => {
+                  {["Problem Statements", "Submissions"].map(tab => {
                     const isHackOnly = ["Problem Statements", "Submissions"].includes(tab);
                     if (isHackOnly && selectedEvent.eventType !== "hackathon") return null;
                     return (
@@ -697,7 +695,7 @@ export default function AdminDashboard() {
           </aside>
 
           {/* MAIN EVENT WORKSPACE */}
-          <div style={{ flex: 1, padding: "40px 48px", overflowY: "auto", boxSizing: "border-box" }}>
+          <div data-lenis-prevent style={{ flex: 1, padding: "40px 48px", overflowY: "auto", boxSizing: "border-box" }}>
             
             {/* Header section status */}
             <div style={{ borderBottom: "1px solid rgba(255,255,255,0.07)", paddingBottom: 24, marginBottom: 36, display: "flex", justifyHeight: "flex-end", justifyContent: "space-between", alignItems: "center" }}>
@@ -713,7 +711,7 @@ export default function AdminDashboard() {
               {/* Event status pill */}
               <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
                 <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#FFFF00", animation: "pulse 2s infinite" }} />
-                <span style={{ fontFamily: FONT, fontSize: 12, color: "rgba(255,255,255,0.6)" }}>Registrations Active</span>
+                <span style={{ fontFamily: FONT, fontSize: 12, color: "rgba(255,255,255,0.6)" }}>Event Active</span>
               </div>
             </div>
 
@@ -749,11 +747,7 @@ export default function AdminDashboard() {
 
                     {/* Stats metrics */}
                     <div style={{ display: "flex", gap: 16 }}>
-                      <StatCard label="Registered Attendees/Teams" value={eventRegs.length} color="#FFFF00" />
-                      {selectedEvent.eventType === "hackathon" && (
-                        <StatCard label="Total Hacker Members" value={eventRegs.reduce((sum, r) => sum + r.members.length, 0)} color="#FFFF00" />
-                      )}
-                      <StatCard label="Event Capacity limit" value={selectedEvent.capacity || "Open"} color="#00FFFF" />
+                      <StatCard label="Event Capacity" value={selectedEvent.capacity || "Open"} color="#00FFFF" />
                       <OptionStatCard label="Entry Fee" value="Free" color="#FF00FF" />
                     </div>
 
@@ -966,22 +960,6 @@ export default function AdminDashboard() {
                             </div>
                           ))}
                         </div>
-                      )}
-                    </div>
-
-                  </div>
-                )}
-
-                {/* 6. REGISTRATIONS PANEL */}
-                {activeTab === "Registrations" && (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-                    
-                    {/* Registrations List container */}
-                    <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 16, overflow: "hidden" }}>
-                      {selectedEvent.eventType === "hackathon" ? (
-                        <HackathonTable data={eventRegs} />
-                      ) : (
-                        <MeetupTable data={eventRegs} />
                       )}
                     </div>
 
@@ -1333,21 +1311,6 @@ export default function AdminDashboard() {
                     {/* Charts */}
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
                       
-                      {/* Reg status over time */}
-                      <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 16, padding: 24 }}>
-                        <h4 style={{ fontFamily: FONT, fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "rgba(255,255,255,0.4)", margin: "0 0 20px 0" }}>Registration Velocity</h4>
-                        
-                        <div style={{ display: "flex", gap: 16, alignItems: "flex-end", height: 180, paddingBottom: 10, borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-                          {[12, 18, 25, 45, 60, eventRegs.length].map((val, idx) => (
-                            <div key={idx} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-                              <span style={{ fontFamily: FONT, fontSize: 11, color: "#FFFF00" }}>{val}</span>
-                              <div style={{ width: "100%", height: `${Math.min(100, (val / 70) * 100)}%`, background: "#FFFF00", borderRadius: "4px 4px 0 0" }} />
-                              <span style={{ fontFamily: FONT, fontSize: 10, color: "rgba(255,255,255,0.3)" }}>Day {idx + 1}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
                       {/* Experience levels */}
                       <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 16, padding: 24 }}>
                         <h4 style={{ fontFamily: FONT, fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "rgba(255,255,255,0.4)", margin: "0 0 20px 0" }}>Skill Demographics</h4>
@@ -1382,15 +1345,9 @@ export default function AdminDashboard() {
                     
                     <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 16, padding: 24 }}>
                       <h3 style={{ fontFamily: FONT, fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#FFFF00", margin: "0 0 8px 0" }}>Export CSV Logs</h3>
-                      <p style={{ fontFamily: FONT, fontSize: 13, color: "rgba(255,255,255,0.45)", marginBottom: 24 }}>Generate spreadsheet downloads containing all registration tables and leaderboards.</p>
-                      
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                        <div style={{ display: "flex", flexDirection: "column", gap: 8, padding: 18, background: "rgba(255,255,255,0.015)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: 12 }}>
-                          <span style={{ fontFamily: FONT, fontSize: 15, fontWeight: 700, color: "#fff" }}>Complete Registrations Log</span>
-                          <span style={{ fontFamily: FONT, fontSize: 12, color: "rgba(255,255,255,0.35)", marginBottom: 12 }}>Export fields: Name, Email, Phone, Timestamp, Tracks, Roles.</span>
-                          <button onClick={() => alert("CSV Generation complete! Downloading 'registrations_log.csv'...")} style={buttonStyle}>Generate & Download CSV</button>
-                        </div>
+                      <p style={{ fontFamily: FONT, fontSize: 13, color: "rgba(255,255,255,0.45)", marginBottom: 24 }}>Generate spreadsheet downloads for event leaderboards.</p>
 
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                         {selectedEvent.eventType === "hackathon" && (
                           <div style={{ display: "flex", flexDirection: "column", gap: 8, padding: 18, background: "rgba(255,255,255,0.015)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: 12 }}>
                             <span style={{ fontFamily: FONT, fontSize: 15, fontWeight: 700, color: "#fff" }}>Project Submissions Leaderboard</span>

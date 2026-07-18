@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect, useLayoutEffect } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { useState, useMemo, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/context/AuthContext";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
@@ -10,14 +12,10 @@ import {
   Building2,
   Zap,
   ExternalLink,
-  Plus,
   X,
   Search,
   Upload as UploadIcon,
 } from "lucide-react";
-
-// ── Swap this path for your actual hero background ─────────────────────────
-import blob from "@/assets/websiteback.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -37,45 +35,7 @@ function GithubIcon({ className }) {
   );
 }
 
-// ── Seed data so the page isn't empty on first load ────────────────────────
-const seedProjects = [
-  {
-    id: "seed-1",
-    title: "PulseBoard — Live Ops Dashboard",
-    hackathon: "HackUp 2026",
-    date: "3–4 Apr 2026",
-    track: "Developer Tools",
-    stack: ["React", "Node", "WebSocket", "PostgreSQL"],
-    github: "https://github.com",
-    demo: "https://example.com",
-    team: ["Aarav", "Diya", "Kabir"],
-    thumbnail: "https://picsum.photos/seed/pulseboard/640/420",
-  },
-  {
-    id: "seed-2",
-    title: "Reflex — Offline-First Notes",
-    hackathon: "Hackthecore",
-    date: "18–19 May 2026",
-    track: "Productivity",
-    stack: ["Svelte", "IndexedDB", "CRDT"],
-    github: "https://github.com",
-    demo: "https://example.com",
-    team: ["Meera", "Yusuf"],
-    thumbnail: "https://picsum.photos/seed/reflex/640/420",
-  },
-  {
-    id: "seed-3",
-    title: "Terra — Crop Health from Satellite",
-    hackathon: "HackUp 2026",
-    date: "3–4 Apr 2026",
-    track: "AI / ML",
-    stack: ["Python", "PyTorch", "FastAPI"],
-    github: "https://github.com",
-    demo: "https://example.com",
-    team: ["Ishaan", "Priya", "Rohan", "Sana"],
-    thumbnail: "https://picsum.photos/seed/terra/640/420",
-  },
-];
+const API_BASE = `${import.meta.env.VITE_API_URL}/api`;
 
 const emptyForm = {
   title: "",
@@ -217,40 +177,40 @@ function ProjectCard({ project }) {
 
 // Modal is always mounted; AnimatePresence controls enter/exit so the
 // overlay and panel animate out instead of just vanishing.
-function UploadModal({ open, onClose, onSubmit }) {
+function UploadModal({ open, onClose, onSubmit, userName }) {
   const [form, setForm] = useState(emptyForm);
-  const fileRef = useRef(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  // Pre-fill team with logged-in user's name
+  useEffect(() => {
+    if (open && userName) {
+      setForm((f) => ({ ...f, team: f.team || userName }));
+    }
+  }, [open, userName]);
 
   const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
-  const handleFile = (e) => {
-    const file = e.target.files?.[0];
-    if (file) setForm((f) => ({ ...f, thumbnail: URL.createObjectURL(file) }));
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.title || !form.hackathon) return;
+    setSubmitting(true);
 
-    onSubmit({
-      id: `p-${Date.now()}`,
+    // blob: URLs are client-side only — never send them to the backend
+    const thumbnail = form.thumbnail.startsWith("blob:") ? "" : form.thumbnail;
+
+    await onSubmit({
       title: form.title,
       hackathon: form.hackathon,
       date: form.date || "Undated",
       track: form.track || "General",
-      stack: form.stack
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean),
+      stack: form.stack.split(",").map((s) => s.trim()).filter(Boolean),
       github: form.github,
       demo: form.demo,
-      team: form.team
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean) || ["You"],
-      thumbnail: form.thumbnail || "https://picsum.photos/640/420",
+      team: form.team.split(",").map((s) => s.trim()).filter(Boolean),
+      thumbnail,
     });
 
+    setSubmitting(false);
     setForm(emptyForm);
     onClose();
   };
@@ -274,9 +234,9 @@ function UploadModal({ open, onClose, onSubmit }) {
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             onSubmit={handleSubmit}
             className="relative w-full max-w-lg bg-white rounded-[28px] shadow-2xl
-                       max-h-[90vh] overflow-y-auto"
+                       flex flex-col max-h-[92vh]"
           >
-            <div className="sticky top-0 bg-white flex items-center justify-between px-6 py-5 border-b border-black/5">
+            <div className="shrink-0 bg-white flex items-center justify-between px-6 py-5 border-b border-black/5 rounded-t-[28px]">
               <h2 className="text-xl font-black text-black">Upload your build</h2>
               <button
                 type="button"
@@ -287,7 +247,7 @@ function UploadModal({ open, onClose, onSubmit }) {
               </button>
             </div>
 
-            <div className="px-6 py-5 space-y-4">
+            <div data-lenis-prevent className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
               <label className="block">
                 <span className="text-sm font-bold text-black">Project title *</span>
                 <input
@@ -298,6 +258,25 @@ function UploadModal({ open, onClose, onSubmit }) {
                   className="mt-1.5 w-full rounded-xl border border-black/10 px-3.5 py-2.5
                              text-sm outline-none focus:border-black transition-colors"
                 />
+              </label>
+
+              <label className="block">
+                <span className="text-sm font-bold text-black">Banner / Thumbnail URL</span>
+                <input
+                  value={form.thumbnail}
+                  onChange={update("thumbnail")}
+                  placeholder="https://images.unsplash.com/…"
+                  className="mt-1.5 w-full rounded-xl border border-black/10 px-3.5 py-2.5
+                             text-sm outline-none focus:border-black transition-colors"
+                />
+                {form.thumbnail && (
+                  <img
+                    src={form.thumbnail}
+                    alt="Preview"
+                    className="mt-2 h-28 w-full object-cover rounded-xl border border-black/10"
+                    onError={(e) => { e.target.style.display = "none"; }}
+                  />
+                )}
               </label>
 
               <div className="grid grid-cols-2 gap-3">
@@ -382,45 +361,16 @@ function UploadModal({ open, onClose, onSubmit }) {
                 </label>
               </div>
 
-              <div>
-                <span className="text-sm font-bold text-black">Thumbnail</span>
-                <button
-                  type="button"
-                  onClick={() => fileRef.current?.click()}
-                  className="mt-1.5 w-full rounded-xl border-2 border-dashed border-black/15
-                             px-3.5 py-6 flex flex-col items-center gap-2 text-neutral-500
-                             hover:border-black/30 transition-colors"
-                >
-                  {form.thumbnail ? (
-                    <img
-                      src={form.thumbnail}
-                      alt="Preview"
-                      className="h-24 w-full object-cover rounded-lg"
-                    />
-                  ) : (
-                    <>
-                      <UploadIcon className="h-5 w-5" />
-                      <span className="text-xs">Click to choose an image</span>
-                    </>
-                  )}
-                </button>
-                <input
-                  ref={fileRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFile}
-                  className="hidden"
-                />
-              </div>
             </div>
 
-            <div className="sticky bottom-0 bg-white px-6 py-5 border-t border-black/5">
+            <div className="shrink-0 bg-white px-6 py-5 border-t border-black/5 rounded-b-[28px]">
               <button
                 type="submit"
+                disabled={submitting}
                 className="w-full rounded-full bg-black text-white font-bold py-3
-                           hover:bg-neutral-800 transition-colors"
+                           hover:bg-neutral-800 transition-colors disabled:opacity-50"
               >
-                Publish project
+                {submitting ? "Submitting…" : "Submit for review"}
               </button>
             </div>
           </motion.form>
@@ -430,43 +380,67 @@ function UploadModal({ open, onClose, onSubmit }) {
   );
 }
 
-// Framer variants for the hero's staggered entrance on mount.
-const heroContainer = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
-};
-const heroItem = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
-};
-
 export default function ShowCase() {
-  const [projects, setProjects] = useState(seedProjects);
+  const { user, token } = useAuth();
+  const navigate = useNavigate();
+  const [projects, setProjects] = useState([]);
+  const [loadingProjects, setLoadingProjects] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [activeTrack, setActiveTrack] = useState("All");
   const gridRef = useRef(null);
 
-  const tracks = useMemo(
-    () => ["All", ...new Set(projects.map((p) => p.track))],
-    [projects]
-  );
+  // Fetch approved projects from API
+  useEffect(() => {
+    fetch(`${API_BASE}/projects/approved`)
+      .then((r) => r.json())
+      .then((data) => setProjects(Array.isArray(data) ? data : []))
+      .catch(() => setProjects([]))
+      .finally(() => setLoadingProjects(false));
+  }, []);
 
   const filtered = useMemo(
     () =>
-      projects.filter((p) => {
-        const matchesTrack = activeTrack === "All" || p.track === activeTrack;
-        const matchesQuery =
-          query.trim() === "" ||
-          p.title.toLowerCase().includes(query.toLowerCase()) ||
-          p.hackathon.toLowerCase().includes(query.toLowerCase());
-        return matchesTrack && matchesQuery;
-      }),
-    [projects, query, activeTrack]
+      query.trim() === ""
+        ? projects
+        : projects.filter(
+            (p) =>
+              p.title.toLowerCase().includes(query.toLowerCase()) ||
+              p.hackathon.toLowerCase().includes(query.toLowerCase())
+          ),
+    [projects, query]
   );
 
-  // ── Lenis smooth scroll, wired into GSAP's ticker so ScrollTrigger and
-  //    Lenis agree on scroll position every frame. ─────────────────────────
+  const [loginPrompt, setLoginPrompt] = useState(false);
+
+  const handleUploadClick = () => {
+    if (!user) {
+      setLoginPrompt(true);
+      return;
+    }
+    setModalOpen(true);
+  };
+
+  const handleProjectSubmit = async (projectData) => {
+    try {
+      const res = await fetch(`${API_BASE}/projects`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(projectData),
+      });
+      if (!res.ok) {
+        const d = await res.json();
+        alert(d.message || "Submission failed.");
+        return;
+      }
+      alert("Project submitted! It will appear after admin approval.");
+    } catch {
+      alert("Could not reach server. Try again.");
+    }
+  };
+
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.1,
@@ -488,79 +462,34 @@ export default function ShowCase() {
     };
   }, []);
 
-
-  // ── Header background fades in from transparent to solid as you scroll
-  //    past the hero, driven by Framer Motion's scroll value. ────────────
-  const { scrollY } = useScroll();
-  const headerBg = useTransform(
-    scrollY,
-    [0, 160],
-    ["rgba(255,255,255,0)", "rgba(255,255,255,0.92)"]
-  );
-  const headerBorder = useTransform(
-    scrollY,
-    [0, 160],
-    ["rgba(0,0,0,0)", "rgba(0,0,0,0.06)"]
-  );
-
   return (
     <div className="min-h-screen bg-white">
-      {/* ── Top bar ── */}
-      <motion.header
-        style={{ backgroundColor: headerBg, borderColor: headerBorder }}
-        className="fixed top-0 inset-x-0 z-40 flex items-center justify-end
-                   px-6 md:px-12 py-5 border-b backdrop-blur-md"
-      >
-      </motion.header>
-
-      {/* ── Hero ── */}
-      <section
-        className="relative h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center"
-        style={{ backgroundImage: `url(${blob})` }}
-      >
-        <motion.div
-          variants={heroContainer}
-          initial="hidden"
-          animate="show"
-          className="relative px-6 max-w-3xl text-center"
-        >
-          
-
-          <motion.h1
-            variants={heroItem}
-            className="mt-5 text-4xl md:text-6xl font-black tracking-tight text-black uppercase"
-          >
-            Built in one weekend.
-            <br />
-            Shown off forever.
-          </motion.h1>
-
-          <motion.p
-            variants={heroItem}
-            className="mt-4 text-base md:text-lg text-black/80 max-w-xl mx-auto"
-          >
-            Every hack has a story — the all-nighters, the last-minute pivots,
-            the demo that barely worked. This is where those stories live.
-          </motion.p>
-
-          <motion.button
-            variants={heroItem}
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => setModalOpen(true)}
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-white text-black
-                       font-bold px-7 py-3.5 hover:bg-neutral-100 transition-colors"
+      {/* ── Page Header ── */}
+      <section className="px-6 md:px-12 py-8 border-b border-black/5" style={{ marginTop: "100px" }}>
+        <div className="mx-auto max-w-6xl flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-black uppercase">
+              Project <span style={{ color: "#1DCA23" }}>Showcase</span>
+            </h1>
+            <p className="mt-1 text-sm text-neutral-500">
+              Built at hackathons. Shown off forever.
+            </p>
+          </div>
+          <button
+            onClick={handleUploadClick}
+            className="inline-flex items-center gap-2 rounded-full font-bold px-6 py-3 transition-colors border-2 bg-transparent text-black hover:bg-black/5"
+            style={{ borderColor: "#52B816" }}
           >
             <UploadIcon className="h-4 w-4" />
             Upload your build
-          </motion.button>
-        </motion.div>
+          </button>
+        </div>
       </section>
 
-      {/* ── Filters ── */}
-      <section className="sticky top-[73px] z-10 bg-white/90 backdrop-blur border-b border-black/5 px-6 md:px-12 py-4">
-        <div className="mx-auto max-w-6xl flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-          <div className="relative w-full sm:w-72">
+      {/* ── Search ── */}
+      <section className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-black/5 px-6 md:px-12 py-4">
+        <div className="mx-auto max-w-6xl">
+          <div className="relative w-full sm:w-80">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
             <input
               value={query}
@@ -570,37 +499,23 @@ export default function ShowCase() {
                          text-sm outline-none focus:border-black transition-colors"
             />
           </div>
-
-          <div className="flex flex-wrap gap-2">
-            {tracks.map((track) => (
-              <button
-                key={track}
-                onClick={() => setActiveTrack(track)}
-                className={`rounded-full px-4 py-1.5 text-xs font-bold border transition-colors ${
-                  activeTrack === track
-                    ? "bg-black text-white border-black"
-                    : "border-black/10 text-neutral-600 hover:border-black/30"
-                }`}
-              >
-                {track}
-              </button>
-            ))}
-          </div>
         </div>
       </section>
 
       {/* ── Grid ── */}
       <section ref={gridRef} className="px-6 md:px-12 py-10">
         <div className="mx-auto max-w-6xl">
-          {filtered.length === 0 ? (
+          {loadingProjects ? (
+            <div className="py-20 text-center text-neutral-400 text-sm">Loading projects…</div>
+          ) : filtered.length === 0 ? (
             <div className="py-20 text-center text-neutral-500">
-              <p className="font-bold text-black text-lg">No projects match yet</p>
-              <p className="mt-1 text-sm">Try a different search or track.</p>
+              <p className="font-bold text-black text-lg">No projects here yet</p>
+              <p className="mt-1 text-sm">Be the first to submit your build.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((project) => (
-                <ProjectCard key={project.id} project={project} />
+                <ProjectCard key={project._id || project.id} project={project} />
               ))}
             </div>
           )}
@@ -610,8 +525,63 @@ export default function ShowCase() {
       <UploadModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        onSubmit={(project) => setProjects((prev) => [project, ...prev])}
+        onSubmit={handleProjectSubmit}
+        userName={user?.name}
       />
+
+      {/* ── Login prompt ── */}
+      <AnimatePresence>
+        {loginPrompt && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+              onClick={() => setLoginPrompt(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 12, scale: 0.97 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              className="relative bg-white rounded-[24px] shadow-2xl p-8 max-w-sm w-full text-center"
+            >
+              <button
+                onClick={() => setLoginPrompt(false)}
+                className="absolute top-4 right-4 h-8 w-8 rounded-full flex items-center justify-center hover:bg-neutral-100"
+              >
+                <X className="h-4 w-4 text-neutral-500" />
+              </button>
+
+              <div className="h-14 w-14 rounded-full bg-black flex items-center justify-center mx-auto mb-4">
+                <UploadIcon className="h-6 w-6 text-white" />
+              </div>
+
+              <h2 className="text-xl font-black text-black">Sign in to upload</h2>
+              <p className="mt-2 text-sm text-neutral-500">
+                You need an account to submit your project to the showcase.
+              </p>
+
+              <div className="mt-6 flex flex-col gap-3">
+                <button
+                  onClick={() => navigate("/login")}
+                  className="w-full rounded-full bg-black text-white font-bold py-3 hover:bg-neutral-800 transition-colors"
+                >
+                  Log in
+                </button>
+                <button
+                  onClick={() => navigate("/signup")}
+                  className="w-full rounded-full border border-black/15 text-black font-bold py-3 hover:bg-neutral-50 transition-colors"
+                >
+                  Create account
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

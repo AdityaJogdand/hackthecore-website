@@ -1,40 +1,53 @@
-const express = require("express");
+import express from "express";
+import { requireAuth } from "./auth.js";
+import { requireAdmin } from "./admin.js";
+import Project from "../models/Project.js";
+
 const router = express.Router();
-const { requireAuth } = require("./auth.js");
-const { requireAdmin } = require("./admin.js");
-const Project = require("../models/Project.js");
+
+const HTTP_URL = /^https?:\/\/.+/;
+function safeStr(val, max) {
+  if (typeof val !== "string") return "";
+  return val.trim().slice(0, max);
+}
+function safeUrl(val) {
+  const s = safeStr(val, 500);
+  // Reject blob:, data:, javascript: and anything not http/https
+  return HTTP_URL.test(s) ? s : "";
+}
 
 // POST /api/projects - Submit a new project (authenticated user)
 router.post("/", requireAuth, async (req, res) => {
   try {
-    const {
-      title,
-      hackathon,
-      date,
-      track,
-      stack,
-      github,
-      demo,
-      team,
-      thumbnail,
-    } = req.body;
+    const { title, hackathon, date, track, stack, github, demo, team, thumbnail } = req.body;
 
-    // Basic validation
-    if (!title || !hackathon) {
-      return res.status(400).json({ message: "Title and hackathon are required." });
+    if (!title || typeof title !== "string" || !title.trim()) {
+      return res.status(400).json({ message: "Title is required." });
+    }
+    if (!hackathon || typeof hackathon !== "string" || !hackathon.trim()) {
+      return res.status(400).json({ message: "Hackathon name is required." });
+    }
+    if (!Array.isArray(stack) || !Array.isArray(team)) {
+      return res.status(400).json({ message: "stack and team must be arrays." });
+    }
+    if (stack.length > 20) {
+      return res.status(400).json({ message: "stack cannot exceed 20 items." });
+    }
+    if (team.length > 10) {
+      return res.status(400).json({ message: "team cannot exceed 10 members." });
     }
 
     const newProject = new Project({
-      title: title.trim(),
-      hackathon: hackathon.trim(),
-      date: date ? date.trim() : "",
-      track: track ? track.trim() : "",
-      stack: Array.isArray(stack) ? stack.map(s => s.trim()).filter(Boolean) : [],
-      github: github ? github.trim() : "",
-      demo: demo ? demo.trim() : "",
-      team: Array.isArray(team) ? team.map(t => t.trim()).filter(Boolean) : [],
-      thumbnail: thumbnail ? thumbnail.trim() : "",
-      submittedBy: req.userId, // from requireAuth middleware
+      title: safeStr(title, 150),
+      hackathon: safeStr(hackathon, 150),
+      date: safeStr(date, 50),
+      track: safeStr(track, 100),
+      stack: stack.map(s => safeStr(s, 50)).filter(Boolean),
+      github: safeUrl(github),
+      demo: safeUrl(demo),
+      team: team.map(t => safeStr(t, 100)).filter(Boolean),
+      thumbnail: safeUrl(thumbnail),
+      submittedBy: req.userId,
     });
 
     const savedProject = await newProject.save();
@@ -139,4 +152,4 @@ router.patch("/:id/reject", requireAdmin, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

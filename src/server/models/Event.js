@@ -50,6 +50,7 @@ const eventSchema = new mongoose.Schema({
   time:                 { type: String, required: true },
   capacity:             { type: String },
   registrationDeadline: { type: String },
+  registrationLink: { type: String, default: "" },
   description:          { type: String },
   venueImages:          { type: [String], default: [] },
   timeline:             { type: [timelineItemSchema], default: [] },

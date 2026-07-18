@@ -75,21 +75,21 @@ export default function GapHero() {
 
   const leftTransform = reducedMotion
     ? 'translateX(0) skewX(0deg) rotate(0deg)'
-    : `translateX(${(1 - ease) * -110}vw) skewX(${leftSkew}deg) rotate(${leftRotate}deg)`;
+    : `translateX(${(1 - ease) * -60}vw) skewX(${leftSkew}deg) rotate(${leftRotate}deg)`;
   const rightTransform = reducedMotion
     ? 'translateX(0) skewX(0deg) rotate(0deg)'
-    : `translateX(${(1 - ease) * 110}vw) skewX(${rightSkew}deg) rotate(${rightRotate}deg)`;
+    : `translateX(${(1 - ease) * 60}vw) skewX(${rightSkew}deg) rotate(${rightRotate}deg)`;
   const mobileLeftTransform = reducedMotion
     ? 'translateX(0) skewX(0deg) rotate(0deg)'
-    : `translateX(${(1 - ease) * -130}vw) skewX(${leftSkew}deg) rotate(${leftRotate}deg)`;
+    : `translateX(${(1 - ease) * -70}vw) skewX(${leftSkew}deg) rotate(${leftRotate}deg)`;
   const mobileRightTransform = reducedMotion
     ? 'translateX(0) skewX(0deg) rotate(0deg)'
-    : `translateX(${(1 - ease) * 130}vw) skewX(${rightSkew}deg) rotate(${rightRotate}deg)`;
+    : `translateX(${(1 - ease) * 70}vw) skewX(${rightSkew}deg) rotate(${rightRotate}deg)`;
 
   return (
     <div
       ref={sectionRef}
-      className={`relative h-[180vh] ${merged ? 'bg-[#FEF636]' : 'bg-[#0B0C0A]'}`}
+      className={`relative h-[130vh] ${merged ? 'bg-[#FEF636]' : 'bg-[#0B0C0A]'}`}
     >
       <style>{`
         @keyframes ripple-expand {

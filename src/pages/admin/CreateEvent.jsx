@@ -222,6 +222,7 @@ export default function CreateEvent() {
   const [time, setTime] = useState("");
   const [capacity, setCapacity] = useState("");
   const [deadline, setDeadline] = useState("");
+  const [registrationLink, setRegistrationLink] = useState("");
   const [description, setDescription] = useState("");
   const [timeline, setTimeline] = useState([emptyTimelineItem()]);
   const [sponsors, setSponsors] = useState([emptySponsor()]);
@@ -281,7 +282,7 @@ export default function CreateEvent() {
       title, banner, thumbnail, venue, city, date, time,
       mode: eventMode,
       fee,
-      capacity, registrationDeadline: deadline,
+      capacity, registrationDeadline: deadline, registrationLink,
       description,
       venueImages: [venueImage1, venueImage2].filter(Boolean),
       timeline: timeline.filter(t => t.time && t.label),
@@ -402,6 +403,7 @@ export default function CreateEvent() {
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                   <Input label="Capacity" placeholder={eventType === "hackathon" ? "e.g. 300 hackers · 60 teams" : "e.g. 80 seats"} value={capacity} onChange={e => setCapacity(e.target.value)} />
                   <Input label="Registration deadline" placeholder="e.g. Jul 25 2026" value={deadline} onChange={e => setDeadline(e.target.value)} />
+                  <Input label="Registration link (external)" placeholder="https://devfolio.co/..." value={registrationLink} onChange={e => setRegistrationLink(e.target.value)} />
                 </div>
                 <TextArea label="Description" required rows={4} placeholder="Use a blank line between paragraphs." value={description} onChange={e => setDescription(e.target.value)} />
               </div>

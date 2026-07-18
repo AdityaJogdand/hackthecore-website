@@ -109,16 +109,6 @@ const Events = () => {
   const FONT = "clamp(7.5rem, 16vw, 13.5rem)";
   const ease = [0.22, 1, 0.36, 1];
 
-  const handleEventClick = (eventId, eventType) => {
-    if (eventType === "hackathon") {
-      navigate(`/events/hackathon/${eventId}`);
-    } else if (eventType === "meetup") {
-      navigate(`/events/meetup/${eventId}`);
-    }
-  };
-  useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-  }, []);
   return (
     <>
 
@@ -304,8 +294,8 @@ const Events = () => {
                     transition={{ duration: 0.5, delay: i * 0.05, ease }}
                     onHoverStart={() => setHoveredId(event._id)}
                     onHoverEnd={() => setHoveredId(null)}
-                    onClick={() => handleEventClick(event._id, event.eventType)}
                     whileHover={{ y: -6 }}
+                    onClick={() => navigate(`/events/${event._id}`)}
                     className="group cursor-pointer rounded-[20px] border border-black/10 bg-white overflow-hidden transition-shadow duration-300"
                     style={{
                       boxShadow: isHovered

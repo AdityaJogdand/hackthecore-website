@@ -5,11 +5,11 @@ import cors from "cors";
 import helmet from "helmet";
 import passport from "passport";
 
-import registrationRoutes from "./routes/registrations.js";
-import adminRoutes, { requireAdmin } from "./routes/admin.js";
+import adminRoutes from "./routes/admin.js";
 import eventRoutes from "./routes/events.js";
 import partnershipRoutes from "./routes/partnerships.js";
 import authRoutes from "./routes/auth.js";
+import projectRoutes from "./routes/projects.js";
 
 
 const app = express();
@@ -67,61 +67,11 @@ app.use(passport.initialize());
 /* -------------------------------------------------------------------------- */
 
 app.use("/api/auth", authRoutes);
-app.use("/api/registrations", registrationRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/partnerships", partnershipRoutes);
+app.use("/api/projects", projectRoutes);
 
-
-/* -------------------------------------------------------------------------- */
-/*                              Admin Routes                                  */
-/* -------------------------------------------------------------------------- */
-
-app.get(
-  "/api/admin/registrations/hackathon",
-  requireAdmin,
-  async (req, res) => {
-    try {
-      const { HackathonRegistration } = await import(
-        "./models/Registration.js"
-      );
-
-      const data = await HackathonRegistration.find().sort({
-        submittedAt: -1,
-      });
-
-      res.json(data);
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({
-        message: "Server error.",
-      });
-    }
-  }
-);
-
-app.get(
-  "/api/admin/registrations/meetup",
-  requireAdmin,
-  async (req, res) => {
-    try {
-      const { MeetupRegistration } = await import(
-        "./models/Registration.js"
-      );
-
-      const data = await MeetupRegistration.find().sort({
-        submittedAt: -1,
-      });
-
-      res.json(data);
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({
-        message: "Server error.",
-      });
-    }
-  }
-);
 
 /* -------------------------------------------------------------------------- */
 /*                               Health Check                                 */

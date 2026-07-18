@@ -25,10 +25,25 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// Whitelist allowed event fields to prevent mass assignment
+function pickEventFields(body) {
+  const allowed = [
+    "eventType","title","banner","thumbnail","venue","city","date","time",
+    "capacity","registrationDeadline","registrationLink","description","venueImages","timeline",
+    "sponsors","contact","edition","themeImage","problemStatement","prizes",
+    "judges","faqs","rsvpRole",
+  ];
+  const out = {};
+  for (const key of allowed) {
+    if (key in body) out[key] = body[key];
+  }
+  return out;
+}
+
 // ADMIN ONLY — create event
 router.post("/", requireAdmin, async (req, res) => {
   try {
-    const event = await Event.create(req.body);
+    const event = await Event.create(pickEventFields(req.body));
     res.status(201).json(event);
   } catch (err) {
     res.status(400).json({ message: err.message || "Failed to create event." });
@@ -38,7 +53,7 @@ router.post("/", requireAdmin, async (req, res) => {
 // ADMIN ONLY — update event
 router.put("/:id", requireAdmin, async (req, res) => {
   try {
-    const event = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const event = await Event.findByIdAndUpdate(req.params.id, pickEventFields(req.body), { new: true, runValidators: true });
     if (!event) return res.status(404).json({ message: "Event not found." });
     res.json(event);
   } catch (err) {

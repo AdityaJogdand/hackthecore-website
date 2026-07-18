@@ -88,7 +88,7 @@ router.post("/", submissionLimiter, async (req, res) => {
           secure: parseInt(smtpPort, 10) === 465, // true for 465, false for others
           auth: {
             user: smtpUser,
-            password: smtpPass,
+            pass: smtpPass,
           },
         });
 

@@ -1,13 +1,20 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import rateLimit from "express-rate-limit";
+import { timingSafeEqual, createHash } from "crypto";
 
 const router = express.Router();
 
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5,                    // max 5 attempts
+  windowMs: 15 * 60 * 1000,
+  max: 5,
   message: { message: "Too many login attempts. Try again in 15 minutes." },
+});
+
+const verifyLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  message: { valid: false },
 });
 
 // POST /api/admin/login
@@ -21,7 +28,11 @@ router.post("/login", loginLimiter, (req, res) => {
     return res.status(400).json({ message: "Username and password required." });
   }
 
-  if (username !== validUsername || password !== validPassword) {
+  // Timing-safe comparison to prevent timing attacks
+  const hash = (s) => createHash("sha256").update(s).digest();
+  const usernameMatch = timingSafeEqual(hash(username), hash(validUsername));
+  const passwordMatch = timingSafeEqual(hash(password), hash(validPassword));
+  if (!usernameMatch || !passwordMatch) {
     return res.status(401).json({ message: "Invalid credentials." });
   }
 
@@ -35,7 +46,7 @@ router.post("/login", loginLimiter, (req, res) => {
 });
 
 // GET /api/admin/verify
-router.get("/verify", (req, res) => {
+router.get("/verify", verifyLimiter, (req, res) => {
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith("Bearer ")) {
     return res.status(401).json({ valid: false });

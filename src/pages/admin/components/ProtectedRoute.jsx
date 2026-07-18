@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
 const API_BASE = `${import.meta.env.VITE_API_URL}/api`;
+const ADMIN_LOGIN_SALT = import.meta.env.VITE_ADMIN_LOGIN_SALT;
+const ADMIN_LOGIN_PATH = `/admin/login-${ADMIN_LOGIN_SALT}`;
 
 export default function ProtectedRoute({ children }) {
   const [status, setStatus] = useState("checking");
@@ -49,5 +51,5 @@ export default function ProtectedRoute({ children }) {
     );
   }
 
-  return status === "ok" ? children : <Navigate to="/admin/login" replace />;
+  return status === "ok" ? children : <Navigate to={ADMIN_LOGIN_PATH} replace />;
 }

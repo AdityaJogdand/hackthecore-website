@@ -1,8 +1,10 @@
 import React, { useEffect, useRef } from 'react'
 import blob from '../assets/websiteback.png'
 import { gsap } from 'gsap'
+import { useNavigate } from 'react-router-dom'
 
 const Herosection = () => {
+  const navigate = useNavigate()
   const buildRef = useRef(null)
   const nextRef = useRef(null)
   const containerRef = useRef(null)
@@ -114,6 +116,7 @@ const Herosection = () => {
           <button
             onMouseEnter={handleBtnEnter}
             onMouseLeave={handleBtnLeave}
+            onClick={() => navigate('/community')}
             className="w-full sm:w-auto px-6 py-3 sm:px-9 sm:py-3.5 rounded-full bg-black text-white text-[11px] sm:text-xs font-bold tracking-[0.15em] sm:tracking-[0.2em] uppercase transition-colors duration-300 hover:bg-white hover:text-black border-2 border-black"
           >
             Join Community

@@ -195,7 +195,7 @@ const Navbar = () => {
         ) : (
           <Link
             to="/login"
-            className="px-4 py-2 text-xs font-bold uppercase text-neutral-900 border border-neutral-900 rounded-full"
+            className="px-7 py-3 rounded-full bg-[#0C0C0D] text-white text-xs font-black uppercase tracking-[0.15em] transition-colors duration-300 hover:bg-neutral-700"
           >
             Sign In
           </Link>
@@ -364,7 +364,7 @@ const Navbar = () => {
                 <Link
                   to="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center w-full py-2.5 rounded-full text-xs font-bold uppercase text-white bg-neutral-900"
+                  className="flex items-center justify-center w-full py-3 rounded-full text-[11px] font-black uppercase tracking-[0.15em] text-white bg-[#0C0C0D]"
                 >
                   Sign In
                 </Link>

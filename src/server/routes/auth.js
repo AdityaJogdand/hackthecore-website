@@ -84,6 +84,14 @@ const googleLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+const meLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  message: { message: "Too many requests." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // ═══════════════════════════════════════════════════════
 //  HELPERS
 // ═══════════════════════════════════════════════════════
@@ -278,7 +286,7 @@ res.redirect(`${process.env.CLIENT_URL}/login?token=${token}`);
 //  GET /api/auth/me  — return current user from JWT
 // ═══════════════════════════════════════════════════════
 
-router.get("/me", async (req, res) => {
+router.get("/me", meLimiter, async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith("Bearer ")) {
