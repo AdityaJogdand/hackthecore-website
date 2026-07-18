@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import htcLogo from "../assets/hackthecorelogo.png";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -457,12 +458,8 @@ function DesktopLayout({ done, setDone }) {
             {/* LEFT */}
             <div style={{ flex: "0 0 48%", background: C.leftBg, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between", padding: "2.5rem 2rem", position: "relative", overflow: "hidden", borderRight: `1px solid ${C.border}` }}>
                 {/* wordmark */}
-                <div style={{ width: "100%", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <svg width="20" height="20" viewBox="0 0 22 22" fill="none">
-                        <rect width="22" height="22" rx="4" fill={C.ink} />
-                        <path d="M7 6v10M15 6v10M7 11h8" stroke={C.yellow} strokeWidth="2" strokeLinecap="round" />
-                    </svg>
-                    <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.1rem", letterSpacing: "0.06em", color: C.ink, lineHeight: 1 }}>HackTheCore</span>
+                <div style={{ width: "100%", display: "flex", alignItems: "center" }}>
+                    <img src={htcLogo} alt="HackTheCore" style={{ height: 32, width: "auto", objectFit: "contain" }} />
                 </div>
 
                 {/* scattered cards fill the middle */}
@@ -500,12 +497,8 @@ function MobileLayout({ done, setDone }) {
     return (
         <div style={{ minHeight: "100vh", background: C.bg }}>
             <div style={{ background: C.leftBg, borderBottom: `1px solid ${C.border}`, padding: "16px 20px 0" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 16 }}>
-                    <svg width="18" height="18" viewBox="0 0 22 22" fill="none">
-                        <rect width="22" height="22" rx="4" fill={C.ink} />
-                        <path d="M7 6v10M15 6v10M7 11h8" stroke={C.yellow} strokeWidth="2" strokeLinecap="round" />
-                    </svg>
-                    <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem", letterSpacing: "0.06em", color: C.ink, lineHeight: 1 }}>HackTheCore</span>
+                <div style={{ display: "flex", alignItems: "center", marginBottom: 16 }}>
+                    <img src={htcLogo} alt="HackTheCore" style={{ height: 28, width: "auto", objectFit: "contain" }} />
                 </div>
 
                 <StackedCards />
