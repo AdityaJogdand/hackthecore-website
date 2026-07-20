@@ -1,9 +1,9 @@
 import { useRef, useLayoutEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import glimpseImageOne from "@/assets/SFM_5081.JPG";
-import glimpseImageTwo from "@/assets/SFM_5083.JPG";
-import glimpseImageFour from "@/assets/SFM_6818.JPG";
+import glimpseImageOne from "@/assets/where it all beign.JPG";
+import glimpseImageTwo from "@/assets/late night breakout.JPG";
+import glimpseImageFour from "@/assets/celebrating the wins.JPG";
 import hackUpLogo from "@/assets/HackUp.PNG";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -55,6 +55,7 @@ const events = [
                 alt: "Winning team on stage",
                 eyebrow: "Closing",
                 title: "Celebrating the wins",
+                objectPosition: "center 20%",
             },
             
         ],
@@ -106,12 +107,13 @@ const events = [
     // },
 ];
 
-function ImageCard({ img, alt, eyebrow, title }) {
+function ImageCard({ img, alt, eyebrow, title, objectPosition = "center" }) {
     return (
         <div className="group relative h-full w-full overflow-hidden rounded-[20px]">
             <img
                 src={img}
                 alt={alt}
+                style={{ objectPosition }}
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />

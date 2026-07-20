@@ -85,12 +85,14 @@ function Chip({ children }) {
 // see the ScrollTrigger effect in ShowCase() below.
 function ProjectCard({ project }) {
   const extraStack = Math.max(0, project.stack.length - 4);
+  const cardLink = project.demo || project.github;
 
   return (
     <article
-      className="reveal-card group relative bg-white rounded-[28px] border border-black/5
+      onClick={() => cardLink && window.open(cardLink, "_blank", "noreferrer")}
+      className={`reveal-card group relative bg-white rounded-[28px] border border-black/5
                  shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-xl
-                 hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+                 hover:-translate-y-1 transition-all duration-300 overflow-hidden${cardLink ? " cursor-pointer" : ""}`}
     >
       {/* Thumbnail */}
       <div className="relative h-44 w-full overflow-hidden rounded-t-[28px] bg-neutral-200">
@@ -142,7 +144,7 @@ function ProjectCard({ project }) {
             ))}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
             {project.github && (
               <a
                 href={project.github}

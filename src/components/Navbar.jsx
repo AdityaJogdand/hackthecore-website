@@ -50,7 +50,7 @@ const Navbar = () => {
   // Close the mobile menu automatically if the viewport grows back to desktop size
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768) setMobileMenuOpen(false);
+      if (window.innerWidth >= 1024) setMobileMenuOpen(false);
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -61,6 +61,7 @@ const Navbar = () => {
     { label: "About", to: "/aboutpage" },
     { label: "Events", to: "/events" },
     { label: "Showcase", to: "/showcase" },
+    { label: "Community", to: "/community" },
   ];
 
   const smoothEase = "cubic-bezier(0.22, 1, 0.36, 1)";
@@ -154,7 +155,7 @@ const Navbar = () => {
 
       {/* Logo — pinned to the far top-left corner */}
       <div
-        className="hidden md:block absolute top-3 left-8 pointer-events-auto"
+        className="hidden lg:block absolute top-3 left-8 pointer-events-auto"
         style={{
           opacity: scrolled ? 0 : 1,
           transform: scrolled ? "translate(0, -16px)" : "translate(0, 0)",
@@ -169,7 +170,7 @@ const Navbar = () => {
 
       {/* Nav items — centered as their own group, same height as logo so text sits on the same vertical center */}
       <div
-        className="hidden md:flex absolute top-3 left-1/2 items-center h-16 gap-16 pointer-events-auto"
+        className="hidden lg:flex absolute top-3 left-1/2 items-center h-16 gap-16 pointer-events-auto"
         style={{
           transform: scrolled ? "translate(-50%, -16px)" : "translate(-50%, 0)",
           opacity: scrolled ? 0 : 1,
@@ -189,7 +190,7 @@ const Navbar = () => {
       </div>
 
       {/* Avatar / Sign In — pinned to the far top-right corner, stays fixed with no scroll animation */}
-      <div className="hidden md:flex absolute top-3 right-8 items-center h-16 pointer-events-auto">
+      <div className="hidden lg:flex absolute top-3 right-8 items-center h-16 pointer-events-auto">
         {isAuthenticated && user ? (
           <AvatarButton size={44} ringColor="#0C0C0D" />
         ) : (
@@ -204,7 +205,7 @@ const Navbar = () => {
 
       {/* Collapsed pill + avatar — top-center to top-left */}
       <div
-        className="hidden md:flex absolute items-center gap-3 pointer-events-none"
+        className="hidden lg:flex absolute items-center gap-3 pointer-events-none"
         style={{
           top: 16,
           left: scrolled ? 16 : "50%",
@@ -217,7 +218,7 @@ const Navbar = () => {
           className="relative overflow-hidden rounded-full pointer-events-auto"
           style={{
             height: 64,
-            width: hovered ? 510 : 64,
+            width: hovered ? 650 : 64,
             background: "#0C0C0D",
             pointerEvents: scrolled ? "auto" : "none",
             transition: `width 450ms ${smoothEase}`,
@@ -287,7 +288,7 @@ const Navbar = () => {
       {/* ============ MOBILE NAVBAR (below md) ============ */}
 
       {/* Mobile top bar — logo left, hamburger/close button right, always visible */}
-      <div className="flex md:hidden absolute top-0 left-0 right-0 items-center justify-between px-5 py-3 pointer-events-auto bg-[#0C0C0D]/95 backdrop-blur-sm border-b border-white/10">
+      <div className="flex lg:hidden absolute top-0 left-0 right-0 items-center justify-between px-5 py-3 pointer-events-auto bg-[#0C0C0D]/95 backdrop-blur-sm border-b border-white/10">
         <Link to="/" className="flex items-center h-10" onClick={() => setMobileMenuOpen(false)}>
           <img src={white} alt="HackTheCore Logo" className="h-9 w-auto object-contain" />
         </Link>
@@ -310,7 +311,7 @@ const Navbar = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="md:hidden absolute top-16 left-3 right-3 bg-white border border-neutral-200 rounded-2xl shadow-xl py-3 pointer-events-auto overflow-hidden"
+            className="lg:hidden absolute top-16 left-3 right-3 bg-white border border-neutral-200 rounded-2xl shadow-xl py-3 pointer-events-auto overflow-hidden"
           >
             {navItems.map((item) => (
               <Link

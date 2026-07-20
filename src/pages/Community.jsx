@@ -2,10 +2,11 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Footer from "@/components/Footer";
-import teamImg from "@/assets/teaming.png";
 import aboutUsImg from "@/assets/aboutus.jpeg";
 import appleBtn from "@/assets/apple.png";
 import playBtn from "@/assets/play.png";
+import frontPhone from "@/assets/front.png";
+import leftPhone from "@/assets/left.png";
 import vid1 from "@/assets/videos/1.mp4";
 import vid2 from "@/assets/videos/2.mp4";
 import vid3 from "@/assets/videos/4.mp4";
@@ -319,7 +320,7 @@ function TestimonialCarousel() {
 
   return (
     <section style={{
-      background: "linear-gradient(135deg, #fdf6ec 0%, #f5f0e8 50%, #ede8df 100%)",
+      background: "#ffffff",
       padding: "clamp(72px, 10vw, 120px) clamp(24px, 6vw, 80px)",
       overflow: "hidden",
     }}>
@@ -898,7 +899,7 @@ export default function Community() {
             </div>
           </motion.div>
 
-          {/* ── Right: phone mockup ── */}
+          {/* ── Right: phone mockups ── */}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -907,47 +908,46 @@ export default function Community() {
             className="app-phone-wrapper"
             style={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", minHeight: 560 }}
           >
-            {/* Glow ring behind phone */}
+            {/* Glow ring behind phones */}
             <div style={{
               position: "absolute",
-              width: 280, height: 280,
+              width: 320, height: 320,
               borderRadius: "50%",
               background: "radial-gradient(circle, rgba(244,221,14,0.15) 0%, transparent 70%)",
               pointerEvents: "none",
             }} />
 
-            {/* Phone frame */}
-            <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="app-phone-frame"
-              style={{
-                width: 260,
-                height: 560,
-                borderRadius: 44,
-                border: "8px solid rgba(255,255,255,0.1)",
-                background: "#111",
-                overflow: "hidden",
-                position: "relative",
-                boxShadow: "0 60px 120px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.08)",
-                transform: "perspective(1200px) rotateY(-8deg) rotateX(3deg)",
-                zIndex: 2,
-              }}
-            >
-              {/* Dynamic island */}
-              <div style={{
-                position: "absolute", top: 14, left: "50%",
-                transform: "translateX(-50%)",
-                width: 90, height: 26,
-                background: "#000",
-                borderRadius: 20, zIndex: 10,
-              }} />
-              <video
-                src={vid2}
-                autoPlay muted loop playsInline
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            {/* Front phone (front.png) — right side, behind */}
+            <div style={{ position: "absolute", left: "50%", transform: "translateX(5%)", zIndex: 4 }}>
+              <motion.img
+                src={frontPhone}
+                alt="App screen front"
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="app-phone-front"
+                style={{
+                  width: 260,
+                  display: "block",
+                  filter: "drop-shadow(0 60px 100px rgba(0,0,0,0.5))",
+                }}
               />
-            </motion.div>
+            </div>
+
+            {/* Left phone (left.png) — left side, in front */}
+            <div style={{ position: "absolute", left: "50%", transform: "translateX(-70%) rotate(-10deg)", zIndex: 3 }}>
+              <motion.img
+                src={leftPhone}
+                alt="App screen"
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                className="app-phone-left"
+                style={{
+                  width: 300,
+                  display: "block",
+                  filter: "drop-shadow(0 40px 80px rgba(0,0,0,0.7))",
+                }}
+              />
+            </div>
 
           </motion.div>
 
@@ -958,18 +958,13 @@ export default function Community() {
           @media (max-width: 720px) {
             .app-showcase-grid { grid-template-columns: 1fr !important; }
             .app-phone-wrapper { min-height: 380px !important; }
-            .app-phone-frame {
-              width: 200px !important;
-              height: 430px !important;
-              transform: none !important;
-            }
+            .app-phone-front { width: 180px !important; }
+            .app-phone-left { width: 180px !important; }
           }
           @media (max-width: 400px) {
             .app-phone-wrapper { min-height: 320px !important; }
-            .app-phone-frame {
-              width: 170px !important;
-              height: 360px !important;
-            }
+            .app-phone-front { width: 150px !important; }
+            .app-phone-left { width: 150px !important; }
           }
         `}</style>
       </section>

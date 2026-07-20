@@ -2,6 +2,11 @@ import { useRef, useLayoutEffect, useState } from "react";
 import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import innovationImg from "@/assets/innovation.jpeg";
+import excellenceImg from "@/assets/excellence.jpeg";
+import collaborationImg from "@/assets/collabration-1.png";
+import communityImg from "@/assets/communtiy first-1.png";
+import growthImg from "@/assets/growth-1.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -11,32 +16,32 @@ const coreValues = [
   {
     title: "Innovation",
     copy: "Encouraging creativity and solving real-world problems through technology.",
-    accent: "#1E3A8A", // Dark Gold
-    seed: "innovation-circuit",
+    accent: "#1E3A8A",
+    img: innovationImg,
   },
   {
     title: "Community First",
     copy: "Building meaningful relationships and creating a supportive environment",
-    accent: "#166534", // Dark Teal
-    seed: "community-hands",
+    accent: "#166534",
+    img: communityImg,
   },
   {
     title: "Excellence",
     copy: "Recognizing effort, quality, and genuine talent over popularity or participation alone.",
-    accent: "#881337", // Royal Blue
-    seed: "merit-summit",
+    accent: "#881337",
+    img: excellenceImg,
   },
   {
     title: "Collaboration",
     copy: "Bringing students, mentors, and industry leaders together to create greater impact.",
-    accent: "#312E81", // Deep Rose
-    seed: "collaboration-table",
+    accent: "#312E81",
+    img: collaborationImg,
   },
   {
     title: "Growth",
     copy: "Promoting continuous learning, experimentation, and personal development.",
-    accent: "#5B3A29    ", // Deep Violet
-    seed: "growth-path",
+    accent: "#5B3A29",
+    img: growthImg,
   },
 ];
 
@@ -122,16 +127,18 @@ function CoreValuesReveal() {
                     }}
                 >
                     {/* stacked background photos, crossfaded by hover */}
-                    {coreValues.map((value, i) => (
-                        <img
-                            key={value.title}
-                            src={`https://picsum.photos/seed/${value.seed}/1920/1200`}
-                            alt=""
-                            aria-hidden="true"
-                            className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-out"
-                            style={{ opacity: hovered === i ? 1 : 0 }}
-                        />
-                    ))}
+                    {coreValues.map((value, i) =>
+                        value.img ? (
+                            <img
+                                key={value.title}
+                                src={value.img}
+                                alt=""
+                                aria-hidden="true"
+                                className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-out"
+                                style={{ opacity: hovered === i ? 1 : 0 }}
+                            />
+                        ) : null
+                    )}
 
                     {/* scrim so text stays legible over whichever photo is showing */}
                     <div

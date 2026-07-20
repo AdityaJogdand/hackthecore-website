@@ -140,9 +140,9 @@ const Herosection = () => {
           className="flex items-center justify-center flex-wrap gap-x-5 gap-y-4 sm:gap-x-10 md:gap-x-14 mt-10 sm:mt-12 px-2"
         >
           {[
-            { value: '150+', label: 'Projects Shipped' },
-            { value: '40+', label: 'Clients Worldwide' },
-            { value: '8', label: 'Years Building' },
+            { value: '500+', label: 'Projects Shipped' },
+            { value: '40+', label: 'Colleges and University' },
+            { value: '2000+', label: 'Builders' },
           ].map((stat, i) => (
             <React.Fragment key={stat.label}>
               {i !== 0 && <div className="hidden xs:block w-px h-7 sm:h-8 bg-black opacity-20" />}

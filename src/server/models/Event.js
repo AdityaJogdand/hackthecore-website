@@ -77,6 +77,12 @@ const eventSchema = new mongoose.Schema({
   // Meetup-only
   rsvpRole: { type: String },
 
+  stats: {
+    builders: { type: String, default: "" },
+    duration: { type: String, default: "" },
+    prizePool: { type: String, default: "" },
+  },
+
   featured: { type: Boolean, default: false },
 
   createdAt: { type: Date, default: Date.now },

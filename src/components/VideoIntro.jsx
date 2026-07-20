@@ -53,13 +53,22 @@ const VideoIntro = () => {
         pointerEvents: done ? "none" : "auto",
       }}
     >
+      <style>{`
+        .htc-intro-video::-webkit-media-controls { display: none !important; }
+        .htc-intro-video::-webkit-media-controls-enclosure { display: none !important; }
+        .htc-intro-video::-webkit-media-controls-panel { display: none !important; }
+      `}</style>
       <video
         ref={videoRef}
         src={logoVideo}
         autoPlay
         muted
         playsInline
-        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        controls={false}
+        controlsList="nodownload nofullscreen noremoteplayback"
+        disablePictureInPicture
+        className="htc-intro-video"
+        style={{ width: "100%", height: "100%", objectFit: "cover", pointerEvents: "none" }}
       />
     </div>
   );

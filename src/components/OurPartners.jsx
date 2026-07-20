@@ -45,7 +45,7 @@ function LogoCard({ logo }) {
   return (
     <div
       style={{
-        height: 108,
+        height: 140,
         background: C.bgCard,
         border: `1px solid ${C.border}`,
         borderRadius: 10,
@@ -70,12 +70,13 @@ function LogoCard({ logo }) {
         alt={logo.name}
         loading="lazy"
         style={{
-          maxHeight: 62,
-          maxWidth: 112,
+          maxHeight: 80,
+          maxWidth: 144,
           width: "auto",
           height: "auto",
           objectFit: "contain",
           display: "block",
+          
         }}
       />
     </div>
@@ -99,7 +100,7 @@ function ScrollRow({ logos, direction, duration }) {
         }}
       >
         {items.map((logo, i) => (
-          <div key={`${logo.name}-${i}`} style={{ width: 160, flexShrink: 0 }}>
+          <div key={`${logo.name}-${i}`} style={{ width: 200, flexShrink: 0 }}>
             <LogoCard logo={logo} />
           </div>
         ))}

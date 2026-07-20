@@ -41,7 +41,7 @@ function pickEventFields(body) {
     "eventType","title","banner","thumbnail","venue","city","date","time",
     "capacity","registrationDeadline","registrationLink","description","venueImages","timeline",
     "sponsors","contact","edition","themeImage","problemStatement","prizes",
-    "judges","faqs","rsvpRole","featured",
+    "judges","faqs","rsvpRole","featured","stats",
   ];
   const out = {};
   for (const key of allowed) {

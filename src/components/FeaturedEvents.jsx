@@ -30,6 +30,12 @@ export default function FeaturedEvents() {
 
   if (!event) return null;
 
+  const isDeadlinePassed = (() => {
+    if (!event.registrationDeadline) return false;
+    const d = new Date(event.registrationDeadline);
+    return !isNaN(d) && d < new Date();
+  })();
+
   return (
     <section
       style={{
@@ -129,7 +135,7 @@ export default function FeaturedEvents() {
             style={{
               fontFamily: "'Inter', sans-serif",
               fontWeight: 400,
-              fontSize: "clamp(0.8rem, 2vw, 3rem)",
+              fontSize: "clamp(0.7rem, 1.2vw, 1rem)",
               color: C.inkMid,
               margin: 0,
               letterSpacing: "0.01em",
@@ -144,7 +150,7 @@ export default function FeaturedEvents() {
             style={{
               fontFamily: "'Inter', sans-serif",
               fontWeight: 600,
-              fontSize: "clamp(0.75rem, 2vw, 1.25rem)",
+              fontSize: "clamp(0.65rem, 1vw, 0.8rem)",
               letterSpacing: "0.18em",
               textTransform: "uppercase",
               color: C.ink,
@@ -188,6 +194,7 @@ export default function FeaturedEvents() {
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
+            onClick={() => navigate(`/events/${event._id}`)}
             style={{
               position: "relative",
               borderRadius: 6,
@@ -268,7 +275,7 @@ export default function FeaturedEvents() {
                     fontSize: "0.55rem",
                     letterSpacing: "0.18em",
                     textTransform: "uppercase",
-                    color: "#4ADE80",
+                    color: isDeadlinePassed ? "#F87171" : "#4ADE80",
                     background: "rgba(0,0,0,0.5)",
                     backdropFilter: "blur(8px)",
                     padding: "0.4em 0.8em",
@@ -283,12 +290,12 @@ export default function FeaturedEvents() {
                       width: 6,
                       height: 6,
                       borderRadius: "50%",
-                      background: "#4ADE80",
+                      background: isDeadlinePassed ? "#F87171" : "#4ADE80",
                       display: "inline-block",
                       animation: "pulse-dot 2s ease infinite",
                     }}
                   />
-                  {event.registrationLink ? "REGISTRATIONS OPEN" : "COMING SOON"}
+                  {isDeadlinePassed ? "REGISTRATION CLOSED" : event.registrationLink?.trim() ? "REGISTRATIONS OPEN" : "COMING SOON"}
                 </span>
               </motion.div>
 
@@ -403,9 +410,9 @@ export default function FeaturedEvents() {
               />
 
               {[
-                { value: "500+", label: "Builders" },
-                { value: "48h", label: "Non-Stop" },
-                { value: "₹5L+", label: "In Prizes" },
+                { value: event.stats?.builders || "500+", label: "Builders" },
+                { value: event.stats?.duration || "48h", label: "Non-Stop" },
+                { value: event.stats?.prizePool || "₹5L+", label: "In Prizes" },
               ].map(h => (
                 <div key={h.label} style={{ display: "flex", alignItems: "baseline", gap: "0.35em" }}>
                   <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: "clamp(1rem, 1.8vw, 1.3rem)", color: C.yellowBg, letterSpacing: "-0.02em" }}>{h.value}</span>
@@ -413,7 +420,7 @@ export default function FeaturedEvents() {
                 </div>
               ))}
 
-              <div style={{ marginLeft: "auto", display: "flex", flexWrap: "wrap", gap: "0.6em", justifyContent: "flex-end" }}>
+              <div onClick={e => e.stopPropagation()} style={{ marginLeft: "auto", display: "flex", flexWrap: "wrap", gap: "0.6em", justifyContent: "flex-end" }}>
                 <motion.button
                   onClick={() => navigate(`/events/${event._id}`)}
                   whileHover={{ scale: 1.04 }}
@@ -443,7 +450,30 @@ export default function FeaturedEvents() {
                   </svg>
                 </motion.button>
 
-                {event.registrationLink ? (
+                {isDeadlinePassed ? (
+                  <motion.button
+                    disabled
+                    style={{
+                      background: "rgba(239,68,68,0.15)",
+                      color: "rgba(239,68,68,0.7)",
+                      border: "1px solid rgba(239,68,68,0.25)",
+                      padding: "0.7em 2.2em",
+                      fontFamily: "'Inter', sans-serif",
+                      fontWeight: 700,
+                      fontSize: "0.68rem",
+                      letterSpacing: "0.16em",
+                      textTransform: "uppercase",
+                      cursor: "not-allowed",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: 2,
+                      minWidth: 120,
+                    }}
+                  >
+                    Registration Closed
+                  </motion.button>
+                ) : event.registrationLink?.trim() ? (
                   <motion.a
                     href={/^https?:\/\//i.test(event.registrationLink) ? event.registrationLink : `https://${event.registrationLink}`}
                     target="_blank"
@@ -493,7 +523,6 @@ export default function FeaturedEvents() {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      gap: "0.5em",
                       borderRadius: 2,
                       minWidth: 120,
                     }}

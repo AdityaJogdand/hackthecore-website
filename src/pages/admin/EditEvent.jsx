@@ -149,6 +149,11 @@ export default function EditEvent() {
   const [timeline, setTimeline] = useState([emptyTimelineItem()]);
   const [contact, setContact] = useState({ email: "", twitter: "", discord: "", whatsapp: "" });
 
+  /* stats */
+  const [statsBuilders, setStatsBuilders] = useState("");
+  const [statsDuration, setStatsDuration] = useState("");
+  const [statsPrizePool, setStatsPrizePool] = useState("");
+
   /* hackathon-only fields */
   const [edition, setEdition] = useState("");
   const [theme, setTheme] = useState("");
@@ -178,6 +183,9 @@ export default function EditEvent() {
         setDescription(data.description || "");
         setTimeline(data.timeline && data.timeline.length > 0 ? data.timeline : [emptyTimelineItem()]);
         setContact(data.contact || { email: "", twitter: "", discord: "", whatsapp: "" });
+        setStatsBuilders(data.stats?.builders || "");
+        setStatsDuration(data.stats?.duration || "");
+        setStatsPrizePool(data.stats?.prizePool || "");
         setEventType(data.eventType);
         
         if (data.eventType === "hackathon") {
@@ -227,6 +235,7 @@ export default function EditEvent() {
       title, banner, thumbnail, venue, city, date: fmtRange(startDate, endDate), time,
       capacity, registrationDeadline: fmtDate(deadline), registrationLink,
       description,
+      stats: { builders: statsBuilders, duration: statsDuration, prizePool: statsPrizePool },
       timeline: timeline.filter(t => t.time && t.label),
       contact,
       ...(eventType === "hackathon" && {
@@ -322,6 +331,15 @@ export default function EditEvent() {
               <Input label="Registration link (external)" placeholder="https://devfolio.co/..." value={registrationLink} onChange={e => setRegistrationLink(e.target.value)} />
             </div>
             <TextArea label="Description" required rows={4} placeholder="Use a blank line between paragraphs." value={description} onChange={e => setDescription(e.target.value)} />
+          </div>
+
+          {/* FEATURED BANNER STATS */}
+          <SectionLabel>Featured banner stats</SectionLabel>
+          <p style={{ fontFamily: FONT, fontSize: 12, color: "rgba(255,255,255,0.3)", marginBottom: 16, marginTop: -12 }}>Shown in the bottom bar of the featured event card on the homepage.</p>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+            <Input label="Builders" placeholder="e.g. 500+" value={statsBuilders} onChange={e => setStatsBuilders(e.target.value)} />
+            <Input label="Duration" placeholder="e.g. 48h" value={statsDuration} onChange={e => setStatsDuration(e.target.value)} />
+            <Input label="Prize Pool" placeholder="e.g. ₹5L+" value={statsPrizePool} onChange={e => setStatsPrizePool(e.target.value)} />
           </div>
 
           {/* PROBLEM STATEMENT (hackathon only) */}

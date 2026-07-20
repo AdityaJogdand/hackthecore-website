@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 /* ─── constants ──────────────────────────────────────────────────────────── */
 
@@ -152,6 +153,7 @@ const headlineFont = {
 };
 
 export default function HeroSection() {
+  const navigate = useNavigate();
   const sectionRef = useRef(null);
 
   return (
@@ -274,6 +276,7 @@ export default function HeroSection() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
+            onClick={() => navigate("/community")}
             onMouseEnter={(e) => (e.currentTarget.style.background = "#2d2d2d")}
             onMouseLeave={(e) => (e.currentTarget.style.background = C.ink)}
             style={{

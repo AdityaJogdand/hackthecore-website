@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Calendar, Building2, Zap } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import headerimg from "@/assets/aboutus.jpeg";
+import headerimg from "@/assets/eventpic.jpeg";
 const API_BASE = `${import.meta.env.VITE_API_URL}/api`;
 const Events = () => {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ const Events = () => {
   const [error, setError] = useState("");
   const [stats, setStats] = useState({
     attendees: 0,
-    speakers: 0,
+    mentors: 0,
     hackathon: 0,
     partners: 0,
   });
@@ -58,10 +58,10 @@ const Events = () => {
           setHasAnimated(true);
 
           const targets = {
-            attendees: 5000,
-            speakers: 120,
+            attendees: 2000,
+            mentors: 50,
             hackathon: events.filter(e => e.eventType === "hackathon").length * 100,
-            partners: 25,
+            partners: 15,
           };
 
           const duration = 1000;
@@ -75,9 +75,9 @@ const Events = () => {
                   targets.attendees,
                   prev.attendees + Math.ceil(targets.attendees / steps)
                 ),
-                speakers: Math.min(
-                  targets.speakers,
-                  prev.speakers + Math.ceil(targets.speakers / steps)
+                mentors: Math.min(
+                  targets.mentors,
+                  prev.mentors + Math.ceil(targets.mentors / steps)
                 ),
                 hackathon: Math.min(
                   targets.hackathon,
@@ -222,7 +222,7 @@ const Events = () => {
           >
             {[
               [`${stats.attendees.toLocaleString()}+`, "Attendees"],
-              [`${stats.speakers}+`, "Speakers"],
+              [`${stats.mentors}+`, "Mentors"],
               [`${stats.hackathon}H`, "Hackathon"],
               [`${stats.partners}+`, "Partners"],
             ].map(([value, label]) => (

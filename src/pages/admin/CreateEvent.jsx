@@ -263,6 +263,11 @@ export default function CreateEvent() {
   const [venueImage1, setVenueImage1] = useState("");
   const [venueImage2, setVenueImage2] = useState("");
 
+  /* ── Stats (featured event banner) ── */
+  const [statsBuilders, setStatsBuilders] = useState("");
+  const [statsDuration, setStatsDuration] = useState("");
+  const [statsPrizePool, setStatsPrizePool] = useState("");
+
   /* ── Hackathon-only fields ── */
   const [edition, setEdition] = useState("");
   const [theme, setTheme] = useState("");
@@ -315,6 +320,7 @@ export default function CreateEvent() {
       fee,
       capacity, registrationDeadline: fmtDate(deadline), registrationLink,
       description,
+      stats: { builders: statsBuilders, duration: statsDuration, prizePool: statsPrizePool },
       venueImages: [venueImage1, venueImage2].filter(Boolean),
       timeline: timeline.filter(t => t.time && t.label),
       sponsors: sponsors.filter(s => s.name),
@@ -440,6 +446,15 @@ export default function CreateEvent() {
                   <Input label="Registration link (external)" placeholder="https://devfolio.co/..." value={registrationLink} onChange={e => setRegistrationLink(e.target.value)} />
                 </div>
                 <TextArea label="Description" required rows={4} placeholder="Use a blank line between paragraphs." value={description} onChange={e => setDescription(e.target.value)} />
+              </div>
+
+              {/* ── FEATURED BANNER STATS ── */}
+              <SectionLabel>Featured banner stats</SectionLabel>
+              <p style={{ fontFamily: FONT, fontSize: 12, color: "rgba(255,255,255,0.3)", marginBottom: 16, marginTop: -12 }}>Shown in the bottom bar of the featured event card on the homepage.</p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+                <Input label="Builders" placeholder="e.g. 500+" value={statsBuilders} onChange={e => setStatsBuilders(e.target.value)} />
+                <Input label="Duration" placeholder="e.g. 48h" value={statsDuration} onChange={e => setStatsDuration(e.target.value)} />
+                <Input label="Prize Pool" placeholder="e.g. ₹5L+" value={statsPrizePool} onChange={e => setStatsPrizePool(e.target.value)} />
               </div>
 
               {/* ── VENUE IMAGES ── */}
